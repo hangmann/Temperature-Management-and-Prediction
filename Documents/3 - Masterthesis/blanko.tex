@@ -1,0 +1,258 @@
+% **************************************************************************************************************
+% A Classic Thesis Style
+% An Homage to The Elements of Typographic Style
+%
+% Copyright (C) 2008 AndrÃ© Miede http://www.miede.de
+%
+%%%%
+% Anpassungen fuer die Universitaet Paderborn, FG DDI
+% durch Wolfgang Reinhardt
+% wolle@upb.de
+%%%%
+%
+% License:
+% This program is free software; you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation; either version 2 of the License, or
+% (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program; see the file COPYING.  If not, write to
+% the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+% Boston, MA 02111-1307, USA.
+%
+% **************************************************************************************************************
+% Note:
+%    * You must not use "u etc. in strings/commands that will be spaced out (use \"u or real umlauts instead)
+%    * Chapters must be marked with the \myChapter{Foo} command (sorry for the inconvenience at this point)
+%    * New enumeration (small caps): \begin{aenumerate} \end{aenumerate}
+%    * For margin notes: \graffito{}
+%    * Do not use bold fonts in this style, it is designed around them
+%    * Use tables as in the examples
+%    * See classicthesis-ldpkg.sty for useful commands
+% **************************************************************************************************************
+% To Do:
+%    * support a List of Listings that looks like the other lists
+%    * mathbb in section-titles/chapter-titles => disappears somehow in headlines!!!
+%    * think about processing a4paper, a5paper, 10pt, 11pt, 12pt etc. options for typearea layout
+%      (store values in internal variables and handle by \AtEndOfPackage{\areaset...})
+% **************************************************************************************************************
+
+
+\documentclass[twoside,openright,titlepage,fleqn,pointlessnumbers,headinclude,,% 
+                11pt,a4paper,BCOR5mm,footinclude,cleardoubleempty,abstracton % <--- obsolete, remove (todo)
+                ]{scrreprt}
+% ********************************************************************
+% KOMA-Script setup http://www.komascript.de/betaKOMAoptions
+% ********************************************************************
+%\KOMAoptions{%
+%    paper=a4,%
+%    fontsize=10pt,%
+%    cleardoublepage=empty,%
+%    footinclude=true,%
+%    %abstract=false%
+%}
+% ********************************************************************
+% Development Stuff
+% ********************************************************************
+\listfiles
+%\usepackage[l2tabu, orthodox, abort]{nag}
+%\usepackage[warning, all]{onlyamsmath}
+% ********************************************************************
+% Re-usable information
+% ********************************************************************
+\newcommand{\myTitle}{Titel der Arbeit \xspace}                      
+\newcommand{\mySubTitle}{Untertitel der Arbeit\xspace}
+%\newcommand{\myDegree}{\xspace}
+\newcommand{\myName}{Name des Kandidaten\xspace}
+\newcommand{\myAdress}{Stra§e 123\\99999 Ort\xspace}
+\newcommand{\myNumber}{Matrikelnummer: 123456\xspace}
+\newcommand{\myProf}{Prof. Dr. phil. Johann S. Magenheim\xspace}
+\newcommand{\myOtherProf}{Prof. Dr. Zweitkorrektor\xspace}
+\newcommand{\mySupervisor}{Dipl.-Inform. Wolfgang Reinhardt\xspace}
+\newcommand{\myFaculty}{Fakult\"at fŸr Elektrotechnik, Informatik und Mathematik\xspace}
+\newcommand{\myDepartment}{Institut fŸr Informatik\xspace}
+\newcommand{\myUni}{\protect{Universit\"at Paderborn}\xspace}
+\newcommand{\myLocation}{Paderborn\xspace}
+\newcommand{\myThesisType}{Bachelorarbeit}
+\newcommand{\myTime}{\today\xspace}
+\newcommand{\myVersion}{Version 0.1\xspace}
+%*******************************************************
+% Packages with options that might require adjustments
+%*******************************************************
+\usepackage{amsfonts} 
+\usepackage[applemac]{inputenc} %ggfs. auf andere Plattform anpassen
+\usepackage[T1]{fontenc} 
+\usepackage[ngerman,american]{babel}           
+%\usepackage{apalike} 
+\usepackage{natbib} 
+ 
+%\usepackage{chapterbib}     
+\usepackage[fleqn]{amsmath} % math environments and more by the AMS
+\usepackage{setspace}
+\usepackage{color}
+	\definecolor{pantone536}{cmyk}{0.3,0.18,0.06,0}
+	\definecolor{pantone428}{cmyk}{0,0,0,0.2}
+	\definecolor{pantone5793}{cmyk}{0.06,0,0.23,0.18}
+	\definecolor{pantone281}{cmyk}{1,0.72,0,0.38}
+	\definecolor{pantone129}{cmyk}{0,0.15,0.76,0}
+	\definecolor{pantone152}{cmyk}{0,0.51,1,0}
+	\definecolor{pantone376}{cmyk}{0.56,0,1,0}
+	
+%*******************************************************
+% todos
+%*******************************************************
+\newcounter{todozaehler}[chapter]
+\setcounter{todozaehler}{0}
+\renewcommand{\thetodozaehler}{\thechapter.\arabic{todozaehler}~}
+\setcounter{todozaehler}{0}
+
+\newcommand{\todo}[1]{{\refstepcounter{todozaehler}\graffito{\colorbox{pantone152}{\parbox{25mm}{\scriptsize\textcolor{white}{\textbf{\textsf{TODO \thetodozaehler}}}}} \colorbox{pantone152}{\parbox{25mm}{\raggedright\scriptsize\textcolor{white}{ \sf \em #1}}}}}}
+
+%*******************************************************
+\usepackage{classicthesis-ldpkg} 
+%*******************************************************
+% Options for classicthesis.sty:
+% tocaligned eulerchapternumbers drafting linedheaders listsseparated
+% subfig nochapters beramono eulermath parts minionpro pdfspacing
+\usepackage[drafting,pdfspacing,linedheaders,tocaligned,
+            subfig,eulermath,parts,dottedtoc]{classicthesis}
+%*******************************************************
+%ArsClassica changes some typographic settings in classicthesis
+\usepackage[english]{arsclassica}
+\usepackage[tight,german]{minitoc} 
+	\def\ptctitle{inhaltsverzeichnis}
+      \def\mtctitle{inhaltsverzeichnis}
+      \def\stctitle{inhaltsverzeichnis}
+      \setlength{\mtcindent}{0pt}
+      \renewcommand{\mtifont}{\normalsize\sffamily%
+         \scshape\lsstyle}
+         \setcounter{minitocdepth}{1}
+%\usepackage{showidx}
+\usepackage{makeidx}                       
+%*******************************************************
+%*******************************************************            
+%\usepackage[section,below]{placeins} <--- not everybody wants this
+%\usepackage[all]{hypcap} <--- does not work with MiKTeX 2.6
+% ********************************************************************
+% Language/strings for backrefs (change here, thanks, Lorenzo)
+%*******************************************************
+%\renewcommand{\backrefnotcitedstring}{\relax}%(Not cited.)
+%\renewcommand{\backrefcitedsinglestring}[1]{(Citato a pagina~#1.)}
+%\renewcommand{\backrefcitedmultistring}[1]{(Citato alle pagine~#1.)}
+%\renewcommand{\backreftwosep}{ e~}
+%\renewcommand{\backreflastsep}{ e~}
+% ********************************************************************
+% Setup and Finetuning
+%*******************************************************
+\newlength{\abcd} % for ab..z string length calculation
+\newcommand{\myfloatalign}{\centering} % how all the floats will be aligned
+\setlength{\extrarowheight}{3pt} % increase table row height
+\clubpenalty = 10000
+\widowpenalty = 10000
+\displaywidowpenalty = 10000
+\parindent=0cm
+\parskip=1ex     
+
+\usepackage{blindtext}
+\newtheorem{mydef}{Definition}
+
+% ********************************************************************
+% Captions look and feel
+%*******************************************************
+\captionsetup{format=hang,font=small}
+% ********************************************************************
+% Where to look for graphics
+%*******************************************************
+%\graphicspath{{gfx/}{misc/}} % considered harmful according to l2tabu
+% ********************************************************************
+% Hyperreferences
+%*******************************************************
+\hypersetup{%
+    colorlinks=true, linktocpage=true, pdfstartpage=3, pdfstartview=FitV,%
+    breaklinks=true, pdfpagemode=UseNone, pageanchor=true, pdfpagemode=UseOutlines,%
+    plainpages=false, bookmarksnumbered, bookmarksopen=true, bookmarksopenlevel=1,%
+    hypertexnames=true, pdfhighlight=/O,%hyperfootnotes=true,%nesting=true,%frenchlinks,%
+    urlcolor=webbrown, linkcolor=RoyalBlue, citecolor= pantone281, %pagecolor=RoyalBlue,%
+    % uncomment the following line if you want to have black links (e.g., for printing)
+    %urlcolor=Black, linkcolor=Black, citecolor=Black, %pagecolor=Black,%
+    pdftitle={\myTitle - \mySubTitle},%
+    pdfauthor={\textcopyright\ \myName, \myUni, \myFaculty},%
+    pdfsubject={},%
+    pdfkeywords={},%
+    pdfcreator={pdfLaTeX},%
+    pdfproducer={LaTeX with hyperref and classicthesis}%
+}
+%********************************************************************
+% Hyphenation
+%*******************************************************
+%\hyphenation{put special hyphenation here}
+% ********************************************************************
+% GO!GO!GO! MOVE IT!
+%*******************************************************
+
+
+\begin{document}
+\frenchspacing
+\raggedbottom
+\dominitoc
+
+\selectlanguage{ngerman} % american ngerman
+%\renewcommand*{\bibname}{new name}
+%\setbibpreamble{}
+\pagenumbering{roman}
+\pagestyle{plain}
+%********************************************************************
+% Frontmatter
+%*******************************************************
+\include{__parts/_FrontBackmatter/Titlepage}
+\include{__parts/_FrontBackmatter/Titleback}   
+\cleardoublepage\include{__parts/_FrontBackmatter/Abstract}
+\cleardoublepage\include{__parts/_FrontBackmatter/Acknowledgments}
+\pagestyle{scrheadings}
+\cleardoublepage\include{__parts/_FrontBackmatter/Contents}
+%********************************************************************
+% Mainmatter
+%*******************************************************
+\pagenumbering{arabic}
+%zeilenabstand
+\begin{spacing}{1.083}   
+% use \cleardoublepage here to avoid problems with pdfbookmark
+
+\include{__parts/chapters/introduction}
+\cleardoublepage
+
+
+\include{__parts/chapters/outlook}
+\cleardoublepage
+
+
+
+
+%\addtocontents{toc}{\protect\clearpage} % TEST
+%\include{__parts/chapters/phd_chapter02}
+\end{spacing}
+% ********************************************************************
+% Backmatter
+%*******************************************************
+\appendix
+
+\include{__parts/appendix/appendix}
+%********************************************************************
+% Other Stuff in the Back
+%*******************************************************
+\nocite{*}
+\cleardoublepage\include{__parts/_FrontBackmatter/Bibliography} 
+\cleardoublepage\include{__parts/_FrontBackMatter/Index}
+%\cleardoublepage\include{__parts/_FrontBackmatter/Colophon}
+\cleardoublepage\include{__parts/_FrontBackmatter/Declaration}
+% ********************************************************************
+% Game Over: Restart, Restore or Quit?
+%*******************************************************
+\end{document}
+% ********************************************************************

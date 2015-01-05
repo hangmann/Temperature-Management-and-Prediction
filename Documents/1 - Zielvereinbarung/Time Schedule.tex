@@ -1,0 +1,109 @@
+\documentclass[12pt,twoside,doublepage]{article}
+
+\newcommand{\autor}{Hendrik Hangmann}
+\newcommand{\titel}{Generating Adjustable Temperature Gradients on modern FPGAs}
+
+\title{Generating Adjustable Temperature Gradients on modern FPGAs}
+\author{Hendrik Hangmann}
+
+% German Language:
+% \usepackage[german]{babel}
+% \usepackage[T1]{fontenc}
+% \usepackage[latin1]{inputenc}
+% \selectlanguage{german}
+
+\usepackage{times}
+\usepackage{url}
+\usepackage{float} 
+\usepackage{geometry}
+
+%\usepackage{psfraq}
+
+\geometry{a4paper,body={5.8in,9in}}
+
+% Graphics:
+\usepackage{graphicx}
+% aller Bilder werden im Unterverzeichnis figures gesucht:
+\graphicspath{{figures/}}
+
+% Headers:
+\usepackage{fancyhdr}
+% \pagestyle{fancy}
+\pagestyle{fancy}
+\fancyhead{}
+%\fancyhead[LE]{ \autor}
+\fancyhead[L]{ \autor}
+%\fancyhead[LO]{}
+%\fancyhead[RE]{}
+%\fancyhead[RO]{ \titel}
+\fancyhead[R]{ Time Schedule }
+\fancyfoot[L]{ \today }
+%\fancyfoot[C]{  }
+\fancyfoot[R]{ \thepage }
+\renewcommand{\footrulewidth}{0.5pt}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 			Text begins here:
+
+%\begin{abstract}
+% ABSTRACT
+%\end{abstract}
+
+\section{Motivation}
+\label{sec:motivation}
+
+Nowadays there is large field of research in thermal effects. The shrinking device structure leads to dramatically increased thermal effects and
+high temperatures. This could have the consequence of soft (timing) errors, and contribute to the premature occurrence of hard errors \cite{Borkar2005}. Especially on modern FPGAs there were several studies on thermal management. But most of these thermal management techniques were studied using thermal simulations.  \\
+As a basis for further researches, which work on real-world systems, it is mandatory to be able to generate spatial thermal gradients. This could lead to the research of thermal imbalances and local hot spots on the chip. Therefore it is important to use dedicated heat-generating circuits.
+
+\section{Formulation of problem}
+\label{sec:problem}
+
+There are several different ways to develop dedicated heat-generating circuits on a FPGA. The FPGA consists of three main parts: Slices, Block RAMs (BRAMs) and Digital Signal Processors (DSPs). These components get wired dynamically, depending on the desired functionality. The functionality is described in Hardware Description Languages such as VHDL. 
+
+Slices consists of several Look-Up Tables (LUTs) und Flip-Flops (FFs) and can be combined to any desired circuit. DSPs are hard-coded circuits for special uses, e.g. calculations. By the reason that e.g. multipliers would take a high amount of space if they were realized by LUTs and FFs, these tasks are mapped to special processors for that purpose. Because of their special purpose, they are highly space-saving. BRAMs are memory units.
+
+It is now possible to instantiate Slices (LUTs and FFs), DSPs or BRAMs and use them specifically for heat-generating circuits. During the research it's eligible to identify the part that generates the most heat and if the mixture of parts outperforms that solution.
+Furthermore the influence of frequencies of these parts is varied to get most heat. 
+
+\section{Objective target}
+\label{sec:target}
+
+\begin{figure}[H]
+	\center{\includegraphics[scale=0.4]{figures/system}}
+	\caption{MicroBlaze System}
+	\label{fig:microblaze}
+\end{figure}
+
+The heat-generating cores are implemented as an embedded system into an existing system on the FPGA called MicroBlaze. MicroBlaze is a microcontroller used by \textit{Xilinx}, with the characteristic that it is also given in VHDL. Figure~\ref{fig:microblaze} depicts this system with the MicroBlaze Processor. Via the PLB bus (\textit{mb\_plb}) several cores can be embedded to the system: e.g. heat-generating cores and the system monitor, from which the temperature can be read.
+
+In order to read the temperature as correctly as possible it is mandatory to decouple the heat-generating cores from the MicoBlaze architecture. Therefore the MicroBlaze architecture and the heat-generating core are given each a defined range on the FPGA. I.e. each core uses a defined set of Slices, DSPs and BRAMs.
+
+After that, LUTs, FFs, DSPs and BRAMs should be individually investigated to identify the highest heat potential. 
+It is eligible to study afterwards how these components can be combined to reach even more heat. These tasks are marked as milestones in the time schedule given in Figure~\ref{fig:schedule}.
+\\ Each of these cores will additionally work with diverse frequencies to be able to measure the influence of clocking. Optionally, I am going to examine the Xilinx Core Generator, to examine the quality of the generated cores.
+
+\section{Time management}
+\label{sec:time}
+
+\begin{figure}[H]
+	\center{\includegraphics[scale=0.5]{figures/schedule}}
+	\caption{Time schedule}
+	\label{fig:schedule}
+\end{figure}
+
+
+%References 
+\bibliography{bib}
+\bibliographystyle{plain}
+
+\end{document}
+
+
+

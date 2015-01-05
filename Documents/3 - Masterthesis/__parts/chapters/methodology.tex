@@ -1,0 +1,154 @@
+
+\chapter{Methodology}
+\label{ch:methodology}
+
+
+In order to generate temperature gradients and heat on an \ac{FPGA}, it is necessary to keep all of its components busy at every time. As chapter \ref{sec:primitives} already covered, there are several primitives, which can be used in order to instantiate circuits, that are native to the Virtex-5 architecture. I.\,e. these primitives can be used to create circuits, which are using every hardware device on the \ac{FPGA}. In other words, by instantiating the low-\,level devices, such as \acp{LUT}, \acp{FF} and so on, you are able to keep each component busy at all time.
+
+The following heat core layouts are precisely doing this. They are closely designed to the underlying Virtex-\,5 \ac{FPGA} architecture, by using the Xilinx primitives to keep each device on the \ac{FPGA} busy. In the following there are several approaches, that could lead to heat generation because of exhaustion of the hardware conditions.
+
+The used primitives for the following heat cores are:
+
+\begin{itemize}
+	\item \ac{LUT6} 
+	\item \ac{SRL16E}  
+	\item \ac{FDCPE}
+	\item \ac{DSP48E}
+	\item \ac{FIFO36}
+\end{itemize}
+
+Due to the equal distribution of \acp{LUT} and \acp{FF} it makes sense to analyze hybrids of these components.
+
+\section{Lookup Tables}
+The following heat core designs are using exclusively \acp{LUT}. They are firstly used with the Xilinx primitive \ac{LUT6} and secondly with \ac{SRL16E}.
+
+\subsection{LUT-\,Pipeline}
+\label{sec:lutpipe}
+
+\begin{figure}[h]
+		\includegraphics[width=\textwidth]{__pics/LUTpipe.pdf}
+		\caption{Modules of the LUT-\,Pipeline}
+		\label{pic:lutpipe}	
+	\end{figure} 
+
+The first heat core consists of one or more pipelines composed of \acp{LUT}, where several \acp{LUT} are concatenated by connecting \textit{I0} and \textit{I2} to \textit{I5} with the output of the predecessor.  \textit{I1} is connected to an enabling signal, which is called \textit{enable\_heater}. Figure \ref{pic:lutpipe} depicts the graphical ordering of this pipeline. \textit{I0} and \textit{I1} are swapped in Figure \ref{pic:lutpipe} for reasons of clarity and comprehensibility. 
+
+The logic mapped to all of the \acp{LUT} will be a simply \ac{XOR} with \textit{I0} and \textit{I1} as input. This will have the effect that, if the heat core is enabled, each \ac{LUT} will invert the signal \textit{I0}. If the heat core is not enabled, each \ac{LUT} will simply pass the signal \textit{I0} through. The other inputs \textit{I2} to \textit{I5} are not used in the logic, but will receive a signal nonetheless in order to fill the internal table. 
+
+The first \ac{LUT} in this pipeline will get signal which toggles from 0 to 1 and back. The speed of the toggling is controlled by an adjustable frequency. 
+
+This pipeline element can now be composed to one huge pipeline or many small pipelines. However, it is important that the number of \acp{LUT} is odd, because otherwise the input signal of the first \ac{LUT} and the output signal of the last \ac{LUT} in the pipeline would be the same. As a consequence, the Xilinx tools would optimize the pipeline, because they would not determine a sense behind this circuit. The number of \acp{LUT} in this oscillator determines the oscillation frequency. 
+
+\subsection{LUT-\,Oscillator}
+
+\begin{figure}[h]
+		\includegraphics[width=0.8\textwidth]{__pics/1-oscillator.pdf}
+		\caption{Single-\,level ring oscillator by using a LUT6}
+		\label{pic:lutosc}	
+	\end{figure} 
+
+	
+Another idea of using \acp{LUT} for the heat cores is to build a ring oscillator. A ring oscillator consists of an odd number of inverters, which are connected in ring form. This will have the effect, that the circuit is oscillating, i.\,e. the circuit will toggle as fast as it can between 0 and 1. As well as the \ac{LUT}-\,pipeline, this heat core will use \acp{LUT6} with an \ac{XOR} mapped to it, in order to toggle the input if the heat core is enabled. But on the contrary, this pipeline's input is its own output to achieve the ring form. Figure \ref{pic:lutosc} depicts a single-\,level ring oscillator, i.\,e. a pipeline with only one \ac{LUT}. Basically any oscillator would work well for this purpose, but the less the levels of a ring oscillator, the faster it oscillates. Consequently this will result in more heat.
+
+Just as in chapter \ref{sec:lutpipe} the \ac{LUT} gets its input on \textit{I0} and \textit{I2} to \textit{I5} and its enabling signal on \textit{I1}. Furthermore \textit{I2} to \textit{I5} are wired, but not used in the internal logic of the \ac{LUT}. 
+
+The heat core could eventually consist either of many of these single-\,level ring oscillator or of less multi-\,level oscillators, with a larger pipeline. Again it is important, that the number of inverters is odd. Otherwise this circuit would not oscillate. 
+
+
+\subsection{SRL-\,Pipeline}
+\label{sec:srlpipe}
+
+\begin{figure}[h]
+		\includegraphics[width=\textwidth]{__pics/SRLPIPE.pdf}
+		\caption{Segments of a SRL-\,Pipeline}
+		\label{pic:srlpipe}	
+	\end{figure} 
+
+Another possibility of using \acp{LUT} for the heat core is to use \acp{SRL16E}. Figure \ref{pic:srlpipe} depicts a small segment of the \ac{SRL}-\,Pipeline, which is created by connecting input \textit{D} with the predecessor's output \textit{O}. By cascading the \acp{SRL16E} you create one huge shift register, which is permanently shifting bits. The maximum capacity $c_{max}$ of this shift register is thus 
+\begin{equation}
+c_{max} = 16 \cdot n
+\label{eq:srlcap}
+\end{equation} where n is the amount of \acfp{SRL16}. All clock input signals \textit{C} are connected to the same clock signals, whose frequency can be adjusted. The \ac{SRL}-\,Pipeline can be turned on and off by setting \textit{enable\_heater} to \textit{1} or \textit{0}. The \acp{SRL16E} will be enabled via the \textit{CE} signal. The signals \textit{A0} to \textit{A3} are omitted for reasons of clarity and comprehensibility.
+
+Again, the first component in this pipeline gets a clock-\,controlled toggling bit, whose speed can be adjusted.
+
+
+\section{Flip-Flops}
+
+The following heat core design is using exclusively \acp{FF} and more precisely the Xilinx primitive \acs{FDCPE}.
+
+
+\subsubsection{FF-\,Pipeline}
+
+\begin{figure}[h]
+		\includegraphics[width=\textwidth]{__pics/FFPIPE.pdf}
+		\caption{Segments of a FF-\,Pipeline}
+		\label{pic:ffpipe}	
+	\end{figure} 
+	
+	
+The only way to use exclusively \acp{FF} is to cascade them and build a shift register. Figure \ref{pic:ffpipe} shows the circuit of the \ac{FF}-\,Pipeline, which looks similar to the \ac{SRL}-\,Pipeline in chapter \ref{sec:srlpipe}. This is because they nearly act the same. They have the same input, output and are clock-\,controlled with a clock enable signal. Beyond that, they have the same purpose, more precisely both pipelines are shift registers except that the \ac{FF} can only store one bit compared to the 16\,bit \ac{SRL}. The maximum capacity of this shift register is thus the same as the amound of used \acp{FF}.
+
+
+\section{LUT and FF Hybrids}
+
+Another way to exploit the given hardware components is to use the whole slice, instead of solely \acp{LUT} or \acp{FF}. The following heat cores are also designed as pipelines in order to keep every component busy at any time. The difference between the following and the preceding pipelines is that the following are not homogeneous but hybrid, using \acp{LUT} or \acp{FF}.
+
+\subsection{LUT-\,FF-\,Pipeline}
+
+\begin{figure}[h]
+		\includegraphics[width=\textwidth]{__pics/lutffpipe.pdf}
+		\caption{Segments of a LUT-\,FF-\,Pipeline}
+		\label{pic:lutffpipe}	
+	\end{figure} 
+
+
+In order to combine \acp{LUT6} with \acp{FF}, I have designed a pipeline similar to the \ac{LUT}-\,Pipeline in Figure \ref{pic:lutpipe}. Like Figure \ref{pic:lutffpipe} depicts, the only difference is, that between each pair of \acp{LUT} there is \ac{FF} interconnected. Thus, the \acp{FF} act as a 1\,bit buffer between the inverting logic of the \acp{LUT}.
+
+
+\subsection{SRL-\,FF-\,Pipeline}
+
+\begin{figure}[h]
+		\includegraphics[width=\textwidth]{__pics/srlffpipe.pdf}
+		\caption{Segments of a SRL-\,FF-\,Pipeline}
+		\label{pic:srlffpipe}	
+	\end{figure} 
+	
+An additional way to use \acp{LUT} and \acp{FF} is to make use of \acp{SRL}, instead of \acp{LUT}, and \acp{FF}. Therefore, each \ac{SRL}'s output signal is interconnected with the input signal of a \ac{FF}. Figure \ref{pic:srlffpipe} depicts a segment of this pipeline. It is now easy to see, that again a large shift register was built, with 16\,bit and 1\,bit elements. The maximum capacity $c_{max}$ of this shift register is thus
+\begin{equation}
+c_{max} = 16 \cdot n + m
+\label{eq:eee}
+\end{equation}
+
+where n is the amount of \acp{SRL16} and m the amount of \acp{FF}.
+
+\section{Digital Signal Processor}
+\label{sec:dsp}
+
+\begin{figure}[h]
+		\includegraphics[width=\textwidth]{__pics/dsp_pipe.pdf}
+		\caption{Segments of a DSP-\,Pipeline}
+		\label{pic:dsppipe}	
+	\end{figure} 
+
+The \acp{DSP} are also cascaded and built to a pipeline. Therefore the the output signal \textit{P} is passed through all \acp{DSP} by interconnecting it with the successor's input signal \textit{C}. All input signals \textit{A} and \textit{B} of the \acp{DSP} are connected to global signals, which change their values with each clock cycle. Figure \ref{pic:dsppipe} depicts two strongly simplified segments of the \ac{DSP}-\,Pipeline. Among other things, the carry signal is omitted in Figure \ref{pic:dsppipe}.
+
+\begin{equation}
+F(A, B, C, CARRYIN) = (A \cdot B) + C + CARRYIN
+\label{eq:dsp}
+\end{equation}
+
+The arithmetical function F which the \acp{DSP} undertakes is shown in Equation \ref{eq:dsp}. F multiplies \textit{A} with \textit{B}, adds \textit{C} and \textit{CARRYIN}.
+
+
+\section{Block RAM}
+\label{sec:bram}
+
+\begin{figure}[h]
+		\includegraphics[width=\textwidth]{__pics/brampipe.pdf}
+		\caption{Segments of a BRAM-\,Pipeline}
+		\label{pic:brampipe}	
+	\end{figure} 
+
+The last discussed component is the \ac{BRAM}, which is composed in a pipeline as well, using the Xilinx primitive \ac{FIFO36}. Therefore the \acf{DI} and the \acf{DO} (with a width of 32\,bit) are interconnected to each other. Figure \ref{pic:brampipe} depicts the simplified structural design of this pipeline. Once the first \ac{BRAM} is filled with data, it passes the first 32\,bit saved in it to the next \ac{BRAM}. Hence, all \acp{BRAM} are filled quickly and changing permanently their memory.
+

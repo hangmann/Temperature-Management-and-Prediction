@@ -1,0 +1,553 @@
+%!TEX root = /Users/nphs/Dropbox/0-Bachelor/2012-BA-Cioran/02-Arbeit/BA-Cioran.tex
+\chapter{Experimental Results}
+\label{ch:results}
+
+\section{Test Set-\,Up}
+\label{ch:setup}
+
+	\begin{figure}[!h]
+	\subfloat[Separation of the system components on the Virtex-5]{
+		\includegraphics[width=0.47\textwidth]{__pics/system_constraint}
+		\label{pic:system_constraint}}\hfill
+	\subfloat[Location of the constrained heater on the Virtex-5]{
+		\includegraphics[width=0.47\textwidth]{__pics/constrainted_heatcore}
+		\label{pic:constrained}}
+	\caption{Constrained areas on the chip}
+	\label{pic:test}
+	\end{figure}
+
+
+The heat cores presented in chapter \ref{ch:methodology} will now be tested under equal conditions. Firstly the system, which was shown in chapter \ref{sec:system}, gets decoupled from the heat core. With the help of the Xilinx constraints you can easily determine a range of components on the chip, which shall be used for the considering peripheral. If this is not done, system and heat core components would be mixed up across the chip, which could have impacts on the temperature. Furthermore, the heat cores would not be tested under equal conditions. Figure \ref{pic:system_constraint} depicts the separation of the system components in the left lower corner of the chip. Hence, most of the chip can be used otherwise, e.\,g. for the heat core.
+
+Secondly the duration of the turned on and turned off heat core should be the same. Table \ref{tbl:phases} shows the four phases of the experiment, which follow an on-\,off-\,pattern in order to picture the temperature gradients.
+
+
+
+	\begin{center}
+\begin{table}%
+\begin{center}
+\begin{tabular}[ht]{p{5cm}p{5cm}}
+	\hline
+	\textbf{Phase} & \textbf{Action}\\
+	\hline
+	
+	\textbf{Cool phase}						\\ Second 0 to 700					& Heat core is turned off to cool down from \textit{previous} tests and to reach operating temperature of the system\\
+	
+	\hline
+	\textbf{Heat Phase}				\\ Second 700	to 1400				& Heat core is turned on in order to generate heat\\
+	
+	\hline
+	\textbf{Cool Phase}						\\ Second 1400 to 2100			& Heat core is again turned off to reach operating temperature of the system\\
+	
+	\hline
+	\textbf{Final Heat Phase}	\\ Second 2100 to 2800			& Heat core is finally turned on again \\
+	\hline \\
+\end{tabular}
+\caption{Test set-\,up: Phases of the experiment}
+\label{tbl:phases}
+\end{center}
+\end{table}
+
+	
+\end{center}
+	
+	
+The heat cores, which were presented in chapter \ref{ch:methodology}, are now tested in two experiments. The first uses the whole available space on the chip for heat generating circuits That is the whole space around the system area in Figure \ref{pic:system_constraint}. The results of this experiment can be found in chapter \ref{sec:unconstrained}. In chapter \ref{sec:constrained} the experiment set-\,up uses a constrained area on the chip, similar to the constrained area for the system. This is for the reason that the heat cores shall generate spatial temperatures gradients in a constrained area depicted in Figure \ref{pic:constrained}. This area uses $61 \times 61 = 3721$ slices and comprises \acp{DSP} and \acp{BRAM} as well. In order to keep this results comparable, the other heat cores will use this constraint area as well.  
+
+Additionally, the unconstrained heat cores were tested with 100\,MHz, in contrary to the constrained heat cores, which were tested with different clock frequencies in a range from 100\,MHz to 300\,MHz or rather 400\,MHz. This is done because of the assumption, that a higher frequency gains a higher temperature. Because of a faulty functionality, higher frequencies are not possible. Chapter \ref{sec:phenomenon} takes a closer look on this behaviour.
+
+\section{Unconstrained Heat Cores}
+\label{sec:unconstrained}
+
+\subsection{LUT-\,Pipeline}
+\label{sec:unclut}
+\begin{figure}[h]
+		\center
+		\includegraphics[width=0.8\textwidth]{__pics/plots/LUTPIPEplotunconstrained}
+		\caption{Unconstrained LUT heat core}
+		\label{pic:unclutplot}	
+	\end{figure}
+
+This heat core will run with 64 instances of a pipeline with 999 inverting \acp{LUT} each, which nearly exhausts all of the \acp{LUT} and only 344 \acp{FF} on the Virtex-5.
+
+
+Figure \ref{pic:unclutplot}	depicts the generated temperature gradients, which are significantly low. This is because of the fact, that the described \ac{LUT} pipelines are only a single-\,level pipelines without interconnected clocked buffers. I.\,e. the input signal has to pass all 999 \acp{LUT} in a pipeline in just one clock cycle. For this reason, the clock frequency, which is used to toggle the input signal, is automatically reduced. Furthermore, not all components in this heat core are simultaneously working. As a consequence, this merely causes a temperature increase of only +12°C.
+
+
+
+\subsection{FF-\,Pipeline}
+
+\begin{figure}[h]
+		\center
+		\includegraphics[width=0.8\textwidth]{__pics/plots/FFplotunconstrained}
+		\caption{Unconstrained FF heat core}
+		\label{pic:uncffplot}	
+	\end{figure}
+
+The \ac{FF} heat core consists of 64 pipelines. Each pipeline contains 1.000 \acp{FF}. Hence, this design is using nearly every \ac{FF} on the chip in combination with the system components.
+
+As the temperature gradients in Figure \ref{pic:uncffplot} depict, the \ac{FF} heat core is able to increase +22°C over 700 seconds, by using 64,376 \acp{FF} and only 233 \acp{LUT}. 
+
+	
+
+
+\subsection{LUT-\,FF-\,Pipeline}
+
+\begin{figure}[h]
+		\center
+		\includegraphics[width=0.8\textwidth]{__pics/plots/LUTFFplotunconstrained}
+		\caption{Unconstrained LUT-\,FF heat core}
+		\label{pic:unclutffplot}	
+	\end{figure}
+	
+In order to improve the \ac{LUT} heat core, this heat core adds buffers between the inverting \ac{LUT}. Thus, the signals only have to pass one \ac{LUT} per clock cycle and hence, the input signal can be toggled with higher clock frequencies. 
+
+Figure \ref{pic:unclutffplot} depicts the generated temperature gradients. The temperature increase is +38°C over 700 seconds, which outperforms the \ac{FF} heat core and of course the \ac{LUT} heat core.
+
+\subsection{LUT-\,Oscillator}
+\begin{figure}[h]
+		\center
+		\includegraphics[width=0.8\textwidth]{__pics/plots/unclutoscplot}
+		\caption{Unconstrained LUT oscillator}
+		\label{pic:unclutoscplot}	
+	\end{figure}
+
+This heat core pursues the goal of exclusively using \acp{LUT} in a heat core, like the \ac{LUT} heat core. Therefore this heat core contains 1,000 oscillators, each consisting of one inverting \ac{LUT}. Additionally, there is a lot of extra logic needed. In order to run 1,000 \acp{LUT} oscillators, this heat core needs about 14,000 \acp{LUT} and 375 \acp{FF}. This extra logic is needed to keep the oscillators readable. Keeping it readable is mandatory, because otherwise the circuits will be optimized and the oscillators will be deleted. This amount of devices does not exhaust the Virtex-5, but 1,000 oscillators will probably achieve sufficient heat.
+
+As the generated temperature gradients in Figure \ref{pic:unclutoscplot} depict, this assumption is fulfilled due to the fact that the \ac{LUT} oscillator increases +134°C over 700 seconds. With a maximum temperature of nearly 200°C, this heat core exceeds the recommended maximum temperature of the Virtex-5, which is 120°C.
+
+
+
+\subsection{Evaluation}
+
+
+
+\begin{center}
+	
+
+\begin{table}%
+\begin{center}
+\begin{tabular}[h]{|l|c|}
+	\hline
+	\textbf{Heat Core} & \textbf{Temperature Increases} \\
+	\hline
+	\hline
+	LUT									& +14\symbol{23}$^{\circ}$C \\
+	
+	\hline
+	FF									& +22\symbol{23}$^{\circ}$C \\
+	
+	\hline
+	
+	LUT-\,FF						& +38\symbol{23}$^{\circ}$C \\
+	
+	\hline
+	Oscillator					& +134\symbol{23}$^{\circ}$C \\
+	
+	\hline
+	
+\end{tabular}
+\caption{Temperature increase of the unconstrained heat cores over 700 seconds}
+\label{tbl:temperatures_unconstrained}
+\end{center}
+\end{table}
+\end{center}
+
+This chapter shall give you an overview of all tested unconstrained heat cores. Table \ref{tbl:temperatures} summarizes the temperature gradients (as seen in Figure \ref{pic:unclutplot} to \ref{pic:unclutoscplot}) by specifying their temperature rise over 700 seconds. This table makes it clear the that heat cores benefit from using \acp{FF}. The \ac{LUT} heat core is rather low in comparison to the other heat cores. But by interconnecting \acp{FF} between the \acp{LUT}, the temperature rise is nearly tripled. 
+
+It is clear, that the \ac{LUT} oscillator clearly outperforms the other tested heat cores, even it uses 4.5 times less components than the other heat cores. Table \ref{tbl:additional_unconstrained} gives you an overview of the used components. 
+
+If the whole chip was covered with these oscillators, extreme temperatures would be generated. With the goal of comparability, all heat cores sizes are adapted to the \ac{LUT} heat core. Additionally, the heat core will be constrained. This done by declaring an area, which provides 14,608 \acp{LUT}. As mentioned above, this requirement is fulfilled by constraining an are of 3721 slices, ergo an area of $61 \times 61$ slices.
+
+The experiments of the constrained heat cores will also test different clock frequencies in order to generate more temperature out of the \ac{FF} and \ac{LUT}-\,\ac{FF} heat core.
+
+\begin{center}
+
+\begin{table}%
+\begin{tabular}[h]{p{5cm}p{5cm}}
+	\hline
+	\textbf{Core} & \textbf{Used components} \\
+	\hline
+	\hline
+	
+	LUT												& 64,137 \acp{LUT} \\
+														& 344 \acp{FF} \\
+	\hline
+	
+	FF												& 233 \acp{LUT} \\
+														& 64,376 \acp{FF} \\
+	
+	\hline
+	
+	LUT-\,FF									& 62,376 \acp{LUT} \\
+														& 62,324 \acp{FF} \\						
+	\hline
+	Oscillator								& 14,608 \acp{LUT} \\
+														& 375 \acp{FF} \\	
+	\hline
+	
+ \\
+\end{tabular}
+\caption{Overview of the components, used by the unconstrained heat cores}
+\label{tbl:additional_unconstrained}
+\end{table}
+\end{center}
+
+
+
+\section{Constrained Heat Cores}
+\label{sec:constrained}
+
+\subsection{LUT heat core}
+
+\begin{figure}[h]
+		\center
+		\includegraphics[width=0.8\textwidth]{__pics/plots/LUTPIPEplot}
+		\caption{LUT heat core}
+		\label{pic:lutpipeplot}	
+	\end{figure}
+
+The following heat cores only use a constrained area on the chip, as already mentioned above. In order to adapt the \ac{LUT} heat core, presented in chapter \ref{sec:unclut}, only 14 pipelines are used. Again, each pipeline contains 1,000 inverting \acp{LUT}. 
+
+As chapter \ref{sec:unclut} already assumed, this heat core is rather inefficient in its temperature rise over 700 seconds. Figure \ref{pic:lutpipeplot} underlines this assumption. As you can see, the temperature only increases +3°C over 700 seconds. The depicted temperature gradients are apparently not suitable for creating local hot and above all generating heat. 
+
+\subsection{LUT-\,Oscillator}
+
+\begin{figure}[h]
+		\center
+		\includegraphics[width=0.8\textwidth]{__pics/plots/LUTplot}
+		\caption{Temperature gradients of 1.000 LUT oscillators}
+		\label{pic:lutplot}	
+	\end{figure}
+	
+As pointed out above this oscillator runs with 1.000 single-level oscillators. This circuit exhausts the constrained area of 3721 slices, because of the additionally required logic. 
+
+Figure \ref{pic:lutplot} depicts the temperature gradients of a 1,000 single-\,level oscillators. In the cool phase the chip temperature levels out at 60\symbol{23}$^{\circ}$C. Immediately at the beginning of the heat phase, the temperature climbs up extremely. After a few seconds the temperature passes the 100\symbol{23}$^{\circ}$C mark and climbs up to around 200\symbol{23}$^{\circ}$C, which means a temperature increase of 134°C in 700 seconds.
+
+As you can see, a rather small oscillator like this strongly exceeds the 120\symbol{23}$^{\circ}$C warranty temperature of a Virtex-5. Moreover, there is no difference between an unconstrained and a constrained \ac{LUT} oscillator, since both of them exhibit a temperature increase of 134°C in 700 seconds.
+
+
+\subsection{SRL heat core}
+
+\begin{figure}[h]
+		\center
+		\includegraphics[width=0.8\textwidth]{__pics/plots/100-400/SRLplot}
+		\caption{SRL-\,Pipeline with 100\,-\,300\,MHz}
+		\label{pic:srlplot}	
+	\end{figure}
+
+The last way to exclusively use \acp{LUT} as a heat core is to use a \ac{SRL}-\,Pipeline. The used \ac{SRL} heat core consist of 41 pipelines, each with 100 \acp{SRL16E}. 
+
+This heat core can not exhaust the full constrained area. As described in \ref{sec:target}, they can not be mapped to every slice, but only to a \textit{SliceM}. Figure \ref{pic:srlplot} depicts the temperature gradients of this \ac{SRL} heat core. A \ac{SRL} heat core running with 100\,MHz only increases the temperature around +4\symbol{23}$^{\circ}$C. The highest temperature rise results from running the heat core with 300\,MHz, what leads to a temperature increase of +12°C.
+
+At this point, adjusting the clock frequency higher than 300\,MHz results leads to a massive significant decrease of the temperature gradients. A clock frequency of 400\,MHz simply yields to a temperature increase of +5°C over 700 seconds. Higher frequencies, like 500\,MHz and 600\,MHz lead to no increase of the temperature.
+
+The decrease of the temperature gradients at higher frequencies can also can be seen in the following experiments. Chapter \ref{sec:phenomenon} takes a closer look on this behavior.
+
+\subsection{FF heat core}
+
+\begin{figure}[h]
+		\center
+		\includegraphics[width=0.8\textwidth]{__pics/plots/100-400/FFplot}
+		\caption{FF-\,Pipeline with 100\,-\,400\,MHz}
+		\label{pic:ffplot}	
+	\end{figure}
+
+This \ac{FF} heat core contains 14 pipelines. Each of them consist of 1.000 \acp{FF}. 
+
+Running the heat core with 100\,MHz has temperature gradients similar to the \ac{SRL} pipeline with an increase of around 5\symbol{23}$^{\circ}$C. But Figure \ref{pic:ffplot} illustrates that adjusting the clock frequency has more effect on the \ac{FF}-\,Pipelines than on the \ac{SRL}-\,Pipelines, which may be reasoned by the amount of the components used in both of the heat cores.
+
+The clock frequency of 400\,MHz outperforms the other frequencies with a maximum temperature of 95\symbol{23}$^{\circ}$C and a temperature increase of +22°C over 700 seconds. This is the same increase as the unconstrained heat core achieved with 64,000 \acp{FF}, on the contrary to 14,000 \acp{FF}.
+
+Again, the gradients massively decrease at higher clock frequencies. This time it decreases by adjusting the clock frequency higher than 400\,MHz. 
+
+\subsection{LUT-\,FF heat core}
+
+\begin{figure}[h]
+		\center
+		\includegraphics[width=0.8\textwidth]{__pics/plots/100-400/LUTFFplot}
+		\caption{LUT-\,FF-\,Pipeline with 100\,-\,400\,MHz}
+		\label{pic:lutffplot}	
+	\end{figure}
+	
+The \ac{LUT}-\,\ac{FF} heat core consists of 14 pipelines. Each pipeline is built up of 1.000 \acp{LUT} and 1.000 \acp{FF}.
+
+This heat core clearly exhausts the constrained area. Nearly all slices are fully occupied. This can be seen in the temperature gradients in Figure \ref{pic:lutffplot}. The heat core has the highest increase so far with around +10\symbol{23}$^{\circ}$C at 100\,MHz . And also the other gradients depict a clear improvement compared to the \ac{FF} heat core. The highest gradient is achieved with the clock frequency of 400\,MHz, raising up to 110\symbol{23}$^{\circ}$C, which is a temperature rise of +41\symbol{23}$^{\circ}$C. 
+
+This increase is even 3°C higher than the unconstrained \ac{LUT}-\,\ac{FF} heat core achieved, whose components are more than quadrupled.
+
+\subsection{SRL-\,FF heat core}
+
+\begin{figure}[h]
+		\center
+		\includegraphics[width=0.8\textwidth]{__pics/plots/100-400/SRLFFplot}
+		\caption{SRL-\,FF-\,Pipeline with 100\,-\,300\,MHz}
+		\label{pic:srlffplot}	
+	\end{figure}
+
+The last tested heat core, which exclusively consist of components, which are located in slices, is the \ac{SRL}-\,\ac{FF} heat core. It consists of 41 pipelines, each with 100 \acp{SRL} and 100 \acp{FF}. 
+
+As you see in Figure \ref{pic:srlffplot} this heat core achieves temperature increases around +6°C at 100\,MHz, which is higher than the \ac{SRL} and the \acp{FF} heat core. Running the heat core with the frequencies 400\,MHz achieves similar results to the gradient of 100\,MHz, and higher frequencies again let the gradients shrink. The top gradient is achieved by running this heat core at 300\,MHz, where the temperature increase is around +20°C.
+
+
+
+\subsection{Evaluation}
+
+\begin{center}
+	
+
+\begin{table}%
+\begin{center}
+\begin{tabular}[h]{|l|c|c|c|c|}
+	\hline
+	\textbf{Heat Core} & \multicolumn{4}{c|}{\textbf{Temperature Rises}} \\\cline{2-5}
+	 & \textbf{100\,MHz} & \textbf{200\,MHz} & \textbf{300\,MHz} & \textbf{400\,MHz}  \\ 
+	\hline
+	\hline
+	LUT					& \multicolumn{4}{c|}{+3\symbol{23}$^{\circ}$C} \\
+	
+	\hline
+	Oscillator					& \multicolumn{4}{c|}{\textcolor{red}{\textbf{\textit{+134°C}}}} \\
+	
+	\hline
+	
+	SRL			& +4°C& +7°C & +12°C  &  -  \\
+	
+	\hline
+	FF 					& +5°C &  +11°C & +18°C  & +22°C \\
+	
+	\hline
+	
+	LUT-\,FF 				& +10°C  & +15°C & +31°C & \textcolor{red}{\textbf{\textit{+41°C}}} \\
+	
+	\hline
+	
+	SRL-\,FF	 				& +6°C & +12°C & +20°C & +5°C\\
+	
+	\hline
+	
+\end{tabular}
+\caption{Temperature increase of the diverse heat cores over 700 seconds}
+\label{tbl:temperatures}
+\end{center}
+\end{table}
+\end{center}
+
+In order to give you an overview of all constrained heat cores, Table \ref{tbl:temperatures} summarizes the temperature gradients (as seen in Figure \ref{pic:lutplot} to \ref{pic:srlffplot}) by specifying the temperature rise over 700 seconds. The two highest temperature increases are generated by the \ac{LUT} oscillator and the \ac{LUT}-\,\ac{FF} heat core at 400\,MHz, which are highlighted in the table.
+
+\begin{center}
+\begin{table}%
+\begin{center}
+\begin{tabular}[h]{p{5cm}p{5cm}}
+	\hline
+	\textbf{Core} & \textbf{Used components} \\
+	\hline
+	\hline
+	
+	LUT												& 14,2448 \acp{LUT} \\
+														& 376 \acp{FF} \\
+														& 0 \acp{DSP} \\							
+														& 0 \acp{BRAM} \\	
+	\hline
+	
+	LUT-\,Oscillator					& 14,608 \acp{LUT} \\
+														& 375 \acp{FF} \\
+														& 0 \acp{DSP} \\							
+														& 0 \acp{BRAM} \\	
+	
+	\hline
+	
+	SRL					& 4,364 \acp{LUT} \\
+							& 376 \acp{FF} \\
+							& 0 \acp{DSP} \\							
+							& 0 \acp{BRAM} \\							
+	\hline
+	FF					& 233 \acp{LUT} \\
+							& 14,376 \acp{FF} \\
+							& 0 \acp{DSP} \\							
+							& 0 \acp{BRAM} \\	
+	
+	\hline
+	
+	LUT-\,FF		& 14,276 \acp{LUT} \\
+							& 14,376 \acp{FF} \\
+							& 0 \acp{DSP} \\							
+							& 0 \acp{BRAM} \\	
+	
+	\hline
+	
+	SRL-\,FF		& 4408 \acp{LUT} \\
+							& 4476 \acp{FF} \\
+							& 0 \acp{DSP} \\							
+							& 0 \acp{BRAM} \\	
+	
+	\hline
+	
+ \\
+\end{tabular}
+\caption{Overview of the components, used by the heat cores}
+\label{tbl:additional}
+\end{center}
+\end{table}
+\end{center}
+
+In general, the advantage of heat cores, which are based on \ac{LUT} and/or \ac{FF} is their high flexibility. They can have any size and can be placed nearly anywhere on the chip. Additionally, the most effective heat cores are based on \ac{LUT} and \ac{FF}, for example the \ac{LUT} oscillator.
+
+The \ac{LUT} oscillator benefits from its few components and its massive temperature rise. Despite of the large temperature gradients, this heat core uses almost exclusively \acp{LUT}, whereby the constrained are is not exhausted. This saves logic for other circuits. On the contrary, the \ac{LUT}-\,\ac{FF} heat core fully exhausts the constrained area. 
+
+According to Table \ref{tbl:additional}, the \ac{LUT}-\,\ac{FF} heat core has nearly twice as much components, because the amount of \acp{FF} is nearly the same as the amount of \acp{LUT}. Nevertheless it generates less temperature. 
+On the one hand, the \ac{LUT}-\,\ac{FF} heat core is more adjustable, as adjusting could additionally happen via variation of the clock frequency. But on the other hand this heat core decreases the amount of available \acp{FF} for other circuits. 
+
+The heat potential of heat cores which are using exclusively \acp{LUT} is rather low, except of the \ac{LUT} oscillator. The worst result reached the \ac{LUT} pipeline, with a temperature rise of only +3°C over 700 seconds. Furthermore, the \ac{SRL} heat core which is based on \acp{LUT} is also one of the worst heat cores. But each of this heat cores benefit from adding \acp{FF} to the pipeline. Nevertheless the \ac{SRL}-\,\ac{FF} heat core's temperature increase over 700 seconds only outperforms the \ac{FF} heat core by maximum 2°C. Another disadvantage of using \acp{SRL} is the fact, that they can not be used beyond 300\,MHz. On the contrary the \ac{FF} and the \ac{LUT}-\,\ac{FF} heat core work until 400\,MHz and thus can generate more heat.
+
+
+\section{Others}
+\label{sec:others}
+The \ac{DSP} and \ac{BRAM} heat cores are not listed in chapter \ref{sec:constrained}, because of their location on the chip. As chapter \ref{sec:target} described, they are only available at a few columns on the chip in contrary to the nearly omnipresent slices.
+
+\subsection{DSP heat core}
+\begin{figure}[h]
+		\center
+		\includegraphics[width=0.8\textwidth]{__pics/plots/DSPplot}
+		\caption{DSP-\,Pipeline with 100\,-\,550\,MHz}
+		\label{pic:dspplot}	
+	\end{figure}
+
+This heat core runs with 38 of 58 available \acp{DSP} which are composed as described in chapter \ref{sec:dsp} with the clock frequencies of 100\,MHz, 200\,MHz, 300\,MHz, 400\,MHz and 550\,MHz, which is the highest supported frequency for \acp{DSP}. The reason why the heat core is only tested with 38 \acp{DSP} is that higher frequencies (400\,MHz and higher) are not supported, when using 58 \acp{DSP}. 
+
+
+%Table \ref{tbl:logic} depicts how many \acp{LUT} and \acp{FF} are needed additionally. Running the heat core 400\,MHz exceeds the number of slices available on a Virtex-5 and can not be implemented.
+
+Figure \ref{pic:dspplot} depicts the temperature gradients generated by the \ac{DSP} heat core with 100\,-550\,MHz in 100\,MHz steps with 38 \acp{DSP}. 
+With its maximum temperature increase of +14°C at 550\,MHz, the \ac{DSP} heat core belongs to the more inefficient heaters. 
+
+Apart from that, this heat core additionally uses 2,252 \acp{LUT} and 4,310 \acp{FF} as extra logic in order to handle the in- and outputs of the \acp{DSP}. It seems reasonable to assume that most of the temperature increases yield from the extra used logic.
+
+\subsection{BRAM heat core}
+
+\begin{figure}[h]
+		\center
+		\includegraphics[width=0.8\textwidth]{__pics/plots/BRAMplot}
+		\caption{BRAM heat core with 100\,-\,500\,MHz}
+		\label{pic:bramplot}	
+	\end{figure}
+
+The \ac{BRAM} heat core consists of 130 \acp{BRAM} which are composed as described in chapter \ref{sec:bram}. As chapter \ref{pic:virtex5} depicts, these components are also only available at static locations on the chip. There are only five columns, which contain \acp{BRAM}. Hence, there is a bit more flexibility given in comparison with \acp{DSP}. The heat cores are tested with 100\,-\,500\,MHz in 100\,MHz steps. 
+
+Figure \ref{pic:bramplot} depicts the temperature gradients, generated by the \ac{BRAM} heat core. This heat core reaches temperature rises up to +25°C and hence outperforms the \ac{DSP} heat cores. Besides that, the \ac{BRAM} heat core only needs 223 \acp{LUT} and 311 \acp{FF} as additional logic. Thus, it is assured that the temperature gradients result from the \acp{BRAM}.
+
+
+\subsection{Evaluation}
+
+\begin{center}
+\begin{table}%
+\begin{center}
+\begin{tabular}[h]{|l|c|c|c|c|c|c|}
+	\hline
+	\textbf{Heat Core} & \multicolumn{6}{c|}{\textbf{Temperature Rises with different frequencies [MHz]}} \\\cline{2-7}
+	 & \textbf{100} & \textbf{200} & \textbf{300} & \textbf{400} & \textbf{500} & \textbf{600} \\ 
+	\hline
+	\hline
+	DSP				& +2°C & +4°C & +7°C & +11°C & \multicolumn{2}{c|}{+14°C}  \\
+	
+	\hline
+	
+	BRAM				& +5°C & +10°C & +14°C & +20°C & +25°C & -\\
+\hline
+
+\end{tabular}
+\caption{Overview of the components, used by the heat cores}
+\label{tbl:others_temperatures}
+\end{center}
+\end{table}
+\end{center}
+
+With the view to compare the \ac{DSP} and the \ac{BRAM} heat core, we have again a look on the temperature increases over 700 seconds and the used logic on the Virtex-5.
+
+\begin{center}
+\begin{table}%
+\begin{center}
+\begin{tabular}[h]{p{5cm}p{5cm}}
+	\hline
+	\textbf{Heat Core} & \textbf{Used components} \\
+	\hline
+	\hline
+
+
+	DSP					& 2252 \acp{LUT} \\
+							& 4310 \acp{FF} \\
+							& 38 \acp{DSP} \\							
+							& 0 \acp{BRAM} \\	
+	
+	\hline
+	
+	BRAM				& 223 \acp{LUT} \\
+							& 311 \acp{FF} \\
+							& 0 \acp{DSP} \\							
+							& 130 \acp{BRAM} \\	
+	\hline
+
+\\
+\end{tabular}
+\caption{Overview of the components, used by the heat cores}
+\label{tbl:others_additional}
+\end{center}
+\end{table}
+\end{center}
+
+\acp{DSP} are rather inflexible, because of their static position on the Virtex-5. As chapter \ref{pic:virtex5} described, there is only one column on the chip where \acp{DSP} can be instantiated. The hot spots can only be placed at this points. Above all, this heat core needs a lot of additional logic to be functional. As Table \ref{tbl:others_additional} depicts, the \ac{DSP} heat core uses 2252 \acp{LUT} and 4310 \acp{FF}. Regardless of whether this additionally needed logic is as well mapped to a constrained area or not, it can also create hot spots at locations on the chip, where possibly no hot spots were planned. 
+
+Despite, of the amount of \acp{DSP} and the additional logic, the \ac{DSP} heat core does not perform well in creating hot spots. Table \ref{tbl:others_temperatures} depicts, that it gets clearly outperformed by the \ac{BRAM} heat core. Firstly, this given by the temperature increase over 700 seconds, which is at most +14°C at its maximum frequency. As opposed to this, the \ac{BRAM} heat core has an increase of +25°C over 700 seconds at its maximum frequency of 600\,MHz.
+
+Secondly, the \acp{BRAM} heat core can be placed more flexible, due to distribution of \acp{BRAM} on the Virtex-5. Chapter \ref{sec:target} depicts, that there are five nearly equally distributed columns, where \acp{BRAM} can be instantiated. In addition to that, Table \ref{tbl:others_additional} points out, that the \acp{BRAM} heat core solely uses 223 \acp{LUT} and	311 \acp{FF} in order to run 130 \acp{BRAM}.
+
+Another observation is that the \ac{BRAM} heat core uses the less logic of all presented heat cores, which makes it even more efficient. In the case you do not want to use much \acp{LUT} and/or \acp{FF} for the heat core, the \acp{BRAM} is a good alternative to the slice bound heat cores. 
+
+
+
+\section{Temperature gradients with high frequencies}
+\label{sec:phenomenon}
+
+\begin{figure}[h]
+		\center
+		\includegraphics[width=0.8\textwidth]{__pics/plots/plot_4_6}
+		\caption{LUT-\,FF heat core at 400, 500 and 600\,MHz}
+		\label{pic:plot46}	
+	\end{figure}
+	
+In order to explain the phenomenon, that the temperature gradients of some heat cores decrease at high clock frequencies, I will now take a closer look on the top frequencies of the constrained \ac{LUT}-\,\ac{FF} heat core. Figure \ref{pic:plot46} depicts the temperature gradients of the highest gradient at 400\,MHz and the gradients at 500\,MHz and 600\,MHz, which are apparently lower.
+
+Moreover it is significant, that the temperature gradients of 500\,MHz and 600\,MHz outperform all the gradient at 400\,MHz the first seconds. Then suddenly the increase slows down and they get passed by 400\,MHz. 
+Firstly, I speculated on a faulty diode, which is responsible for the reading the temperature. In order to examine the diode, I measured the supply voltage of the chip. This is done while testing the \ac{LUT}-\,\ac{FF} heat core with all frequencies. The result was a supply voltage of 1.05 with a variabilities of +/- 0.013, but nothing special at 500\,MHz or 600\,MHz. 
+
+\begin{figure}[h]
+		\center
+		\includegraphics[width=0.8\textwidth]{__pics/plots/outsideplot}
+		\caption{Outside temperature of the chip, running a LUT-\,FF heat core at 400, 500 and 600\,MHz}
+		\label{pic:outsideplot}	
+	\end{figure}
+
+
+
+Secondly, I tested whether the System Monitor has faulty outputs by actual high temperatures. Therefore, I measured the outside temperature of the chip via holding a thermometer on the cooling element. Figure \ref{pic:outsideplot} depicts the results of this measurement. The heat core is running with 400\,MHz between the first and second dotted line, 500\,MHz between the second and third and finally 600\,MHz starting at the third dotted line. As you can see the chip actually gets colder with 500\,MHz and even colder with 600\,MHz.
+
+As a consequence, the diode works correctly for this experiments.
+
+At last, I read out the last seven \acp{FF} of the pipelines in the \ac{FF} heat core. If the heat core runs correctly, the last seven bits has to be "1010101" or "0101010", due to the toggling input of the pipeline. The results of running the heat core with 100\,MHz to 400\,MHz depicts that they are working correctly. 
+Misleadingly the result of higher frequencies was always "1111111" at 500\,MHz and 600\,MHz. Therefore, the heat cores, which are based on slices, do not work correctly at high frequencies.
+
+
+\section{Summary}
+
+All in all this chapter depicts, that higher frequencies result in higher temperatures with functional heat cores. Figure \ref{pic:summaryplot} gives you an overview of all constrained heat cores, the \ac{BRAM} and the \ac{DSP} heat core. 
+
+\begin{figure}[h]
+		\center
+		\includegraphics[width=\textwidth]{__pics/plots/summaryplot}
+		\caption{Comparison of all constrained heat cores, BRAM and DSP heat core}
+		\label{pic:summaryplot}	
+	\end{figure}
+
+Once again Figure \ref{pic:summaryplot} puts emphasis on the superior temperature gradients of the \ac{LUT} oscillator and the rather worse temperature gradients of the \ac{LUT} heat core, which uses \ac{LUT} pipelines. Although the \ac{LUT}-\,\ac{FF} and the \ac{FF} heat core generate lower temperature gradients, they could be capable to generate heat, because they could probably generate even more heat if their functionality could be fixed at higher frequencies (500\,MHz and 600\,MHz). 
+
+The \ac{BRAM} heat core achieves similar gradients to the \ac{FF} heat core. This makes it a possible alternative to heat cores, which are using exclusivly \acp{LUT} and/or \acp{FF}, even though their gradients are not that high as e.\,g. the gradients of the \ac{LUT}-\,\ac{FF} heat core. 

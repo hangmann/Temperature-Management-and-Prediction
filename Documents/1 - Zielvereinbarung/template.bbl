@@ -1,0 +1,36 @@
+\begin{thebibliography}{1}
+
+\bibitem{Agne2013}
+Andreas Agne, Hendrik Hangmann, Markus Happe, Marco Platzner, and Christian
+  Plessl.
+\newblock {Seven recipes for setting your FPGA on fire – A cookbook on heat
+  generators}.
+\newblock {\em Microprocessors and Microsystems}, (0):--, 2013.
+
+\bibitem{Happe}
+Markus Happe, Andreas Agne, and Christian Plessl.
+\newblock {Measuring and predicting temperature distributions on FPGAs at
+  run-time}.
+\newblock {\em Reconfigurable Computing and \ldots}, pages 55--60, 2011.
+
+\bibitem{Huang2006}
+Wei Huang and Shougata Ghosh.
+\newblock {HotSpot: A compact thermal modeling methodology for early-stage VLSI
+  design}.
+\newblock {\em Very Large Scale \ldots}, 14(5):501--513, 2006.
+
+\bibitem{Sapatnekar2005}
+S.S. Sapatnekar and Yong Zhan.
+\newblock {Fast Computation of the Temperature Distribution in VLSI Chips Using
+  the Discrete Cosine Transform and Table Look-Up}.
+\newblock {\em Proc. of Design Automation Conference (ASP-DAC)}, 1:87--92,
+  2005.
+
+\bibitem{Sayed2011}
+Moinuddin~a. Sayed and Phillip~H. Jones.
+\newblock {Characterizing Non-ideal Impacts of Reconfigurable Hardware
+  Workloads on Ring Oscillator-Based Thermometers}.
+\newblock {\em 2011 International Conference on Reconfigurable Computing and
+  FPGAs}, pages 92--98, November 2011.
+
+\end{thebibliography}

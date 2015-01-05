@@ -1,0 +1,9 @@
+\begin{thebibliography}{1}
+
+\bibitem{Brakmo1995}
+L.S. Brakmo and L.L. Peterson.
+\newblock {TCP Vegas: end to end congestion avoidance on a global Internet}.
+\newblock {\em IEEE Journal on Selected Areas in Communications},
+  13(8):1465--1480, 1995.
+
+\end{thebibliography}

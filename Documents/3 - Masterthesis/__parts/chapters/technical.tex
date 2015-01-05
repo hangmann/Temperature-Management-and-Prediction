@@ -1,0 +1,158 @@
+
+\chapter{Technical Background}
+\label{ch:technical}
+\section{FPGAs}
+\label{ch:fpgas}
+
+An \ac{FPGA} is an \ac{IC} on which logical circuits can be implemented. More specifically an \ac{FPGA} is a semiconductor device that is based around a matrix of \acp{CLB} connected via programmable interconnects \cite{Xilinx}. \acp{CLB} are the logical blocks, where most of the sequential as well as combinatorial circuits will be implemented. Each of them consist of a pair of slices, which are not directly connected to each other \cite{Xilinx2012a}. Each of this slices contains \acp{LUT} and \acp{FF}. Basic logical functions such as AND, OR and so an are mapped into the \acp{LUT} by defining a table with all input constellations and their corresponding outputs. There are no hard-\,wired logical functions in a \ac{LUT}. 
+The other components which are located in a \graffito{slice} slice, are \acp{FF}. \acp{FF} are 1-bit registers and can store one bit over any amount of time. 
+
+\begin{figure}[h]
+		\includegraphics[width=\textwidth]{__pics/FPGA}
+		\caption{Basic design of an FPGA \cite{Website}}
+		\label{pic:fpga}	
+	\end{figure}
+
+Additionally there are a few more components, which can be configured in order to achieve the desired logical circuit. Besides \acp{CLB} these components are \acp{DSP} and \acp{BRAM}. A \ac{DSP} is an \ac{ASIC}, i.\,e. a hard-wired logic whose specific functions are huge arithmetical and logical operations. By the reason that e.\,g. multipliers would take a high amount of space if they were realized by \acp{LUT} and \acp{FF}, these tasks are mapped to special processors for that purpose. Because of their special purpose, they are highly space-\,saving. A \ac{BRAM} is a simple \ac{RAM}, which is a memory unit. Figure \ref{pic:fpga} shows an exemplary structure of a \ac{FPGA}. Besides the logic blocks, it depicts the programmable interconnects and \ac{IO} blocks.
+
+
+As already said above, these components are connected via a programmable interconnects, which make the \ac{FPGA} reconfigurable \cite{Dubey2009}. These programmable interconnects consist of horizontal and vertical wires and switches (antifuse or pass transistors) \cite{Www.ycce.edu}, which route the signals between the components of the \ac{FPGA}. So, via configurating the switches, the components can be wired.
+
+\begin{figure}[h]
+		\includegraphics[width=\textwidth]{__pics/HDLtoBIT}
+		\caption{From HDL-file to configuration bitfile}
+		\label{pic:hdltobit}	
+	\end{figure} 
+
+As a first step to configure a \ac{FPGA} with the desired hardware function, the hardware has to be described by a \ac{HDL} such as Verilog or \ac{VHDL}. Secondly the described hardware will be synthesized in order to get a logical circuit (Figure \ref{pic:hdltobit}). At this point the hardware can be easily run in a simulation, but can not be loaded on the \ac{FPGA}, because foremost the logical circuit has to be mapped to the specific \ac{FPGA} architecture. Therefore, the logical circuit has to be implemented to a configuration bitfile. This bitfile contains the configuration of every component on the chip, e.\,g. the logical function function of a \ac{LUT}, the start value of a \ac{FF} or the programmable interconnects.
+
+\begin{figure}[h]
+		\includegraphics[width=\textwidth]{__pics/virtex5}
+		\caption{A simplified overview of a Virtex-\,5 FPGA}
+		\label{pic:virtex5}	
+	\end{figure} 
+
+
+\section{Target Device}
+\label{sec:target}
+For this work a \textit{Xilinx Virtex-\,5} \ac{FPGA} (xc5vlx110t) was used, which has a maximum supported working temperature of 120\symbol{23}$^{\circ}$C. Furthermore the Virtex-\,5 is equipped with a diode, which enables the reading of the temperature and the supply voltage of the chip. The Circuits on the Virtex-\,5 can be implemented with a maximum frequency of 600\,MHz.
+
+\begin{figure}[h]
+		\includegraphics[width=\textwidth]{__pics/CLB}
+		\caption{Composition of the CLB column in Figure \ref{pic:virtex5}}
+		\label{pic:clb}	
+	\end{figure} 
+
+Figure \ref{pic:virtex5} shows a simplified overview of the chip. As you can see, the Virtex-\,5 consists of eight \ac{CLB} columns, five \ac{BRAM} columns and one \ac{DSP} column. There are also areas for the \ac{DCM} and the \ac{PLL}, which are used for the clock generator. \ac{IO} columns are needed to interact with the hardware on the \ac{FPGA}. The amount of \acp{BRAM} is 148, with a memory size of 36\,Kb each. Additionally they can also be used as two \acp{BRAM} with 18\,Kb. The maximum memory in \acp{BRAM} is 5328\,Kb. The amount of available \acp{DSP} is 64 \cite{Description2009}. 
+
+
+\begin{center}
+
+\begin{figure}[h]
+\begin{center}
+		\includegraphics[width=0.6\textwidth]{__pics/slice}
+		\caption{Composition of slice}
+		\label{pic:slice}	
+		\end{center}
+	\end{figure} 
+\end{center}
+
+The main parts of the chip are the \acp{CLB}. There are two types of \acp{CLB}: first the \textit{CLBLM}, which consists of one \textit{SliceM} and one \textit{SliceL} and secondly the \textit{CLBLL}, which consists of two \textit{SliceLs}. Just as the \textit{SliceL}, the \textit{SliceM} contains four \acp{LUT} and four \acp{FF}, as Figure \ref{pic:slice} depicts. The only difference is, that a \textit{SliceM} can be configured to operate as a 32-bit shift register or as a 64-bit distributed RAM \cite{Description2009}. Every row in the \ac{CLB} matrix is in the same sequence as shown in Figure \ref{pic:clb}.
+
+\section{Xilinx Primitives}
+\label{sec:primitives}
+
+This chapter provides an overview of what Xilinx primitives are and how they are used. The chapters are ordered by the primitives, which are used in this thesis. 
+
+Xilinx primitives are hardware structures, which can be instantiated like any other circuit, even though they are not existent in a Hardware Description Language like \ac{VHDL}. In fact, they are already implemented and available as netlists. These netlists can now be easily integrated and instantiated in the \ac{VHDL} code. 
+
+The special feature of the primitives is that these circuits are native to the targeted \ac{FPGA} \cite{Xilinx2010c}. For example, you are able to instantiate \acp{FF}, \acp{DSP} and many more components, which will be directly mapped to the corresponding hardware devices on the \ac{FPGA}. 
+
+This chapter should give you a closer look on the five primitives that are used to implement the following circuits. 
+
+\begin{itemize}
+	\item \acp{LUT}
+	\item \acp{FF}
+	\item \acp{SRL}
+	\item \acp{DSP}
+	\item \acp{BRAM}
+\end{itemize}
+
+\subsection{Lookup Tables}
+
+\begin{figure}[h]
+	\center
+		\includegraphics[width=0.7\textwidth]{__pics/LUT6.pdf}
+		\caption{Structure of a LUT6, c.\,f. \cite{Xilinx2010c}}
+		\label{pic:lut6}	
+	\end{figure} 
+
+\acp{LUT} are the basic logic building blocks in the hardware, since they can implement any \textit{n}-\,input logic function, where \textit{n} is the amount of input signals \cite{Xilinx2010c}. Therefore a matrix with all possible inputs and the consequential output is stored in the \ac{LUT}.
+
+The \acp{LUT} on the Virtex-\,5 \ac{FPGA} feature up to six input signals and either one or two output signals (\textit{O}). I.\,e. \ac{LUT6} \graffito{LUT6} can implement any logic function with six input signals (\textit{I0} to \textit{I5}). The basic structure of a \ac{LUT6} is depicted in Figure \ref{pic:lut6}. As you can see the \ac{LUT6} is arranged with the help of two \ac{LUT5}\graffito{LUT5}. Therefore it is possible to use two \ac{LUT} primitives on the Virtex-5 \ac{FPGA}: with six or only five input signals.
+
+There is also the possibility to use a second output signal of the \ac{LUT6}, which would simply be the output signal of the lower \ac{LUT5}.
+
+Beyond that, it is also possible to use a \ac{LUT} as an asynchronous 64\,bit ROM, which is addressed with the 6 input signals \cite{Xilinx2010c}.
+	
+	
+\subsection{Flip-Flops}
+
+	\begin{figure}[h]
+		\center
+		\includegraphics[width=0.55\textwidth]{__pics/FDCPE.pdf}
+		\caption{D Flip-\,Flop with Clock Enable Asynchronous Preset and Clear, c.\,f. \cite{Xilinx2010c}}
+		\label{pic:fdcpe}	
+	\end{figure}
+
+An \ac{FF} is a bistable circuit and can be in two solid states, in order to store a single bit over any amount of time. In addition, \acp{FF} are clock-\,controlled, which means the \ac{FF} is only able to change its state, when a rising edge of the clock arrives. 
+
+Figure \ref{pic:fdcpe} depicts a D-\,type \ac{FF} with one output signal (\textit{Q}), which can be used on the Virtex-\,5. In addition to the input signal (\textit{D}) and the \ac{C}, this \ac{FF} has also an \ac{PRE}, an \ac{CLR} and a \ac{CE}. The \ac{PRE}-\,signal is to preset the value of the \ac{FF} and is independent of the \ac{CLK}. The \ac{CLR}-\,signal is as well independent of the \ac{CLK} and can asynchronously clear the value of the \ac{FF}. \ac{CE} simply enables or disables the \ac{FF} depending on whether it is 0 or 1.  This constellation gave this primitive the name \graffito{FDCPE} \ac{FDCPE}.
+
+
+
+\subsection{Shift Register Lookup Tables}
+
+	\begin{figure}[h]
+		\center
+		\includegraphics[width=0.55\textwidth]{__pics/SRL16E.pdf}
+		\caption{16\,bit Shift Register Lookup Table with Clock Enable, c.\,f. \cite{Xilinx2010c}}
+		\label{pic:srl16e}	
+	\end{figure}
+
+The \ac{SRL} is a \ac{LUT} which acts like a shift register. A shift register on the other hand is normally a cascade of \acp{FF} whose input is their predecessors output. I.\,e., a shift register passes a bit through all its \acp{FF}.
+
+There is a way that a 16\,bit shift register is not mapped to 16 \acp{FF}, but only to one \ac{SRL}. This primitive is called \ac{SRL16}. Figure \ref{pic:srl16e} depicts the basic structure of a \ac{SRL16E}\graffito{SRL16E}, which is the same as a \ac{SRL16}, except the enabling input signal. The \textit{D}, \ac{CE}, \ac{C} and \textit{Q} signals are the same as used by the \ac{FDCPE}. The input signals \textit{A0} to \textit{A3} are needed for the configuration of the \ac{SRL16E}.
+
+But \acp{SRL16} can not be mapped to every \ac{LUT}. As chapter \ref{sec:target} described, there are two types of slices (\textit{SliceL} and \textit{SliceM}). \acp{SRL16} can only be mapped to the \acp{LUT} in a \textit{SliceM}.
+
+
+\subsection{Digital Signal Processors}
+
+	\begin{figure}[h]
+		\center
+		\includegraphics[width=0.70\textwidth]{__pics/dsp.pdf}
+		\caption{Strongly simplified structure of a DSP, c.\,f. \cite{Xilinx2010c}}
+		\label{pic:dsp}	
+	\end{figure} 
+
+\acp{DSP} are compact and high-\,speed circuits and fulfill the special purpose of huge arithmetical and logical operations. Multiplications calculated with \acp{LUT} and \acp{FF} would firstly suffer from the used space on the chip and secondly from the elapsed time for the operation. Hence, huge arithmetical and logical operations are mapped to \acp{DSP}.
+
+The Virtex-\,5 primitive \graffito{DSP48E}\ac{DSP48E}  features several arithmetical and logical operations on two's complement values. It is possible to multiply up to 25-\,bit value by an 18-\,bit value. If the multiplier is not used, the \ac{DSP48E} can also be used as a full 48-\,bit adder or subtracter. Additionally there is an alternative of using a hybrid, which contains firstly a multiplier operation and secondly an add, subtract or round operation \cite{Xilinx2012b}. 
+
+Figure \ref{pic:dsp} depicts a strongly simplified overview of the \ac{DSP48E} structure. The input signals A and B are used for multiplication, with the limitation that only the lower 25 bits of A will by multiplied with the 18\,bit long input signal B. Subsequent to the multiplication it is possible to add or subtract the 48\,bit long input signal C. In order to use the full 48\,bit adder/subtracter, A delivers 30\,bit \ac{MSB} input and B delivers 18\,bit \ac{LSB} input to the adder. Thus, A and B get concatenated and afterwards added/subtracted to C \cite{Xilinx2010c}.
+
+Besides the aforesaid operations the \ac{DSP48E} on the Virtex-\,5 \ac{FPGA} is also capable for accumulation, shifting, logical operations and pattern detection, which get directed by the input signals OPMODE and ALUMODE. There are a lot of more input and output signals, which will be abandoned at this point. The maximum frequency for this \ac{DSP} is 550\,MHz.
+
+\subsection{Block RAMs}
+
+There are several ways to use a \ac{BRAM} on a Virtex-5. These varieties are \acp{FIFO}, automatic error-\,correction \ac{RAM}, or general-purpose 36\,kb or 18\,kb \ac{RAM}/\ac{ROM} memories \cite{Xilinx2010c}. Above that, these \acp{BRAM} can be configured as single port \ac{RAM} or dual port \ac{RAM}. This work will deal with a \graffito{FIFO36}\ac{FIFO36}.
+
+\begin{figure}[h]
+		\includegraphics[width=\textwidth]{__pics/bram.pdf}
+		\caption{Simplified structure of a BRAM, c.\,f. \cite{Xilinx2010c}}
+		\label{pic:bram}	
+	\end{figure} 
+	
+		
+Figure \ref{pic:bram} depicts a simplified \ac{BRAM}, which can be used as a \ac{FIFO36}. Besides the \ac{RST} the \ac{FIFO} has got two enable signals, \ac{RDEN} and \ac{WREN}. The output signals are \textit{EMPTY} and \textit{FULL}, which are 1 if the \ac{BRAM} is either full or empty. Furthermore, there are two buses, which handle the data reading and writing. The widths $x$ of the \ac{DI} and the \ac{DO} can be configured to four different widths: $x = 4, 8, 16$ or $32\,bit$.

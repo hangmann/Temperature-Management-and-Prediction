@@ -1,0 +1,141 @@
+This is pdfTeX, Version 3.1415926-1.40.10 (MiKTeX 2.8) (preloaded format=pdftex 2011.4.9)  22 APR 2011 06:56
+entering extended mode
+**C:/Users/Hangmann/Documents/Studium/6.*Semester/Rechnernetze*ProS/latex-vorla
+ge/test/bib.bib
+
+("C:/Users/Hangmann/Documents/Studium/6. Semester/Rechnernetze ProS/latex-vorla
+ge/test/bib.bib"
+Overfull \hbox (184.60628pt too wide) in paragraph at lines 1--52
+\tenrm tle = TCP Ve-gas: end to end con-ges-tion avoid-ance on a global In-ter-
+net, url = http://ieeexplore.ieee.org/lpdocs/epic03/wrapper.htm?arnumber=464716
+,|
+
+\hbox(7.5+2.5)x469.75499, glue set - 1.0
+.\tenrm t
+.\tenrm l
+.\tenrm e
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\tenrm =
+.etc.
+
+
+Overfull \hbox (219.77432pt too wide) in paragraph at lines 1--52
+\tenrm es-ti-ma-tion for en-hanced trans-port over wire-less links, url = http:
+//citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.18.7980&amp;rep=rep1&amp;ty
+pe=pdf,|
+
+\hbox(7.5+2.5)x469.75499, glue set - 1.0
+.\tenrm e
+.\tenrm s
+.\discretionary
+..\tenrm -
+.\tenrm t
+.\tenrm i
+.etc.
+
+
+Overfull \hbox (44.60608pt too wide) in paragraph at lines 1--52
+\tenrm West-wood+ TCP con-ges-tion con-trol, url = http://ieeexplore.ieee.org/l
+pdocs/epic03/wrapper.htm?arnumber=1189097,|
+
+\hbox(7.5+2.5)x469.75499, glue set - 1.0
+.\tenrm W
+.\kern-0.83334
+.\tenrm e
+.\tenrm s
+.\discretionary replacing 2
+..\tenrm t
+..\tenrm -
+.etc.
+
+Missing character: There is no Ã in font cmr10!
+Missing character: There is no ¾ in font cmr10!
+Missing character: There is no Ã in font cmr10!
+Missing character: There is no ¾ in font cmr10!
+
+Overfull \hbox (9.77379pt too wide) in paragraph at lines 53--76
+[]\tenrm issn = 01403664, jour-nal = Com-puter Com-mu-ni-ca-tions, key-words = 
+1,band-width es-ti-ma-tion,corresponding|
+
+\hbox(6.94444+1.94444)x469.75499, glue set - 1.0
+.\hbox(0.0+0.0)x20.0
+.\tenrm i
+.\tenrm s
+.\tenrm s
+.\tenrm n
+.etc.
+
+
+Overfull \hbox (72.8572pt too wide) in paragraph at lines 53--76
+\tenrm author,cs,e-mail ad-dresses,edu,efficiency,fax,friendliness trade-offs,g
+erla,introduction and re-lated work,r,renwang,tel,ucla,wang,|
+
+\hbox(6.94444+1.94444)x469.75499, glue set - 1.0
+.\tenrm a
+.\tenrm u
+.\tenrm t
+.\tenrm h
+.\tenrm o
+.etc.
+
+
+Overfull \hbox (136.49635pt too wide) in paragraph at lines 53--76
+\tenrm tive band-width es-ti-ma-tion to im-prove ef-fi-ciency/friendliness trad
+e-offs, url = http://linkinghub.elsevier.com/retrieve/pii/S0140366403001142,|
+
+\hbox(7.5+2.5)x469.75499, glue set - 1.0
+.\tenrm t
+.\tenrm i
+.\tenrm v
+.\kern-0.27779
+.\tenrm e
+.etc.
+
+
+Overfull \hbox (86.41298pt too wide) in paragraph at lines 77--85
+\tenrm in multiple-path cases, url = http://citeseerx.ist.psu.edu/viewdoc/downl
+oad?doi=10.1.1.18.4176&amp;rep=rep1&amp;type=pdf|
+
+\hbox(7.5+2.5)x469.75499, glue set - 1.0
+.\tenrm i
+.\tenrm n
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\tenrm m
+.\kern-0.27779
+.etc.
+
+
+Overfull \hbox (4.32953pt too wide) in paragraph at lines 122--130
+\tenrm = http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.71.571&amp;re
+p=rep1&amp;type=pdf, vol-ume|
+
+\hbox(7.5+2.5)x469.75499, glue set - 1.0
+.\tenrm =
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\tenrm h
+.\kern-0.27779
+.\tenrm t
+.etc.
+
+
+Overfull \hbox (4.71709pt too wide) in paragraph at lines 131--142
+\tenrm i-son of TCP Reno and Ve-gas, url = http://ieeexplore.ieee.org/lpdocs/ep
+ic03/wrapper.htm?arnumber=752178,|
+
+\hbox(7.5+2.5)x469.75499, glue set - 1.0
+.\tenrm i
+.\discretionary
+..\tenrm -
+.\tenrm s
+.\tenrm o
+.\tenrm n
+.etc.
+
+[1{C:/ProgramData/MiKTeX/2.8/pdftex/config/pdftex.map}])
+*
+! Emergency stop.
+<*> ...echnernetze*ProS/latex-vorlage/test/bib.bib
+                                                  
+End of file on the terminal!
+
+!  ==> Fatal error occurred, no output PDF file produced!

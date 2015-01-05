@@ -1,0 +1,1 @@
+texify --clean --pdf --run-viewer BA-Cioran.tex

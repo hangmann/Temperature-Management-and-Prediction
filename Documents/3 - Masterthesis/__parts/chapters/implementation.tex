@@ -1,0 +1,57 @@
+
+\chapter{Implementation}
+\label{ch:implementation}
+
+\section{System}
+\label{sec:system}
+
+\begin{figure}[h]
+		\includegraphics[width=\textwidth]{__pics/architecture}
+		\caption{Architecture of the underlying system}
+		\label{pic:architecture}	
+	\end{figure} 
+	
+\subsection{MicroBlaze Micro Controller System}
+The underlying system consists of the \ac{MCS}, which is a complete standalone soft processor system, specified in \ac{VHDL}. It is specially designed for the implementation on a \textit{Xilinx} \ac{FPGA}, which covers a minimum area on the chip. The main part of the \ac{MCS} is the MicroBlaze processor, which is a 32-\,bit \ac{RISC} with a Harvard architecture with a rich instruction set optimized for embedded applications \cite{Xilinxa}. Besides the MicroBlaze processor, the \ac{MCS} delivers local memory and a set of peripherals \cite{Xilinx2012}. Firstly the local memory is used for data storage and secondly for program storage in order to control the system. The local memory is connected to the MicroBlaze processor via the \ac{LMB} and can have size between 6\,KB and 64\,KB \cite{Xilinx2012}.
+
+In Addition to the \ac{LMB}, the \ac{MCS} delivers a \ac{PLB} interface, on which the it communicates with other added peripherals. Figure \ref{pic:architecture} depicts a simple overview of the used underlying system, where the \ac{PLB} interconnects the \ac{MCS} with slaves of \ac{PLB}, i.\,e. other peripherals.
+
+\subsection{Peripherals}
+
+Due to the \ac{MCS}, peripherals can be easily embedded into the system via the \ac{PLB}. Figure \ref{pic:architecture} depicts the architecture of the underlying system, especially the \ac{MCS} and what is of importance in this chapter: the slaves of the \ac{PLB}. These \ac{PLB} slave peripherals are thus accessible for the \ac{MCS} and hence for running programs on its processor. According to this it is simple to use hardware circuits and their results respectively in programs, which are running on the \ac{MCS}.
+
+There are two types of peripherals: On the one hand prefab Xilinx peripherals, like the Clock Generator and the System Monitor. And on the other hand user-\,peripherals, like the Simple Timebase or the Heat Generating Core.
+
+These peripherals are also completely given in \ac{VHDL}.
+
+\subsubsection{Clock Generator}
+
+As already pointed out in chapter \ref{sec:target} parts of the circuit may be implemented with a maximum frequency of 600\,MHz. This frequencies can be organized with the Clock Generator, which can store up to 16 arbitrary frequencies between 1\,MHz and 600\,MHz. Moreover the phase shift of the clock signal can also be adapted.
+
+\begin{figure}[h]
+		\includegraphics[width=\textwidth]{__pics/clockgenerator}
+		\caption{Overview of a Clock Generator module on a Virtex-\,5 \cite{Xilinx2010}}
+		\label{pic:clockgen}	
+	\end{figure}
+
+Figure \ref{pic:clockgen} depicts the functionality of a Clock Generator module on the Virtex-\,5 \ac{FPGA}. Each Clock Generator module consists of two \acfp{DCM} and one \acf{PLL}, which modules and connections are automatically instantiated \cite{Xilinx2010}. The \ac{PLL} undertakes the task of generating multiple clocks with their specific frequencies and phases \cite{Xilinx2009}. The \ac{DCM} is used to implement delay locked loop, digital frequency synthesizer, digital phase shifter, or a digital spread spectrum \cite{Xilinx2009a}. Both the \ac{PLL} and \ac{DCM} are combined with a \ac{BUFG}.
+
+The Clock Generator is connected to the \ac{MCS} an can be connected to any other peripheral, i.\,e. different circuits can be implemented with different clocks. The actual maximum frequency depends on the used components and circuitry. To be more specific, the maximum frequency is determined by the critical path, i.\.e. the longest path between the memory elements. For example, the \ac{MCS} can be implemented with a frequency only on a range from 1\,MHz to 125\,MHz, instead of the possible 600\,MHz.
+
+The Clock Generator is an official Xilinx peripheral, which is provided by the \ac{EDK}.
+
+\subsubsection{System Monitor}
+
+Chapter \ref{sec:target} already denoted that the Virtex-\,5 \ac{FPGA} contains a diode, which allows the designer to read the on-chip temperature and supply voltages. The System Monitor provides an \ac{ADC}, which bucks the analog diode and writes the converted digital values into its registers. As you can see in Figure \ref{pic:architecture} the System Monitor is connected as a slave peripheral to the \ac{PLB} and is thus accessible for the \ac{MCS}.
+
+The System Monitor is an official Xilinx peripheral, which is provided by the \ac{EDK}.
+
+\subsubsection{Simple Timebase}
+
+In order to use time-\,controlled operations in the software running on the \ac{MCS}, it is necessary to provide a peripheral, which is able to count in one millisecond steps. Therefore the Simple Timebase counts up on every rising edge of the clock and stores the result in a register, which is accessible from the \ac{PLB}.  Due to the fact, that the Simple Timebase is implemented with a 100\,MHz frequency, the software can easily calculate the corresponding seconds. 
+
+To compute the elapsed time (in milliseconds) between to points in time, the software simply subtract the start- and end-\,timestamps from each other and divide the result by 100,000. This is done because the hardware counts up 100,000 times in one millisecond. 100\,MHz means 100,000,000\,clock cycles per second, which on the other hand means 100,000\,clock cycles and increments respectively per millisecond. 
+
+\subsubsection{Heat Generating Core}
+
+This periphal is the heart of the work and consists of dedicated heat generating circuits, which works as already presented in chapter \ref{ch:methodology}. The heat core gets as well controlled via a program the \ac{MCS} using the \ac{PLB}.
