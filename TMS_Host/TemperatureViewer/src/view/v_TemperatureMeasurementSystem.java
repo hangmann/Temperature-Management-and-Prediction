@@ -4,10 +4,10 @@ import controller.*;
 
 import javax.swing.*;
 
-import model.m_TemperatureMeasurementSystem;
-import controller.c_SerialReader;
-import controller.TemperatureControl;
-import controller.c_TimerThread;
+import model.M_TemperatureMeasurementSystem;
+import controller.C_SerialReader;
+import controller.C_TemperatureControl;
+import controller.C_TimerThread;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -26,12 +26,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+
 /**
- * User: christoph
- * Date: 2/23/12
- * Time: 1:28 PM
+ * Main window
+ * 
+ * @author Hendrik Hangmann
+ * @since  07.01.2015
+ *
  */
-public class v_TemperatureMeasurementSystem implements ActionListener {
+public class V_TemperatureMeasurementSystem implements ActionListener {
 	// refresh interval in millisecons
 //	static final int REFRESH_INTERVAL = 100;
 //	static final int SENSOR_GRID_WIDTH = 5, SENSOR_GRID_HEIGHT = 5;
@@ -41,20 +44,24 @@ public class v_TemperatureMeasurementSystem implements ActionListener {
 //	static private int max_temp = 100;
 	
 	private static JButton mStartCalibration, mStopCalibration, mShowTemperatureOnChip, mToggle3d, stopHeaters, start10mex;
-	private static TemperatureControl mTempControl;
-	private m_TemperatureMeasurementSystem m_TMS;
-	private final c_TemperatureMeasurementSystem c_TMS;
+	private static C_TemperatureControl mTempControl;
+	private M_TemperatureMeasurementSystem m_TMS;
+	private final C_TemperatureMeasurementSystem c_TMS;
 	
-	private static v_TemperatureDistribution mChipView;
+	private static V_TemperatureDistribution mChipView;
 	private static JFrame mControlFrame;
-	private v_Console consoleWindow;
+	private V_Console consoleWindow;
 	private OutputStream out;
-	public v_Console outputWindow;
+	public V_Console outputWindow;
 	int i = 0;
 
 	
 	
-	public v_TemperatureMeasurementSystem(final c_TemperatureMeasurementSystem c_TMS) 
+	/**
+	 * Build up UI
+	 * @param c_TMS Reference to controller class
+	 */
+	public V_TemperatureMeasurementSystem(final C_TemperatureMeasurementSystem c_TMS) 
 	{
 		this.m_TMS = c_TMS.getModel();
 		this.c_TMS = c_TMS;
@@ -62,7 +69,7 @@ public class v_TemperatureMeasurementSystem implements ActionListener {
 		mControlFrame.setLayout(new FlowLayout());
 
 		//TODO
-		mTempControl = new TemperatureControl(this, "output", m_TemperatureMeasurementSystem.REFRESH_INTERVAL, m_TemperatureMeasurementSystem.SENSOR_GRID_WIDTH, m_TemperatureMeasurementSystem.SENSOR_GRID_HEIGHT);
+		mTempControl = new C_TemperatureControl(this, "output", M_TemperatureMeasurementSystem.REFRESH_INTERVAL, M_TemperatureMeasurementSystem.SENSOR_GRID_WIDTH, M_TemperatureMeasurementSystem.SENSOR_GRID_HEIGHT);
 
 		mStartCalibration = new JButton("start calibration");
 		mStopCalibration = new JButton("stop calibration");
@@ -114,7 +121,7 @@ public class v_TemperatureMeasurementSystem implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				if (mChipView == null) {
 					// new ChipView(mTempControl, pSubdivision, pMaxFPS);
-					mChipView = new v_TemperatureDistribution(mTempControl, m_TemperatureMeasurementSystem.MIN_TEMP, m_TemperatureMeasurementSystem.MAX_TEMP, m_TemperatureMeasurementSystem.SUBDIVISION, m_TemperatureMeasurementSystem.MAX_FPS);
+					mChipView = new V_TemperatureDistribution(mTempControl, M_TemperatureMeasurementSystem.MIN_TEMP, M_TemperatureMeasurementSystem.MAX_TEMP, M_TemperatureMeasurementSystem.SUBDIVISION, M_TemperatureMeasurementSystem.MAX_FPS);
 				} else {
 					mChipView.setVisible(true);
 				}
@@ -162,12 +169,16 @@ public class v_TemperatureMeasurementSystem implements ActionListener {
 		c_TMS.start10MinExperiment();		
 	}
 	
+    /**
+     *  Starts Calibration routine
+     */
     public void startCalibration() {
     	mStartCalibration.setEnabled(false);
 		mStopCalibration.setEnabled(true);
 
 		mTempControl.startCalibration();
 		c_TMS.getHeatControl().calibrate();
+		
 		try {
 			mTempControl.startReading();
 		} catch (FileNotFoundException e) {
@@ -175,11 +186,17 @@ public class v_TemperatureMeasurementSystem implements ActionListener {
 		}
 	}
     	
+    /**
+     *  set all heaters to 0
+     */
     public void resetHeaters()
     {
     	c_TMS.getHeatControl().stopHeaters();
     }
     
+    /**
+     *  Stops Calibration
+     */
     public void stopCalibration() {
     	mStartCalibration.setEnabled(true);
 		mStopCalibration.setEnabled(false);

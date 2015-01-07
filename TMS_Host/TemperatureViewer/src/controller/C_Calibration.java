@@ -1,7 +1,7 @@
 package controller;
 
 
-public class Calibration {
+public class C_Calibration {
 	final int ITERATIONS = 10;
 	final int STEPCOUNT = 10;
 	
@@ -9,7 +9,7 @@ public class Calibration {
 	private int mCount;
 	private SingleCalibration[] mCalibrations;
 
-	public Calibration(int pNumberOfSensors) {
+	public C_Calibration(int pNumberOfSensors) {
 		mNumberOfSensors = pNumberOfSensors;
 		mCalibrations = new SingleCalibration[mNumberOfSensors];
 		

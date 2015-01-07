@@ -2,25 +2,25 @@ package controller;
 
 import java.io.IOException;
 
-import model.m_TemperatureMeasurementSystem;
-import view.v_HeaterControl;
+import model.M_TemperatureMeasurementSystem;
+import view.V_HeaterControl;
 
-public class c_HeaterControl {
+public class C_HeaterControl {
 
-	v_HeaterControl v_HC;
-	c_TemperatureMeasurementSystem c_TMS;
+	V_HeaterControl v_HC;
+	C_TemperatureMeasurementSystem c_TMS;
 	
-	public c_HeaterControl(c_TemperatureMeasurementSystem c_TMS)
+	public C_HeaterControl(C_TemperatureMeasurementSystem c_TMS)
 	{
 		this.c_TMS = c_TMS;
-		v_HC = new v_HeaterControl(c_TMS);
+		v_HC = new V_HeaterControl(c_TMS);
 		
 	}
 	
 
 	public void setAllHeaters(int j){
 		if (j >= 0 && j <= 32){	
-			for (int i = 0;  i < m_TemperatureMeasurementSystem.NUMBER_OF_HEATERS; i++)
+			for (int i = 0;  i < M_TemperatureMeasurementSystem.NUMBER_OF_HEATERS; i++)
 			{	
 				v_HC.setComboIndex(i, j);
 	
@@ -38,19 +38,9 @@ public class c_HeaterControl {
 	
 	public void calibrate(){
 		
-		for (int i = 0; i<m_TemperatureMeasurementSystem.NUMBER_OF_HEATERS; i++)
-		{	
-			v_HC.setComboIndex(i,m_TemperatureMeasurementSystem.HEATER_ADJUSTABILITY);
-
-			//setHeater(i,adjustability);
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		c_TMS.getSerialCommunication().appendText("\nStarting...\n");
+		setAllHeaters(M_TemperatureMeasurementSystem.HEATER_ADJUSTABILITY );
+		
+		c_TMS.getSerialCommunication().appendText("\nStarting Calibration...\n");
 		
 		try {
 			Thread.sleep(500);
@@ -64,17 +54,7 @@ public class c_HeaterControl {
 	public void stopHeaters(){
 		//controller.stopCalibration();
 		
-		for (int i = 0; i<m_TemperatureMeasurementSystem.NUMBER_OF_HEATERS; i++)
-		{	
-			v_HC.setComboIndex(i,0);
-			//setHeater(i,0);
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		setAllHeaters(0);
 		
 	}
 	
@@ -129,7 +109,6 @@ public class c_HeaterControl {
 
 
 	public void toggleOutput() {
-		// TODO Auto-generated method stub
 		sendMsg("toggleoutput");
 	}
 

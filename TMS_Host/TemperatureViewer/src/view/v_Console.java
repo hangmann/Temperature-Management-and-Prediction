@@ -11,10 +11,10 @@ import java.awt.event.ComponentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 
-import controller.c_CommandParser;
+import controller.C_CommandParser;
 import controller.*;
 
-public class v_Console implements ComponentListener{
+public class V_Console implements ComponentListener{
 
 	private JFrame f;
 
@@ -23,12 +23,12 @@ public class v_Console implements ComponentListener{
 	private JPanel panel;
 	private JTextField inputText;
 	private JButton send;
-	private c_CommandParser parser;
+	private C_CommandParser parser;
 	
-	public v_Console(c_TemperatureMeasurementSystem c_TMS){
+	public V_Console(C_TemperatureMeasurementSystem c_TMS){
 		
 	//	this.control = control;
-		parser = new c_CommandParser(c_TMS);
+		parser = new C_CommandParser(c_TMS);
 		
         // Create Frame
         f = new JFrame("Output");

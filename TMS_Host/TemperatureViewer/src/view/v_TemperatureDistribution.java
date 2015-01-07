@@ -2,10 +2,9 @@ package view;
 import com.sun.opengl.util.FPSAnimator;
 import com.sun.opengl.util.GLUT;
 
-import controller.KeyboardListener3d;
-import controller.MouseListener3d;
-import controller.TemperatureControl;
-import controller.TemperatureGrid;
+import controller.C_MouseListener3d;
+import controller.C_TemperatureControl;
+import controller.C_KeyboardListener3d;
 
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
@@ -16,7 +15,7 @@ import javax.swing.*;
  * Date: 2/23/12
  * Time: 9:19 PM
  */
-public class v_TemperatureDistribution extends JFrame implements GLEventListener {
+public class V_TemperatureDistribution extends JFrame implements GLEventListener {
 	private GLU mGlu;
 	private GLUT mGlut;
 	private GLCanvas mCanvas;
@@ -24,11 +23,11 @@ public class v_TemperatureDistribution extends JFrame implements GLEventListener
 
 	private boolean mVisible;
 
-	private TemperatureControl mTempCont;
+	private C_TemperatureControl mTempCont;
 
 	private int mSensorGridWidth, mSensorGridHeight;
 	private int mNumberOfSensors;
-	private TemperatureGrid mTempGrid;
+	private V_TemperatureGrid mTempGrid;
 
 	private boolean m3d;
 	private boolean mListenersInit;
@@ -38,7 +37,7 @@ public class v_TemperatureDistribution extends JFrame implements GLEventListener
 	private long mStartTime = 0;
 	private int mFrameCounter = 0;
 
-	public v_TemperatureDistribution(TemperatureControl pTempCont, int min_temp, int max_temp, int pSubdivision, int pMaxFPS) {
+	public V_TemperatureDistribution(C_TemperatureControl pTempCont, int min_temp, int max_temp, int pSubdivision, int pMaxFPS) {
 		mTempCont = pTempCont;
 
 		m3d = false;
@@ -53,7 +52,7 @@ public class v_TemperatureDistribution extends JFrame implements GLEventListener
 		mSensorGridWidth = mTempCont.getSensorGridWidth();
 		mSensorGridHeight = mTempCont.getSensorGridHeight();
 
-		mTempGrid = new TemperatureGrid(min_temp, max_temp, pSubdivision, mSensorGridWidth, mSensorGridHeight);
+		mTempGrid = new V_TemperatureGrid(min_temp, max_temp, pSubdivision, mSensorGridWidth, mSensorGridHeight);
 
 		mGlu = new GLU();
 		mGlut = new GLUT();
@@ -95,11 +94,11 @@ public class v_TemperatureDistribution extends JFrame implements GLEventListener
 
 		if (!mListenersInit) {
 			mListenersInit = true;
-			MouseListener3d ml = new MouseListener3d(this);
+			C_MouseListener3d ml = new C_MouseListener3d(this);
 			pDrawable.addMouseListener(ml);
 			pDrawable.addMouseMotionListener(ml);
 			pDrawable.addMouseWheelListener(ml);
-			pDrawable.addKeyListener(new KeyboardListener3d(this));
+			pDrawable.addKeyListener(new C_KeyboardListener3d(this));
 		}
 
 		gl.glEnable(GL.GL_DEPTH_TEST);

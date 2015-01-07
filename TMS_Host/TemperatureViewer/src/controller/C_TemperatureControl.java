@@ -1,14 +1,14 @@
 package controller;
 import java.io.FileNotFoundException;
 
-import view.v_TemperatureMeasurementSystem;
+import view.V_TemperatureMeasurementSystem;
 
 /**
  * User: christoph
  * Date: 2/23/12
  * Time: 1:40 PM
  */
-public class TemperatureControl {
+public class C_TemperatureControl {
 	final int VCC = 1;
 
 	private String mFileName;
@@ -17,12 +17,13 @@ public class TemperatureControl {
 	private int mSensorGridWidth, mSensorGridHeight;
 
 	private boolean mIsCalibrating;
-	private Calibration mCalibration;
-	private DataReader mDataReader;
+	private C_Calibration mCalibration;
+	private C_DataReader mDataReader;
+	private boolean foundFirstEvenTemperatures;
 
 	private double[] mCurrTemp;
 
-	public TemperatureControl(v_TemperatureMeasurementSystem control, String pFileName, int pRefreshInterval, int pGridWidth, int pGridHeight) {
+	public C_TemperatureControl(V_TemperatureMeasurementSystem control, String pFileName, int pRefreshInterval, int pGridWidth, int pGridHeight) {
 		mFileName = pFileName;
 		mRefreshInterval = pRefreshInterval;
 		mNumberOfSensors = pGridWidth * pGridHeight;
@@ -30,16 +31,30 @@ public class TemperatureControl {
 		mSensorGridHeight = pGridWidth;
 
 		mIsCalibrating = false;
-		mCalibration = new Calibration(mNumberOfSensors);
+		mCalibration = new C_Calibration(mNumberOfSensors);
 
 		mCurrTemp = new double[mNumberOfSensors];
 
-		mDataReader = new DataReader(control, this, mFileName, mRefreshInterval, mNumberOfSensors);
+		foundFirstEvenTemperatures = false;
+		
+		mDataReader = new C_DataReader(control, this, mFileName, mRefreshInterval, mNumberOfSensors);
 	}
 
 	public synchronized void updateData(int[] pSensorData, double pTempData, double pVoltData) {
 		if (mIsCalibrating) {
 			mCalibration.addData(pSensorData, pTempData, pVoltData - VCC);
+			
+			if (foundFirstEvenTemperatures && mDataReader.findLevelTemperatures(pTempData, 0.05f)){
+				stopCalibration();
+				foundFirstEvenTemperatures = false;
+				System.out.println("Reached second even (low) temperatures."); //chip fully calibrated
+			}
+			
+			if (!foundFirstEvenTemperatures && mDataReader.findLevelTemperatures(pTempData, 0.05f)){
+				foundFirstEvenTemperatures = true;
+				System.out.println("Reached first even (high) temperatures."); //next step: switch off heaters
+				// TODO: switch off heaters!
+			}	
 		} else {
 			mCalibration.getTemperature(mCurrTemp, pSensorData);
 		}

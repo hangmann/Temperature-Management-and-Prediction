@@ -1,15 +1,15 @@
 package controller;
-import view.v_TemperatureMeasurementSystem;
+import view.V_TemperatureMeasurementSystem;
 
 
-public class c_TimerThread implements Runnable {
+public class C_TimerThread implements Runnable {
 
 	int duration = 1000;
 	int maxlevel = 32;
-	c_TemperatureMeasurementSystem c_TMS;
+	C_TemperatureMeasurementSystem c_TMS;
 	int count = 1;
 	
-	public c_TimerThread(int duration, int maxlevel, c_TemperatureMeasurementSystem c_TMS)
+	public C_TimerThread(int duration, int maxlevel, C_TemperatureMeasurementSystem c_TMS)
 	{
 		this.duration = duration;
 		this.c_TMS = c_TMS;

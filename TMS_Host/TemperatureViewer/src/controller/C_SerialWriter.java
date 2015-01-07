@@ -3,11 +3,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 
   /** */
-    public class SerialWriter implements Runnable 
+    public class C_SerialWriter implements Runnable 
     {
         OutputStream out;
         
-        public SerialWriter ( OutputStream out )
+        public C_SerialWriter ( OutputStream out )
         {
             this.out = out;
         }

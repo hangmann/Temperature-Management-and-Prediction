@@ -7,15 +7,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
-import view.v_Console;
+import view.V_Console;
 
- public class c_SerialReader implements Runnable 
+ public class C_SerialReader implements Runnable 
     {
 	 	private InputStream in;
 	 	private PrintWriter out;
-        private c_SerialCommumication c_SR;
+        private C_SerialCommumication c_SR;
         
-        public c_SerialReader ( c_SerialCommumication c_SR, InputStream in)
+        public C_SerialReader ( C_SerialCommumication c_SR, InputStream in)
         {
         	this.c_SR = c_SR;
         	try {

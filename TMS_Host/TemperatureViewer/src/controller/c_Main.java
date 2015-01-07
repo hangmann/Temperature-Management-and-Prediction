@@ -2,11 +2,11 @@ package controller;
 import model.*;
 import view.*;
 
-public class c_Main {
+public class C_Main {
 		
 	public static void main (String args[])
 	{
-		new c_TemperatureMeasurementSystem();
+		new C_TemperatureMeasurementSystem();
 	}
 	
 }

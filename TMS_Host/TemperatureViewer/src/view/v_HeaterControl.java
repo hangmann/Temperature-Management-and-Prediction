@@ -11,33 +11,33 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.WindowConstants;
 
-import controller.c_HeaterControl;
-import controller.c_TemperatureMeasurementSystem;
-import model.m_TemperatureMeasurementSystem;
+import controller.C_HeaterControl;
+import controller.C_TemperatureMeasurementSystem;
+import model.M_TemperatureMeasurementSystem;
 
-public class v_HeaterControl implements ActionListener{
+public class V_HeaterControl implements ActionListener{
 
 	private String [] items;
 	private JLabel [] labels;
 	private ComboBox [] combos;
 	private JFrame frame;
-    public m_TemperatureMeasurementSystem m_TMS;
-    private c_HeaterControl c_HC;
+    public M_TemperatureMeasurementSystem m_TMS;
+    private C_HeaterControl c_HC;
     
     
-    public v_HeaterControl (c_TemperatureMeasurementSystem c_TMS)
+    public V_HeaterControl (C_TemperatureMeasurementSystem c_TMS)
 	{
     	this.m_TMS = c_TMS.getModel();
     	this.c_HC = c_TMS.getHeatControl();
 
 		frame = new JFrame("Heater Control");
-		GridLayout experimentLayout = new GridLayout(m_TemperatureMeasurementSystem.NUMBER_OF_HEATERS, m_TemperatureMeasurementSystem.HEATER_ADJUSTABILITY);
+		GridLayout experimentLayout = new GridLayout(M_TemperatureMeasurementSystem.NUMBER_OF_HEATERS, M_TemperatureMeasurementSystem.HEATER_ADJUSTABILITY);
 		frame.setLayout(experimentLayout);
               
-        items = new String[m_TemperatureMeasurementSystem.HEATER_ADJUSTABILITY +1 ];
+        items = new String[M_TemperatureMeasurementSystem.HEATER_ADJUSTABILITY +1 ];
         
         String si;
-        for (int i = 0; i <= m_TemperatureMeasurementSystem.HEATER_ADJUSTABILITY; i++)
+        for (int i = 0; i <= M_TemperatureMeasurementSystem.HEATER_ADJUSTABILITY; i++)
         {
         	if (i<10)
         		si = "0"+i;
@@ -47,8 +47,8 @@ public class v_HeaterControl implements ActionListener{
         	items[i] = si;
         }
         
-        labels = new JLabel [m_TemperatureMeasurementSystem.NUMBER_OF_HEATERS];
-        combos = new ComboBox[m_TemperatureMeasurementSystem.NUMBER_OF_HEATERS];
+        labels = new JLabel [M_TemperatureMeasurementSystem.NUMBER_OF_HEATERS];
+        combos = new ComboBox[M_TemperatureMeasurementSystem.NUMBER_OF_HEATERS];
         
         addGUIComponents();
         frame.setSize(200,1000);
@@ -67,7 +67,7 @@ public class v_HeaterControl implements ActionListener{
     
 	private void addGUIComponents()
 	{
-		for (int i = 0; i < m_TemperatureMeasurementSystem.NUMBER_OF_HEATERS; i++)
+		for (int i = 0; i < M_TemperatureMeasurementSystem.NUMBER_OF_HEATERS; i++)
 		{
 			labels[i] = new JLabel("Heater " + i);
 			

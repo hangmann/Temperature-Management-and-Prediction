@@ -6,18 +6,18 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
-import view.v_TemperatureDistribution;
+import view.V_TemperatureDistribution;
 
 /**
  * User: christoph
  * Date: 2/25/12
  * Time: 10:18 AM
  */
-public class MouseListener3d extends MouseAdapter implements MouseWheelListener {
+public class C_MouseListener3d extends MouseAdapter implements MouseWheelListener {
 	private int mPrevX, mPrevY;
-	private v_TemperatureDistribution mChipView;
+	private V_TemperatureDistribution mChipView;
 
-	public MouseListener3d(v_TemperatureDistribution pChipView) {
+	public C_MouseListener3d(V_TemperatureDistribution pChipView) {
 		mPrevX = 0;
 		mPrevY = 0;
 		mChipView = pChipView;

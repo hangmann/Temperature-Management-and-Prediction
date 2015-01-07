@@ -2,34 +2,41 @@ package controller;
 import java.io.*;
 import java.util.ArrayList;
 
-import view.v_TemperatureMeasurementSystem;
+import view.V_TemperatureMeasurementSystem;
 
 /**
  * User: christoph
  * Date: 2/23/12
  * Time: 1:39 PM
  */
-public class DataReader {
+public class C_DataReader {
 	static final int WAIT_FOR_NEW_CHARACTERS_TIME = 5;
 	
 	private enum ReadingStates {startOfNewLine, counter, sensorData, tempData, voltData}
 
-	private TemperatureControl mTempContol;
+	private C_TemperatureControl mTempContol;
 	private String mFileName;
 	private int mRefreshInterval;
 	private int mNumberOfSensor;
 	private ReaderThread mReaderThread;
-	private ArrayList<Double> tempData;
-	private v_TemperatureMeasurementSystem control;
+	private Double [] tempData;
+	private V_TemperatureMeasurementSystem control;
+	private float delta = 0.1f;
+	private boolean [] even;
+	private boolean alleven;
+	private int requiredEvenValues;
 
-	public DataReader(v_TemperatureMeasurementSystem control,TemperatureControl pTempControl, String pFileName, int pRefreshInterval, int pNumberOfSensors) {
+	public C_DataReader(V_TemperatureMeasurementSystem control,C_TemperatureControl pTempControl, String pFileName, int pRefreshInterval, int pNumberOfSensors) {
 		mTempContol = pTempControl;
-		control = control;
+		this.control = control;
 		mFileName = pFileName;
 		mRefreshInterval = pRefreshInterval;
 		mNumberOfSensor = pNumberOfSensors;
 		mReaderThread = new ReaderThread();
-		tempData= new ArrayList<Double>();																	
+		tempData= new Double[32];	
+		requiredEvenValues = 16;
+		alleven = false;
+		even = new boolean[requiredEvenValues];
 	}
 
 	public synchronized void startReading() throws FileNotFoundException {
@@ -46,19 +53,45 @@ public class DataReader {
 		}
 	}
 	
-	public void findChanges(double mTempData) {
-		if (tempData.size() >9){
-			System.out.println(Math.abs(tempData.get(0) - tempData.get(9)) + " <= 20?\n");
-			if (Math.abs(tempData.get(0) - tempData.get(9)) <= 20){
-				control.resetHeaters();
-			} else {
-				for (int i = 0; i<10-1;i++){
-					tempData.set(i, tempData.get(i+1));
+	public boolean findLevelTemperatures(double mTempData, float delta) {
+		
+		for (int i = 0; i<requiredEvenValues-1;i++){
+			tempData[i] = tempData[i+1];
+		}
+		
+		tempData[requiredEvenValues-1] = mTempData;
+		
+		System.out.println(tempData[0] + " " + tempData[1] + " " + tempData[2] + " " + tempData[3]);
+		
+	
+		if (tempData[0] != 0d && tempData[requiredEvenValues-1] != 0d){
+			if (Math.abs(tempData[0] - tempData[requiredEvenValues-1]) <= delta){
+				even[0]=true;
+				even[requiredEvenValues-1]=true;
+				for (int i = 1; i<requiredEvenValues-1;i++){
+					if (Math.abs(tempData[0] - tempData[i]) <= delta)
+					{
+						even[i] = true;
+					}
 				}
-				tempData.remove(9);
+				
+				for (int i = 0; i< requiredEvenValues;i++)
+				{
+					if (!even[i]){
+						alleven = false;
+						return false;
+					}else {
+						for (int j = 0; j< requiredEvenValues;j++)
+						{
+							even[j]=false;
+						}
+					}
+					alleven = true;
+				}
+				
 			}
 		}
-		tempData.add(mTempData);
+		return false;
 	}
 
 	private class ReaderThread extends Thread {
@@ -180,9 +213,14 @@ public class DataReader {
 					// if space, go to voltData
 					// otherwise read temperature Data
 					if (c == ' ') {
+						
 						mTempData = Double.parseDouble(data);
 						// TODO Scan for non-increasing non-decreasing temperature rises
-						findChanges(mTempData);
+						if (findLevelTemperatures(mTempData, delta))
+						{
+							mTempContol.stopCalibration();
+						}
+						
 						data = "";
 
 						mState = ReadingStates.voltData;

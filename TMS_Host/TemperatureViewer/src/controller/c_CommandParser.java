@@ -4,12 +4,12 @@ import java.util.Scanner;
 
 import view.*;
 
-public class c_CommandParser {
+public class C_CommandParser {
 	private Scanner scanner;
 	private boolean match = false;	
-	private c_SerialCommumication c_SR;
-	private c_HeaterControl c_HC;
-	private c_TemperatureMeasurementSystem c_TMS;
+	private C_SerialCommumication c_SR;
+	private C_HeaterControl c_HC;
+	private C_TemperatureMeasurementSystem c_TMS;
 	private ArrayList<String> inputs;
 	private String commands []= {	"help", 
 							"setheater \\w+ \\w+", 
@@ -27,7 +27,7 @@ public class c_CommandParser {
 							"setoutput \\w+"};
 	
 	
-	public c_CommandParser(c_TemperatureMeasurementSystem c_TMS)
+	public C_CommandParser(C_TemperatureMeasurementSystem c_TMS)
 	{
 		this.c_SR = c_TMS.getSerialCommunication();
 		this.c_HC = c_TMS.getHeatControl();

@@ -2,17 +2,17 @@ package controller;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import view.v_TemperatureDistribution;
+import view.V_TemperatureDistribution;
 
 /**
  * User: christoph
  * Date: 2/25/12
  * Time: 10:20 AM
  */
-public class KeyboardListener3d extends KeyAdapter {
-	private v_TemperatureDistribution mChipView;
+public class C_KeyboardListener3d extends KeyAdapter {
+	private V_TemperatureDistribution mChipView;
 
-	public KeyboardListener3d(v_TemperatureDistribution pChipView) {
+	public C_KeyboardListener3d(V_TemperatureDistribution pChipView) {
 		mChipView = pChipView;
 	}
 

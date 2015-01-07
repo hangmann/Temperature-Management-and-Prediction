@@ -1,19 +1,19 @@
 package controller;
 
-import model.m_TemperatureMeasurementSystem;
-import view.v_Console;
+import model.M_TemperatureMeasurementSystem;
+import view.V_Console;
 
-public class c_SerialCommumication {
+public class C_SerialCommumication {
 
-	private c_SerialReader c_SR;
-	private v_Console console;
+	private C_SerialReader c_SR;
+	private V_Console console;
 	private String consoleText;
 	
-	public c_SerialCommumication(c_TemperatureMeasurementSystem c_TMS)
+	public C_SerialCommumication(C_TemperatureMeasurementSystem c_TMS)
 	{
 		
-		c_SR = new c_SerialReader(this, c_TMS.getModel().getIn_stream());
-		console = new v_Console(c_TMS);
+		c_SR = new C_SerialReader(this, c_TMS.getModel().getIn_stream());
+		console = new V_Console(c_TMS);
 		// start reading serial port		
         (new Thread(c_SR)).start();
 	}

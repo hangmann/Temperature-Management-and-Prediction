@@ -1,4 +1,4 @@
-package controller;
+package view;
 import javax.media.opengl.GL;
 
 /**
@@ -6,7 +6,7 @@ import javax.media.opengl.GL;
  * Date: 2/24/12
  * Time: 12:49 PM
  */
-public class TemperatureGrid {
+public class V_TemperatureGrid {
 	
 	private int mSubdivision, mProportionalSize;
 	private int mSensorGridWidth, mSensorGridHeight;
@@ -15,7 +15,7 @@ public class TemperatureGrid {
 
 	double[][] mGrid;
 
-	public TemperatureGrid(int min_temp, int max_temp, int pSubdivision, int pGridWidth, int pGridHeight) {
+	public V_TemperatureGrid(int min_temp, int max_temp, int pSubdivision, int pGridWidth, int pGridHeight) {
 		mSubdivision = pSubdivision;
 		mProportionalSize = Math.min(pGridHeight, pGridWidth) * mSubdivision;
 		mSensorGridWidth = pGridWidth;

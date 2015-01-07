@@ -13,30 +13,40 @@ import java.io.OutputStream;
 import model.*;
 import view.*;
 
-public class c_TemperatureMeasurementSystem {
+/**
+ * Controller class for main window
+ * 
+ * @author Hendrik Hangmann
+ * @since  07.01.2015
+ *
+ */
+public class C_TemperatureMeasurementSystem {
 
-	private v_TemperatureMeasurementSystem v_TMS;
-	private m_TemperatureMeasurementSystem m_TMS;	
-	private c_SerialCommumication c_SCom;
-	private c_HeaterControl c_HC;
+	private V_TemperatureMeasurementSystem v_TMS;
+	private M_TemperatureMeasurementSystem m_TMS;	
+	private C_SerialCommumication c_SCom;
+	private C_HeaterControl c_HC;
 	
-	public c_TemperatureMeasurementSystem() {
+	/**
+	 * Constructor opens and initializes serial port 
+	 */
+	public C_TemperatureMeasurementSystem() {
 
-		this.m_TMS = new m_TemperatureMeasurementSystem();
-		this.v_TMS = new v_TemperatureMeasurementSystem(this);
+		this.m_TMS = new M_TemperatureMeasurementSystem();
+		this.v_TMS = new V_TemperatureMeasurementSystem(this);
 		
-		c_SCom = new c_SerialCommumication(this);
+		c_SCom = new C_SerialCommumication(this);
 		
 		
 		// start and configure serial port streams
 		try {
-			CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(m_TemperatureMeasurementSystem.PORTNAME);
+			CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(M_TemperatureMeasurementSystem.PORTNAME);
 
             CommPort commPort;
 			commPort = portIdentifier.open("Temperature Measurement System", 2000);
 			
             SerialPort serialPort = (SerialPort) commPort;
-            serialPort.setSerialPortParams(m_TemperatureMeasurementSystem.BAUD_RATE,m_TemperatureMeasurementSystem.SP_DATABITS ,m_TemperatureMeasurementSystem.SP_STOPBITS,m_TemperatureMeasurementSystem.SP_PARITY);
+            serialPort.setSerialPortParams(M_TemperatureMeasurementSystem.BAUD_RATE,M_TemperatureMeasurementSystem.SP_DATABITS ,M_TemperatureMeasurementSystem.SP_STOPBITS,M_TemperatureMeasurementSystem.SP_PARITY);
             m_TMS.setIn_stream(serialPort.getInputStream());
             m_TMS.setOut_stream(serialPort.getOutputStream());
             showHeatControl(); 
@@ -65,20 +75,20 @@ public class c_TemperatureMeasurementSystem {
 	
 	public void showHeatControl()
 	{
-		this.c_HC = new c_HeaterControl(this);
+		this.c_HC = new C_HeaterControl(this);
 	}
 
-	public m_TemperatureMeasurementSystem getModel()
+	public M_TemperatureMeasurementSystem getModel()
 	{
 		return m_TMS;
 	}
 	
-	public c_SerialCommumication getSerialCommunication()
+	public C_SerialCommumication getSerialCommunication()
 	{
 		return c_SCom;
 	}
 	
-	public c_HeaterControl getHeatControl()
+	public C_HeaterControl getHeatControl()
 	{
 		return this.c_HC;
 	}
@@ -86,7 +96,7 @@ public class c_TemperatureMeasurementSystem {
 	public void start10MinExperiment() {
 		getHeatControl().startExperiment();
 		//heatControl.setOutput(0);
-		Thread t = new Thread(new c_TimerThread(600000, 32, this));
+		Thread t = new Thread(new C_TimerThread(600000, 32, this));
 		    
 	    t.start();
 	}

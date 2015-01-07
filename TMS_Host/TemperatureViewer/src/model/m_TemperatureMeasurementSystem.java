@@ -5,7 +5,14 @@ import java.io.OutputStream;
 
 import gnu.io.SerialPort;
 
-public class m_TemperatureMeasurementSystem {
+/**
+ * Holds important variables to set up the system
+ * 
+ * @author Hendrik Hangmann
+ * @since  07.01.2015
+ *
+ */
+public class M_TemperatureMeasurementSystem {
 	
 	static final public String OUTPUT_FILE_PATH = new String("output");  
 	
@@ -38,7 +45,7 @@ public class m_TemperatureMeasurementSystem {
 	private InputStream in_stream;
 	private OutputStream out_stream;
 	
-	public m_TemperatureMeasurementSystem()
+	public M_TemperatureMeasurementSystem()
 	{
 		
 	}
