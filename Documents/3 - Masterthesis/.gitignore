@@ -22,3 +22,7 @@
 *.pdf
 *.out
 *.synctex.gz
+*.toc
+*.brf
+*.tps
+*.tcp
