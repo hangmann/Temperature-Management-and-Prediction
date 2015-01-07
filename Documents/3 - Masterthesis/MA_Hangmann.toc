@@ -2,8 +2,11 @@
 \vspace {-\cftbeforepartskip }
 \select@language {american}
 \contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}
-\contentsline {chapter}{\numberline {2}Conclusion}{3}{chapter.2}
-\contentsline {chapter}{\numberline {A}Appendix}{5}{appendix.A}
+\contentsline {chapter}{\numberline {2}Heat Modeling of Integrated Devices}{3}{chapter.2}
+\contentsline {chapter}{\numberline {3}Online Evolution of Heat Models}{5}{chapter.3}
+\contentsline {chapter}{\numberline {4}Experiments and Evaluation}{7}{chapter.4}
+\contentsline {chapter}{\numberline {5}Conclusion}{9}{chapter.5}
+\contentsline {chapter}{\numberline {A}Appendix}{11}{appendix.A}
 \vspace {\beforebibskip }
-\contentsline {chapter}{\spacedlowsmallcaps {Bibliography}}{7}{dummy.5}
-\contentsline {chapter}{\spacedlowsmallcaps {Index}}{9}{dummy.6}
+\contentsline {chapter}{\spacedlowsmallcaps {Bibliography}}{13}{dummy.5}
+\contentsline {chapter}{\spacedlowsmallcaps {Index}}{15}{dummy.6}
