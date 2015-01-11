@@ -1,9 +1,11 @@
 package model;
 
+import gnu.io.SerialPort;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import gnu.io.SerialPort;
+
 
 /**
  * Holds important variables to set up the system
@@ -36,7 +38,7 @@ public class M_TemperatureMeasurementSystem {
 	// for linux
 	static public final String L_PORTNAME = "/dev/tty1";
 	
-	static public final String PORTNAME = W_PORTNAME;
+	static public final String PORTNAME = L_PORTNAME;
 	
 	static final public int NUMBER_OF_HEATERS = 22;
 	static final public int HEATER_ADJUSTABILITY = 32;
