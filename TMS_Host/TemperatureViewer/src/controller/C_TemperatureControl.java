@@ -52,8 +52,7 @@ public class C_TemperatureControl {
 			
 			if (!foundFirstEvenTemperatures && mDataReader.findLevelTemperatures(pTempData, 0.05f)){
 				foundFirstEvenTemperatures = true;
-				System.out.println("Reached first even (high) temperatures."); //next step: switch off heaters
-				// TODO: switch off heaters!
+				System.out.println("Reached first even (high) temperatures."); 
 			}	
 		} else {
 			mCalibration.getTemperature(mCurrTemp, pSensorData);

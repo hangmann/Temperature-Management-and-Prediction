@@ -68,7 +68,6 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 		mControlFrame = new JFrame("Temperature Measurement System");
 		mControlFrame.setLayout(new FlowLayout());
 
-		//TODO
 		mTempControl = new C_TemperatureControl(this, "output", M_TemperatureMeasurementSystem.REFRESH_INTERVAL, M_TemperatureMeasurementSystem.SENSOR_GRID_WIDTH, M_TemperatureMeasurementSystem.SENSOR_GRID_HEIGHT);
 
 		mStartCalibration = new JButton("start calibration");
