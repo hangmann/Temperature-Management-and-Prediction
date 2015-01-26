@@ -6,6 +6,7 @@ import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,17 +27,21 @@ public class C_TemperatureMeasurementSystem {
 	private M_TemperatureMeasurementSystem m_TMS;	
 	private C_SerialCommumication c_SCom;
 	private C_HeaterControl c_HC;
+	private C_TemperatureControl mTempControl;
 	
 	/**
 	 * Constructor opens and initializes serial port 
 	 */
 	public C_TemperatureMeasurementSystem() {
 
-		this.m_TMS = new M_TemperatureMeasurementSystem();
+
+		this.m_TMS = new M_TemperatureMeasurementSystem(this);
+		this.c_HC = new C_HeaterControl(this);
+		
 		this.v_TMS = new V_TemperatureMeasurementSystem(this);
+				
 		
-		c_SCom = new C_SerialCommumication(this);
-		
+		mTempControl = new C_TemperatureControl(this, "output", M_TemperatureMeasurementSystem.REFRESH_INTERVAL, M_TemperatureMeasurementSystem.SENSOR_GRID_WIDTH, M_TemperatureMeasurementSystem.SENSOR_GRID_HEIGHT);
 		
 		// start and configure serial port streams
 		try {
@@ -49,7 +54,7 @@ public class C_TemperatureMeasurementSystem {
             serialPort.setSerialPortParams(M_TemperatureMeasurementSystem.BAUD_RATE,M_TemperatureMeasurementSystem.SP_DATABITS ,M_TemperatureMeasurementSystem.SP_STOPBITS,M_TemperatureMeasurementSystem.SP_PARITY);
             m_TMS.setIn_stream(serialPort.getInputStream());
             m_TMS.setOut_stream(serialPort.getOutputStream());
-            showHeatControl(); 
+            c_SCom = new C_SerialCommumication(this);
 
 		} catch (IOException e3) {
 			e3.printStackTrace();
@@ -71,12 +76,10 @@ public class C_TemperatureMeasurementSystem {
 			System.out.println("Error: Port is already in use.");
 			System.exit(0);
 		}
+		
+
 	}
 	
-	public void showHeatControl()
-	{
-		this.c_HC = new C_HeaterControl(this);
-	}
 
 	public M_TemperatureMeasurementSystem getModel()
 	{
@@ -90,7 +93,29 @@ public class C_TemperatureMeasurementSystem {
 	
 	public C_HeaterControl getHeatControl()
 	{
-		return this.c_HC;
+		return c_HC;
+	}
+	
+    /** 
+     *  Starts Calibration routine
+     */
+    public void startCalibration() {
+
+		m_TMS.setReadMode(true);
+		m_TMS.setCalibrationMode(true);
+		getHeatControl().startCalibration();
+		mTempControl.startCalibration();
+	}
+    
+    /**
+     *  Stops Calibration
+     */
+    public void stopCalibration() {
+
+		mTempControl.stopCalibration();
+		getHeatControl().stopCalibration();
+		m_TMS.setCalibrationMode(false);
+		
 	}
 
 	public void start10MinExperiment() {
@@ -100,4 +125,12 @@ public class C_TemperatureMeasurementSystem {
 		    
 	    t.start();
 	}
+
+
+	public C_TemperatureControl getTempControl() {
+		return mTempControl;
+	}
+
+
+
 }

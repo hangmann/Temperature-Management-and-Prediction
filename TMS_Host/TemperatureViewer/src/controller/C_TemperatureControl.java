@@ -1,6 +1,8 @@
 package controller;
 import java.io.FileNotFoundException;
 
+import model.M_TemperatureMeasurementSystem;
+
 import view.V_TemperatureMeasurementSystem;
 
 /**
@@ -20,16 +22,17 @@ public class C_TemperatureControl {
 	private C_Calibration mCalibration;
 	private C_DataReader mDataReader;
 	private boolean foundFirstEvenTemperatures;
+	private C_TemperatureMeasurementSystem control;
 
 	private double[] mCurrTemp;
 
-	public C_TemperatureControl(V_TemperatureMeasurementSystem control, String pFileName, int pRefreshInterval, int pGridWidth, int pGridHeight) {
+	public C_TemperatureControl(C_TemperatureMeasurementSystem control, String pFileName, int pRefreshInterval, int pGridWidth, int pGridHeight) {
 		mFileName = pFileName;
 		mRefreshInterval = pRefreshInterval;
 		mNumberOfSensors = pGridWidth * pGridHeight;
 		mSensorGridWidth = pGridWidth;
 		mSensorGridHeight = pGridWidth;
-
+		this.control = control;
 		mIsCalibrating = false;
 		mCalibration = new C_Calibration(mNumberOfSensors);
 
@@ -42,26 +45,27 @@ public class C_TemperatureControl {
 
 	public synchronized void updateData(int[] pSensorData, double pTempData, double pVoltData) {
 		if (mIsCalibrating) {
+			
 			mCalibration.addData(pSensorData, pTempData, pVoltData - VCC);
 			
-			if (foundFirstEvenTemperatures && mDataReader.findLevelTemperatures(pTempData, 0.05f)){
-				stopCalibration();
+			if (foundFirstEvenTemperatures && mDataReader.findLevelTemperatures(pTempData, 0.55f)){
+				control.stopCalibration();
+				//stopCalibration();
 				foundFirstEvenTemperatures = false;
 				System.out.println("Reached second even (low) temperatures."); //chip fully calibrated
 			}
 			
 			if (!foundFirstEvenTemperatures && mDataReader.findLevelTemperatures(pTempData, 0.05f)){
 				foundFirstEvenTemperatures = true;
-				System.out.println("Reached first even (high) temperatures."); //next step: switch off heaters
-				// TODO: switch off heaters!
+				System.out.println("Reached first even (high) temperatures."); 
+				control.getHeatControl().setAllHeaters(0);
 			}	
 		} else {
 			mCalibration.getTemperature(mCurrTemp, pSensorData);
 		}
 	}
 
-	public synchronized void startReading() throws FileNotFoundException {
-		mDataReader.startReading();
+	public synchronized void startReading()  {
 	}
 
 	public synchronized void stopReading() {
@@ -74,11 +78,12 @@ public class C_TemperatureControl {
 
 	public synchronized void startCalibration() {
 		mIsCalibrating = true;
+		mDataReader.startReading();
+		mCalibration.calibrate();
 	}
 
 	public synchronized void stopCalibration() {
 		mIsCalibrating = false;
-		mCalibration.calibrate();
 	}
 
 	public synchronized double[] getTemperature() {

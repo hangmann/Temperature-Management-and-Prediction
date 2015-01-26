@@ -1,6 +1,4 @@
 package controller;
-import view.V_TemperatureMeasurementSystem;
-
 
 public class C_TimerThread implements Runnable {
 

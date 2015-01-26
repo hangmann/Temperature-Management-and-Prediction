@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
+import model.M_TemperatureMeasurementSystem;
+
 import view.V_Console;
 
  public class C_SerialReader implements Runnable 
@@ -14,8 +16,11 @@ import view.V_Console;
 	 	private InputStream in;
 	 	private PrintWriter out;
         private C_SerialCommumication c_SR;
+        private M_TemperatureMeasurementSystem m_TMS;
+        private String unstoredLines;
+        private String nextLine;
         
-        public C_SerialReader ( C_SerialCommumication c_SR, InputStream in)
+        public C_SerialReader ( C_SerialCommumication c_SR, InputStream in, M_TemperatureMeasurementSystem m_TMS)
         {
         	this.c_SR = c_SR;
         	try {
@@ -25,10 +30,13 @@ import view.V_Console;
 				e.printStackTrace();
 			}
             
+        	this.m_TMS = m_TMS;
+        	unstoredLines="";
+        	nextLine="";
             this.in = in;
         }
         
-        public void run ()
+        public synchronized void run ()
         {
             byte[] buffer = new byte[1024];
             int len = -1;
@@ -38,7 +46,8 @@ import view.V_Console;
                 {
                     System.out.print(new String(buffer,0,len));
                     c_SR.appendText(new String(buffer,0,len));
-                    out.print(new String(buffer,0,len));
+                    out.print(new String(buffer,0,len)); // do NOT write in file!!!
+                    m_TMS.addOutput(new String(buffer,0,len));
                 }
             }
             catch ( IOException e )
@@ -46,6 +55,8 @@ import view.V_Console;
                 e.printStackTrace();
             }
         }
+        
+
     }
 
   

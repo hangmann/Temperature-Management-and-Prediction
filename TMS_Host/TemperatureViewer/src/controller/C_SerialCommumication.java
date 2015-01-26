@@ -12,7 +12,7 @@ public class C_SerialCommumication {
 	public C_SerialCommumication(C_TemperatureMeasurementSystem c_TMS)
 	{
 		
-		c_SR = new C_SerialReader(this, c_TMS.getModel().getIn_stream());
+		c_SR = new C_SerialReader(this, c_TMS.getModel().getIn_stream(), c_TMS.getModel());
 		console = new V_Console(c_TMS);
 		// start reading serial port		
         (new Thread(c_SR)).start();

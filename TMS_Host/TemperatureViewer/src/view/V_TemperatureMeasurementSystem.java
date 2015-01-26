@@ -44,7 +44,6 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 //	static private int max_temp = 100;
 	
 	private static JButton mStartCalibration, mStopCalibration, mShowTemperatureOnChip, mToggle3d, stopHeaters, start10mex;
-	private static C_TemperatureControl mTempControl;
 	private M_TemperatureMeasurementSystem m_TMS;
 	private final C_TemperatureMeasurementSystem c_TMS;
 	
@@ -68,8 +67,6 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 		mControlFrame = new JFrame("Temperature Measurement System");
 		mControlFrame.setLayout(new FlowLayout());
 
-		//TODO
-		mTempControl = new C_TemperatureControl(this, "output", M_TemperatureMeasurementSystem.REFRESH_INTERVAL, M_TemperatureMeasurementSystem.SENSOR_GRID_WIDTH, M_TemperatureMeasurementSystem.SENSOR_GRID_HEIGHT);
 
 		mStartCalibration = new JButton("start calibration");
 		mStopCalibration = new JButton("stop calibration");
@@ -83,11 +80,14 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 		mStartCalibration.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				mStartCalibration.setEnabled(false);
+				c_TMS.startCalibration();
+		    	mStartCalibration.setEnabled(false);
 				mStopCalibration.setEnabled(true);
+		//		mStartCalibration.setEnabled(false);
+		//		mStopCalibration.setEnabled(true);
 
-				mTempControl.startCalibration();
-				c_TMS.getHeatControl().calibrate();
+		//		mTempControl.startCalibration();
+		//		c_TMS.getHeatControl().calibrate();
 			}
 		});
 		
@@ -108,11 +108,9 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 		mStopCalibration.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				mStartCalibration.setEnabled(true);
+		    	mStartCalibration.setEnabled(true);
 				mStopCalibration.setEnabled(false);
-
-				mTempControl.stopCalibration();
-				c_TMS.getHeatControl().stopExperiment();
+				c_TMS.stopCalibration();
 			}
 		});
 
@@ -121,7 +119,7 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				if (mChipView == null) {
 					// new ChipView(mTempControl, pSubdivision, pMaxFPS);
-					mChipView = new V_TemperatureDistribution(mTempControl, M_TemperatureMeasurementSystem.MIN_TEMP, M_TemperatureMeasurementSystem.MAX_TEMP, M_TemperatureMeasurementSystem.SUBDIVISION, M_TemperatureMeasurementSystem.MAX_FPS);
+					mChipView = new V_TemperatureDistribution(c_TMS.getTempControl(), M_TemperatureMeasurementSystem.MIN_TEMP, M_TemperatureMeasurementSystem.MAX_TEMP, M_TemperatureMeasurementSystem.SUBDIVISION, M_TemperatureMeasurementSystem.MAX_FPS);
 				} else {
 					mChipView.setVisible(true);
 				}
@@ -169,22 +167,7 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 		c_TMS.start10MinExperiment();		
 	}
 	
-    /**
-     *  Starts Calibration routine
-     */
-    public void startCalibration() {
-    	mStartCalibration.setEnabled(false);
-		mStopCalibration.setEnabled(true);
 
-		mTempControl.startCalibration();
-		c_TMS.getHeatControl().calibrate();
-		
-		try {
-			mTempControl.startReading();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
     	
     /**
      *  set all heaters to 0
@@ -194,16 +177,7 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
     	c_TMS.getHeatControl().stopHeaters();
     }
     
-    /**
-     *  Stops Calibration
-     */
-    public void stopCalibration() {
-    	mStartCalibration.setEnabled(true);
-		mStopCalibration.setEnabled(false);
 
-		mTempControl.stopCalibration();
-		
-	}
     
 }
 

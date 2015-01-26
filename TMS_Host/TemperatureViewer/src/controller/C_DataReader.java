@@ -2,6 +2,8 @@ package controller;
 import java.io.*;
 import java.util.ArrayList;
 
+import model.M_TemperatureMeasurementSystem;
+
 import view.V_TemperatureMeasurementSystem;
 
 /**
@@ -20,13 +22,13 @@ public class C_DataReader {
 	private int mNumberOfSensor;
 	private ReaderThread mReaderThread;
 	private Double [] tempData;
-	private V_TemperatureMeasurementSystem control;
+	private C_TemperatureMeasurementSystem control;
 	private float delta = 0.1f;
 	private boolean [] even;
 	private boolean alleven;
 	private int requiredEvenValues;
 
-	public C_DataReader(V_TemperatureMeasurementSystem control,C_TemperatureControl pTempControl, String pFileName, int pRefreshInterval, int pNumberOfSensors) {
+	public C_DataReader(C_TemperatureMeasurementSystem control,C_TemperatureControl pTempControl, String pFileName, int pRefreshInterval, int pNumberOfSensors) {
 		mTempContol = pTempControl;
 		this.control = control;
 		mFileName = pFileName;
@@ -34,12 +36,17 @@ public class C_DataReader {
 		mNumberOfSensor = pNumberOfSensors;
 		mReaderThread = new ReaderThread();
 		tempData= new Double[32];	
-		requiredEvenValues = 16;
+		requiredEvenValues = 32;
 		alleven = false;
 		even = new boolean[requiredEvenValues];
+		
+		for (int i = 0; i<32;i++)
+		{
+			tempData[i]=-1d;
+		}
 	}
 
-	public synchronized void startReading() throws FileNotFoundException {
+	public synchronized void startReading()  {
 		mReaderThread.startReading();
 	}
 
@@ -61,7 +68,7 @@ public class C_DataReader {
 		
 		tempData[requiredEvenValues-1] = mTempData;
 		
-		System.out.println(tempData[0] + " " + tempData[1] + " " + tempData[2] + " " + tempData[3]);
+//		System.out.println(tempData[0] + " " + tempData[1] + " " + tempData[2] + " " + tempData[3]);
 		
 	
 		if (tempData[0] != 0d && tempData[requiredEvenValues-1] != 0d){
@@ -106,6 +113,8 @@ public class C_DataReader {
 		private int mCurrSensorNumber;
 		private String data;
 
+		C_SensorDataLine line;
+		
 		public ReaderThread() {
 			mReading = false;
 
@@ -115,53 +124,54 @@ public class C_DataReader {
 			mSensorData = new int[mNumberOfSensor];
 			mCurrSensorNumber = 0;
 			data = "";
+			
 		}
 
-		public void run() {
-			int ci = -1;
-			char c = ' ';
-
-			while (mReading) {
-				while (linesToRead) {
-					// read new character
-					try {
-						ci = mFileReader.read();
-					} catch (IOException e) {
-						System.err.println(e);
-					}
-
-					// if no more characters to read
-					if (ci == -1) {
-						if (mState == ReadingStates.startOfNewLine) {
-							// if startOfNewLine, we must wait for new Line
-							linesToRead = false;
-						} else {
-							// otherwise we have to wait for new characters,
-							// because the file is altered by minicom while reading
-							waitForNewCharacters();
-						}
-					} else {
-						stateMachine(ci, (char) ci);
-					}
-
-				}
-
-				// wait for new Line
-				linesToRead = true;
-				try {
-					Thread.sleep(mRefreshInterval);
-					// reload file
-					reloadFile();
-				} catch (InterruptedException e) {
-					System.err.println(e);
-				}
-			}
-
-			try {
-				mFileReader.close();
-			} catch (IOException e) {
-				System.err.println(e);
-			}
+		public synchronized void run() {
+//			int ci = -1;
+//			char c = ' ';
+//
+//			while (mReading) {
+//				while (linesToRead) {
+//					// read new character
+//					try {
+//						ci = mFileReader.read();
+//					} catch (IOException e) {
+//						System.err.println(e);
+//					}
+//
+//					// if no more characters to read
+//					if (ci == -1) {
+//						if (mState == ReadingStates.startOfNewLine) {
+//							// if startOfNewLine, we must wait for new Line
+//							linesToRead = false;
+//						} else {
+//							// otherwise we have to wait for new characters,
+//							// because the file is altered by minicom while reading
+//							waitForNewCharacters();
+//						}
+//					} else {
+//						stateMachine(ci, (char) ci);
+//					}
+//
+//				}
+//
+//				// wait for new Line
+//				linesToRead = true;
+//				try {
+//					Thread.sleep(mRefreshInterval);
+//					// reload file
+//					reloadFile();
+//				} catch (InterruptedException e) {
+//					System.err.println(e);
+//				}
+//			}
+//
+//			try {
+//				mFileReader.close();
+//			} catch (IOException e) {
+//				System.err.println(e);
+//			}
 		}
 
 		private void reloadFile() {
@@ -178,6 +188,8 @@ public class C_DataReader {
 		}
 
 		private void stateMachine(int ci, char c) {
+
+			System.out.println("STATE MACHINE! mSTATE is: " + mState);
 			switch (mState) {
 				case startOfNewLine:
 					// start of a new line
@@ -188,7 +200,7 @@ public class C_DataReader {
 					if (c == ' ') {
 						data = "";
 						mCurrSensorNumber = 0;
-
+						
 						mState = ReadingStates.sensorData;
 					}
 					break;
@@ -201,7 +213,7 @@ public class C_DataReader {
 						data = "";
 
 						mCurrSensorNumber++;
-
+						//System.out.println(mCurrSensorNumber + ": " + mSensorData[mCurrSensorNumber]);
 						if (mCurrSensorNumber == mNumberOfSensor) {
 							mState = ReadingStates.tempData;
 						}
@@ -215,7 +227,6 @@ public class C_DataReader {
 					if (c == ' ') {
 						
 						mTempData = Double.parseDouble(data);
-						// TODO Scan for non-increasing non-decreasing temperature rises
 						if (findLevelTemperatures(mTempData, delta))
 						{
 							mTempContol.stopCalibration();
@@ -260,14 +271,15 @@ public class C_DataReader {
 			mTempContol.updateData(mSensorData, mTempData, mVoltData);
 		}
 
-		public void startReading() throws FileNotFoundException {
-			mFileReader = new RandomAccessFile(new File(mFileName), "r");
-			mReading = true;
+		public void startReading()  {
+		//	mFileReader = new RandomAccessFile(new File(mFileName), "r");
+		//	mReading = true;
 			this.start();
 		}
 
 		public void stopReading() {
 			mReading = false;
+			this.interrupt();
 		}
 	}
 

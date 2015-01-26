@@ -24,7 +24,8 @@ public class C_CommandParser {
 							"stop",
 							"history",
 							"toggleoutput",
-							"setoutput \\w+"};
+							"setoutput \\w+",
+							"setallheaters \\w+"};
 	
 	
 	public C_CommandParser(C_TemperatureMeasurementSystem c_TMS)
@@ -90,6 +91,7 @@ public class C_CommandParser {
 		case 11: displayHistory(); break;
 		case 12: toggleOutput(); break;
 		case 13: setOuput(Integer.parseInt(query[1])); break;
+		case 14: setAllheaters(Integer.parseInt(query[1]));break;
 		}
 		
 		
@@ -97,6 +99,20 @@ public class C_CommandParser {
 		
 	}
 	
+	private void setAllheaters(int intensity) {
+		for (int i=0; i<=21; i++)
+		{
+			c_HC.setHeater(i, intensity);	
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				
+				e.printStackTrace();
+			}
+		}
+		
+	}
+
 	private void setOuput(int parseInt) {
 		c_HC.setOutput(parseInt);
 	}

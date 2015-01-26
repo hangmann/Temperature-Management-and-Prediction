@@ -13,7 +13,7 @@ public class C_HeaterControl {
 	public C_HeaterControl(C_TemperatureMeasurementSystem c_TMS)
 	{
 		this.c_TMS = c_TMS;
-		v_HC = new V_HeaterControl(c_TMS);
+		v_HC = new V_HeaterControl(c_TMS, this);
 		
 	}
 	
@@ -36,9 +36,9 @@ public class C_HeaterControl {
 	}
 	
 	
-	public void calibrate(){
+	public void startCalibration(){
 		
-		setAllHeaters(M_TemperatureMeasurementSystem.HEATER_ADJUSTABILITY );
+		setAllHeaters(M_TemperatureMeasurementSystem.HEATER_CALIBRATION_LEVEL );
 		
 		c_TMS.getSerialCommunication().appendText("\nStarting Calibration...\n");
 		
@@ -49,6 +49,20 @@ public class C_HeaterControl {
 			e.printStackTrace();
 		}
 		startExperiment();		
+	}
+	
+	public void stopCalibration(){
+		
+		setAllHeaters(0);
+		
+		c_TMS.getSerialCommunication().appendText("\nStopping Calibration...\n");
+		
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 	}
 	
 	public void stopHeaters(){

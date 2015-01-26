@@ -110,7 +110,7 @@ public class C_Calibration {
 			
 			c = maxC;
 			
-		//	System.out.println(c);
+			//System.out.println(c);
 		}
 
 		public double calcRSquare() {

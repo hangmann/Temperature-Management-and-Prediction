@@ -25,19 +25,19 @@ public class V_HeaterControl implements ActionListener{
     private C_HeaterControl c_HC;
     
     
-    public V_HeaterControl (C_TemperatureMeasurementSystem c_TMS)
+    public V_HeaterControl (C_TemperatureMeasurementSystem c_TMS, C_HeaterControl c_HC)
 	{
     	this.m_TMS = c_TMS.getModel();
-    	this.c_HC = c_TMS.getHeatControl();
-
+    	this.c_HC = c_HC;//c_TMS.getHeatControl();
+    	
 		frame = new JFrame("Heater Control");
-		GridLayout experimentLayout = new GridLayout(M_TemperatureMeasurementSystem.NUMBER_OF_HEATERS, M_TemperatureMeasurementSystem.HEATER_ADJUSTABILITY);
+		GridLayout experimentLayout = new GridLayout(M_TemperatureMeasurementSystem.NUMBER_OF_HEATERS, M_TemperatureMeasurementSystem.HEATER_MAX_ADJUSTABILITY);
 		frame.setLayout(experimentLayout);
               
-        items = new String[M_TemperatureMeasurementSystem.HEATER_ADJUSTABILITY +1 ];
+        items = new String[M_TemperatureMeasurementSystem.HEATER_MAX_ADJUSTABILITY +1 ];
         
         String si;
-        for (int i = 0; i <= M_TemperatureMeasurementSystem.HEATER_ADJUSTABILITY; i++)
+        for (int i = 0; i <= M_TemperatureMeasurementSystem.HEATER_MAX_ADJUSTABILITY; i++)
         {
         	if (i<10)
         		si = "0"+i;
@@ -125,8 +125,9 @@ public class V_HeaterControl implements ActionListener{
 		String intensity = cb.getSelectedItem().toString();
 		
 		c_HC.setHeater(Integer.valueOf(id), Integer.valueOf(intensity));
-		
+			
 	}
+
 	
 
 	
