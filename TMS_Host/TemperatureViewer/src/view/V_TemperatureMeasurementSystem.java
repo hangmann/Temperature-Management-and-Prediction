@@ -67,7 +67,6 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 		mControlFrame = new JFrame("Temperature Measurement System");
 		mControlFrame.setLayout(new FlowLayout());
 
-
 		mStartCalibration = new JButton("start calibration");
 		mStopCalibration = new JButton("stop calibration");
 		stopHeaters = new JButton("reset heaters");
@@ -167,8 +166,7 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 		c_TMS.start10MinExperiment();		
 	}
 	
-
-    	
+   	
     /**
      *  set all heaters to 0
      */
@@ -180,4 +178,3 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 
     
 }
-

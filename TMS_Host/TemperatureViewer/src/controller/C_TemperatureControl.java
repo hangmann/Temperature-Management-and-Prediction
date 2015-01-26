@@ -45,7 +45,6 @@ public class C_TemperatureControl {
 
 	public synchronized void updateData(int[] pSensorData, double pTempData, double pVoltData) {
 		if (mIsCalibrating) {
-			
 			mCalibration.addData(pSensorData, pTempData, pVoltData - VCC);
 			
 			if (foundFirstEvenTemperatures && mDataReader.findLevelTemperatures(pTempData, 0.55f)){
@@ -84,6 +83,7 @@ public class C_TemperatureControl {
 
 	public synchronized void stopCalibration() {
 		mIsCalibrating = false;
+		mCalibration.calibrate();
 	}
 
 	public synchronized double[] getTemperature() {
