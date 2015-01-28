@@ -7,12 +7,11 @@ public class C_SerialCommumication {
 
 	private C_SerialReader c_SR;
 	private V_Console console;
-	private String consoleText;
 	
 	public C_SerialCommumication(C_TemperatureMeasurementSystem c_TMS)
 	{
 		
-		c_SR = new C_SerialReader(this, c_TMS.getModel().getIn_stream(), c_TMS.getModel());
+		c_SR = new C_SerialReader(this, c_TMS.getModel().getIn_stream(), c_TMS);
 		console = new V_Console(c_TMS);
 		// start reading serial port		
         (new Thread(c_SR)).start();
@@ -20,8 +19,12 @@ public class C_SerialCommumication {
 	
 	public void appendText(String str)
 	{
-		consoleText += str;
 		console.appendText(str);
+	}
+	
+	public void appendTextTemp(String str)
+	{
+		console.appendTextTemp(str);
 	}
 	
 	public void clearText()

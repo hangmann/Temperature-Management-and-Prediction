@@ -31,7 +31,7 @@ public class M_TemperatureMeasurementSystem {
 	static final public int SUBDIVISION = 10, MAX_FPS = 20;
 	
 	static final public int MIN_TEMP = 30;
-	static final public int MAX_TEMP = 240;
+	static final public int MAX_TEMP = 130;
 
 	// Serial Port parameters
 	static final public int BAUD_RATE = 115200;
@@ -43,7 +43,7 @@ public class M_TemperatureMeasurementSystem {
 	static public final String W_PORTNAME = "COM1";
 
 	// for linux
-	static public final String L_PORTNAME = "/dev/ttyUSB1";
+	static public final String L_PORTNAME = "/dev/ttyUSB0";
 	
 	static public final String PORTNAME = L_PORTNAME;
 	
@@ -55,22 +55,20 @@ public class M_TemperatureMeasurementSystem {
 	private InputStream in_stream;
 	private OutputStream out_stream;
 	private String output;
-	private String unstoredLines;
-	private String nextLine;
+	private String tempOutput;
 	
-	private int lastLine = 0;
 
 	private boolean calibrationMode = false;
 	private boolean readMode = true;
+	private boolean tempMode = false;
 	
 	private C_UnreadSensorData unreadSensorData;
 	private C_TemperatureMeasurementSystem c;
 	
-	public M_TemperatureMeasurementSystem(C_TemperatureMeasurementSystem c)
+	public M_TemperatureMeasurementSystem()
 	{
 		unreadSensorData=new C_UnreadSensorData();
-		nextLine = "";
-		unstoredLines = ""; this.c= c;
+		tempOutput = "";
 	}
 
 	public void setCalibrationMode(boolean bo)
@@ -78,12 +76,20 @@ public class M_TemperatureMeasurementSystem {
 		calibrationMode=bo;
 	}	
 	
-	private boolean getReadMode() {
+	public boolean getReadMode() {
 		return readMode;
 	}
 	
 	public void setReadMode(boolean b) {
 		readMode=b;
+	}
+
+	public boolean getTemperatureMode() {
+		return tempMode;
+	}
+
+	public void setTemperatureMode(boolean b) {
+		tempMode=b;
 	}
 	public boolean getCalibrationMode()
 	{
@@ -110,50 +116,20 @@ public class M_TemperatureMeasurementSystem {
 		return output;
 	}
 	
-    public synchronized void addOutput(String text) {
-		
-    	
-		if(getCalibrationMode() && text != "" && text != null)
-		{
-			unstoredLines += text;
-			if (unstoredLines.contains("\n"))
-			{
-				String [] parts = unstoredLines.split("\n");
-				if (parts.length>1){
-    				for (int i = 0; i<parts.length-1;i++)
-    				{
-    					if (parts[i].split(" ")[0].substring(0, 1).equals("3")){
-    						unreadSensorData.addLine(parts[i]);
-    					}
-    				}
-					
-				if (parts[parts.length - 1].split(" ")[0].substring(0, 1).equals("3")){
-					unstoredLines = parts[parts.length - 1];
-				} else{
-					if (parts.length==1 && parts[0].split(" ")[0].substring(0, 1).equals("3")){
-						unstoredLines=parts[0];
-					}else
-						unstoredLines = "";
-					}
-				}
-			} 
-			
-			if (getCalibrationMode() || getReadMode()) {
-				C_SensorDataLine line = getNextCompleteLine();
-				if (line != null && line.getLineNumber() != -1){
-					c.getTempControl().updateData(line.getSensorData(), line.getTemperature(), line.getVcc());
-				}
-			}
-		}
-		
-		
-	}
-	
-
-
 	public C_SensorDataLine getNextCompleteLine()
 	{
 		return unreadSensorData.getNextUnreadLine();
 	}
 
+	public void addUnreadLine(String string) {
+		 unreadSensorData.addLine(string);
+	}
+
+	public void addTempLine(String string) {
+		 tempOutput += string;
+	}
+
+	public String getUnprintedTempLine() {
+		 return tempOutput;
+	}
 }

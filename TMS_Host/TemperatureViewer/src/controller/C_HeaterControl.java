@@ -55,7 +55,6 @@ public class C_HeaterControl {
 		
 		setAllHeaters(0);
 		
-		c_TMS.getSerialCommunication().appendText("\nStopping Calibration...\n");
 		
 		try {
 			Thread.sleep(500);

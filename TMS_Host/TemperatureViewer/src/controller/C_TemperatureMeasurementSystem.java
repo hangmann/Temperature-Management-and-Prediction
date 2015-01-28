@@ -35,7 +35,7 @@ public class C_TemperatureMeasurementSystem {
 	public C_TemperatureMeasurementSystem() {
 
 
-		this.m_TMS = new M_TemperatureMeasurementSystem(this);
+		this.m_TMS = new M_TemperatureMeasurementSystem();
 		this.c_HC = new C_HeaterControl(this);
 		
 		this.v_TMS = new V_TemperatureMeasurementSystem(this);
@@ -103,7 +103,7 @@ public class C_TemperatureMeasurementSystem {
 
 		m_TMS.setReadMode(true);
 		m_TMS.setCalibrationMode(true);
-		getHeatControl().startCalibration();
+		//getHeatControl().startCalibration();
 		mTempControl.startCalibration();
 	}
     
@@ -113,8 +113,9 @@ public class C_TemperatureMeasurementSystem {
     public void stopCalibration() {
 
 		mTempControl.stopCalibration();
-		getHeatControl().stopCalibration();
+		//getHeatControl().stopCalibration();
 		m_TMS.setCalibrationMode(false);
+		getSerialCommunication().appendText("\n1: Stopping Calibration...\n");
 		
 	}
 

@@ -130,6 +130,7 @@ public class C_Calibration {
 		}
 
 		public void calcCorrXY() {
+			
 			mCorrXY = mCount * mXAvg * mCorrYAvg;
 			mCorrXY += mXYSum - c * mXVSum;
 			mCorrXY -= mCorrYAvg * mXSum;
@@ -158,6 +159,14 @@ public class C_Calibration {
 			mXXSum = 0;
 			mYYSum = 0;
 			mVVSum = 0;
+			mCorrYY = 0;
+			mCorrXY = 0;
+			a = 0;
+			b = 0;
+			c = 0 ;
+			mCorrYAvg = 0 ;
+			mXAvg = 0 ;
+			mXX = 0;
 		}
 		
 		public void calcAB() {

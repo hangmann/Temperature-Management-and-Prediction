@@ -115,6 +115,7 @@ public class V_TemperatureDistribution extends JFrame implements GLEventListener
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 		gl.glLoadIdentity();
 
+		
 		mTempGrid.setTemperature(mTempCont.getTemperature());
 		if (m3d) {
 			applyMouseTranslation(gl);

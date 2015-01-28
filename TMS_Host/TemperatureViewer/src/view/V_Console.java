@@ -19,7 +19,9 @@ public class V_Console implements ComponentListener{
 	private JFrame f;
 
 	private JTextArea textArea;
+	private JTextArea textAreaTemp;
 	private JScrollPane sbrText;
+	private JScrollPane sbrTextTemp;
 	private JPanel panel;
 	private JTextField inputText;
 	private JButton send;
@@ -39,16 +41,25 @@ public class V_Console implements ComponentListener{
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         
 		f.getContentPane().setLayout(new FlowLayout());
-		f.setLocationRelativeTo(null);
+		Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+	    int x = (int) ((dimension.getWidth() - f.getWidth()) / 2);
+	    int y = (int) ((dimension.getHeight() - f.getHeight()) / 2);
+	    f.setLocation(x, y);
         panel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         // Create Scrolling Text Area in Swing
         textArea = new JTextArea("", 20, 120);
         textArea.setEditable(false);
+        textAreaTemp = new JTextArea("", 20, 120);
+        textAreaTemp.setEditable(false);
 		sbrText = new JScrollPane(textArea);
 		sbrText.addComponentListener(this);
 		sbrText.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		sbrText.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		sbrTextTemp = new JScrollPane(textAreaTemp);
+		sbrTextTemp.addComponentListener(this);
+		sbrTextTemp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		sbrTextTemp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
 		send = new JButton("Send");
 		send.addActionListener(
@@ -68,14 +79,18 @@ public class V_Console implements ComponentListener{
 		c.gridy = 0;
 		c.anchor = GridBagConstraints.PAGE_START;
         panel.add(sbrText,c);
-		c.ipady = 0;
 		c.gridx = 0;
 		c.gridy = 1;
+		c.anchor = GridBagConstraints.PAGE_START;
+        panel.add(sbrTextTemp,c);
+		c.ipady = 0;
+		c.gridx = 0;
+		c.gridy = 2;
 		c.anchor = GridBagConstraints.PAGE_END;
 		panel.add(inputText,c);
 		c.ipady = 0;
 		c.gridx = 1;
-		c.gridy = 1;
+		c.gridy = 2;
 		c.anchor = GridBagConstraints.LAST_LINE_END;
 		panel.add(send,c);
         f.getContentPane().add(panel);
@@ -96,7 +111,6 @@ public class V_Console implements ComponentListener{
 		}
 		inputText.setText("");
 	}
-
 	
     public void appendText(String str)
     {
@@ -104,10 +118,18 @@ public class V_Console implements ComponentListener{
 
     	textArea.setCaretPosition(textArea.getDocument().getLength());
     }
+	
+    public void appendTextTemp(String str)
+    {
+    	textAreaTemp.setText(textAreaTemp.getText() +str);
+
+    	textAreaTemp.setCaretPosition(textAreaTemp.getDocument().getLength());
+    }
     
     public void clearText()
     {
     	textArea.setText("");
+    	textAreaTemp.setText("");
     }
 
 	@Override
@@ -127,6 +149,7 @@ public class V_Console implements ComponentListener{
 		// TODO Auto-generated method stub
 
 		textArea.setSize(f.getWidth(), f.getHeight());
+		textAreaTemp.setSize(f.getWidth(), f.getHeight());
 	}
 
 	@Override
