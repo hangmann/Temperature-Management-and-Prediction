@@ -19,7 +19,6 @@
 *.maf
 *.mtc
 *.mtc1
-*.pdf
 *.out
 *.synctex.gz
 *.toc
