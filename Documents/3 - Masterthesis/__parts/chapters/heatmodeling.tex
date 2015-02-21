@@ -1,9 +1,18 @@
 \chapter{Heat Modeling of Integrated Devices}
 \label{ch:heatmodeling}
 \section{Heat Models using physical device models}
-\subsection{Other Methods}
-\subsubsection{RC-\,Networks}
+\subsection{With Die Knowledge}
+\subsection{RC-\,Networks}
 \section{Extension to On-Line Evolution of Heat Models}
+
+\begin{itemize}
+	\item RCN
+	\item heat up
+	\item cool down
+	\item measure temperature
+	\item learn parameters
+	\item evaluate
+\end{itemize}
 
 \section{Temperature Measurement Methods}
 
@@ -17,7 +26,7 @@ Furthermore, the difference between two measured base-emitter voltages $\delta V
 V_{ptat}(T_{abs}) = \frac{kT}{q}\cdot ln(p)
 \end{equation}
 
-The parameters for Equation~\ref{math:PTAT} are the following:
+The parameters for Equation~\ref{eq:PTAT} are the following:
 
 \begin{itemize}
 	\item Boltzman's constant, $k = 1.38 \times 10^{-23}$
@@ -26,7 +35,7 @@ The parameters for Equation~\ref{math:PTAT} are the following:
 	\item Emission current density ratio $p$
 \end{itemize}
 
-This temperature sensor achieves an accuracy of $\pm1\symbol{23}^{\circ}C$, by calibrating $V_{be}$ at room temperature \cite{Bakkar1996}.
+This temperature sensor achieves an accuracy of $\pm1\symbol{23}^{\circ}C$, by calibrating $V_{be}$ at room temperature \cite{Bakker1996}.
 
 Also in modern \acp{FPGA} there is a trend of providing a pre-calibrated thermal diode, which are also provided at \ac{CMOS} level. These devices can for example be found at the Virtex-5 \ac{FPGA} by Xilinx, where the proportionality between the voltage and die temperature is as well exploited. Xilinx specifies this correlation with Equation~\ref{eq:XIL_PTAT} \cite{Xilinx2011a}.
 
@@ -35,7 +44,7 @@ Also in modern \acp{FPGA} there is a trend of providing a pre-calibrated thermal
 V_{ptat}(T_{abs}) = 10 \cdot \frac{kT_{abs}}{q}\cdot ln(10)
 \end{equation}
 
-Note that the emission current density ratio is here set to $p = 10$. Hence, temperature coefficient of $V_{ptat}$ is $-2\,mV/\symbol{23}^{\circ}C$.
+Note that the emission current density ratio is here set to $p = 10$. Hence, the temperature coefficient of $V_{ptat}$ is $-2\,mV/\symbol{23}^{\circ}C$.
 
 Since the thermal diode is pre-calibrated, the temperature can be derived as depicted in Equation~\ref{eq:tempcalc}. To allow the further calculation it is mandatory to convert $V_{ptat}$, given as analog signal, into a digital number. The thermal diode on a Virtex-5 \ac{FPGA} digitizes $V_{abs}$ with the help of the built-in \ac{ADC} and produces the 10\,bit output \ac{ADC} code $V_ADC$. The resulting maximum-measurement error of this on-chip temperature sensor is specified with $\symbol{23}^{\circ}C$ \cite{Xilinx2011a}.
 
@@ -48,23 +57,24 @@ Since the thermal diode is pre-calibrated, the temperature can be derived as dep
 \label{sec:IRC}
 Besides the above-named on-chip solutions of measuring the internal temperature, there is also the possibility to use \ac{IR} cameras. 
 
-For instance, \cite{Ebi2011} measured a spatial thermal gradient of 2\symbol{23}$^{\circ}C$ over 10\,mm on a Xilinx Virtex II \ac{FPGA} using an infrared camera.
-Furthermore \cite{Agne2013}.
+For instance, \cite{Ebi} measured a spatial thermal gradient of 2\symbol{23}$^{\circ}C$ over 10\,mm on a Xilinx Virtex II \ac{FPGA} using an \ac{IR} camera.
+Furthermore \cite{Agne2013} used \ac{IR} cameras to illustrate temperature gradients of $15\symbol{23}^{\circ}C$, as depicted in Figure~\ref{pic:heater_infrared}. The four \ac{IR} camera pictures were taken in three second intervals. In each interval, temperature was generated in one of the chip's four corners. Inside the heated are the temperatures rose up to $95\symbol{23}^{\circ}C$ (depicted as black area), whereas the rest of the chip featured a temperature of $80\symbol{23}^{\circ}C$.
 
-Shortcomings of this approach are that one always needs direct view on the chip's silicon layer \cite{Lopez-Buedo2004}. I.e. no heat sink, package or other material, where the emission cannot be determined.
+Using an \ac{IR} camera has the advantage of a high resolution. As stated in \cite{Nowroz2011}, \ac{IR} cameras can achieve a spatial resolution of up to $30\mu m$ with a $0.5\times$ microscopy kit. Furthermore, if the camera is set up properly, i.\,e. a direct view on the silicon and knowledge of the emission values, this approach provides accurate temperature information.
+However, shortcomings of th \ac{IR} camera approach are that one always needs direct view on the chip's silicon layer \cite{Lopez-Buedo2004}. I.e. no heat sink, package or other material, where the emission values cannot be determined.
 Besides the high price for these devices, \ac{IR} cameras cannot be employed in actual working conditions, because of their size \cite{Nowroz2011}.
 
 
 \begin{figure}[h]
 		\includegraphics[width=\textwidth]{__pics/infra_heater}
-		\caption{Four infrared images of the \ac{FPGA} with temperatures from 80\symbol{23}$^{\circ}C$ (white) to 95\symbol{23}$^{\circ}C$ (black) cf. \cite{Agne2013}}
+		\caption{Four \ac{IR} images of the \ac{FPGA} with temperatures from 80\symbol{23}$^{\circ}C$ (white) to 95\symbol{23}$^{\circ}C$ (black) cf. \cite{Agne2013}}
 		\label{pic:heater_infrared}	
 	\end{figure} 
 
 \subsection{Ring Oscillators}
 
 Nowadays, a widely spread technique to measure the internal on-chip temperatures of \ac{FPGA}-based systems are based on \acp{RO}. These devices are composed of an odd number of inverters, which are connected in a chain. The endmost inverter's output is fed back to the first inverter. Figure~\ref{pic:simple_ro} depicts such a basic \ac{RO}. This leads to a device without a stable condition, causing each inverter's output to oscillate, i.\,e. the output $Q$ toggles between $0$ and $1$ and maximum speed with frequency $f_{osc}$. A longer inverter chain leads to a lower frequency and in addition to less power consumption \cite{Velusamy2005}.
-It is because of the fact that the \ac{RO}'s frequency $f_{osc}$ is inversely proportinal to the on-chip temperature \cite{Lopez-Buedo2002}, that \acp{RO} can be used to measure the temperature on any location on the \ac{FPGA}. The output frequency $f_{osc}$ is dependant on the curcuit's delay. Furthermore, it is also known that \acp{RO} can be used in order to measure delay, leakage and dynamic power \cite{Zick2012}. 
+It is because of the fact that the \ac{RO}'s frequency $f_{osc}$ is inversely proportinal to the on-chip temperature \cite{Lopez-Buedo2002}, that \acp{RO} can be used to measure the temperature on any location on the \ac{FPGA}. The output frequency $f_{osc}$ is dependant on the curcuit's delay. Furthermore, it is also known that \acp{RO} can be used in order to measure delay, leakage and dynamic power \cite{Zick2010, Zick2012}. 
 
 \begin{figure}[h]
 		\includegraphics[width=\textwidth]{__pics/RO.pdf}
@@ -88,7 +98,7 @@ The use of latches was proposed in order to minimize the impact of routing \cite
 The benefits of designing on an \ac{FPGA} are the reconfigurability. This possible due to the \acp{CLB} of which the \ac{FPGA} is composed. The \ac{CLB} however comprises slices, which contain \acp{LUT} and \acp{FF}. 
 Hence, by using \acp{LUT} for the \ac{RO}'s inverters, the \acp{FF} can be used as latches without significant additional wiring.
 
-In contrast to previous approaches, which used seven \cite{Happe} or eleven inverters \cite{Lopez-Buedo2002, Velusamy2005} and no latches, a high-performance \ac{RO}-based temperature sensor comprises 23 inverters and 24 latches \cite{Ruthing2012}. The quality of the \ac{RO} is derived by sensor resolution and sensor noise/deviation.
+In contrast to previous approaches, which used seven \cite{Happe} or eleven inverters \cite{Lopez-Buedo2002, Velusamy2005} and no latches, a high-performance \ac{RO}-based temperature sensor comprises 23 inverters and 24 latches \cite{Ruthing2012}. The quality of the \ac{RO} is derived by the sensor's resolution and noise/deviation.
 In addition to the utilization, the optimal measurement period $t_m$ should not exceed the maximum length of $2^{16}$ clock cycles, which is $655\,\mu s$, when the counter samples with 100\,MHz. For longer measurement periods, there is a risk of self-heating, since \acp{RO} may lead to considerable temperature gradients \cite{Agne2013}.
 
 As previously pointed out, the optimal measurement with the proposed temperature sensor includes the following steps \cite{Ruthing2012}:
@@ -108,25 +118,65 @@ While the device is heated up and cooled down afterwards, $S$ is counted and the
 
 The following approaches request for a temporal temperature gradients equally distributed on the chip. Section~\ref{sec:tempgen} will give an overview of most common and useful methods for heating up the sensors, e.g. the \ac{RO}-based temperature sensors.
 
-As proposed in \cite{Lopez-Buedo2002} the sensors were calibrated by an iron-constantan (Fe-CuNi) thermocouple which is placed in the center of the package exactly measure the on-chip temperature $T$.
+As proposed in \cite{Lopez-Buedo2002} the sensors were calibrated by an iron-constantan (Fe-CuNi) thermocouple which is placed in the centre of the package exactly measure the on-chip temperature $T$.
 
 Section~\ref{sec:IRC} already illustrated that \ac{IR} cameras are able to exactly measure the on-chip temperature $T$ \cite{Nowroz2011}, provided that the camera is pointing directly on the silicon and the emission value is known. Additionally of course, they can be used for calibrating the \ac{RO}-based temperature sensors with high accuracy. 
-WIE GENAU???
 
-Another way to calibrate the sensors is to make use of the built-in thermal diode, which was presented in Section~\ref{sec:diode}. While heating up the chip, the sensor data $S$ and the diode temperature $T_{diode}$ are captured. Again, note that this diode has a $\pm 4°C$ inaccuracy and it is known where the sensor is exactly placed on the \ac{FPGA}.
+Also, temperature-controlled ovens might be used for calibrating the sensors. Because by setting and thereby knowing the surround temperature of the die, $T$ and $S$ can also be captured.
 
-\subsection{Discussion on Accuracy}
-table?
--  +4°C diode (where? no hot spot detection)
--  ROTS (calibrated with +4°C acc and where?!)
--  IR Cam (expensive, no usage in field, silicon view, knowledge about emission)
+Another way to calibrate the sensors is to make use of the built-in thermal diode, which was presented in Section~\ref{sec:diode}. While heating up the chip, the sensor data $S$ and the diode temperature $T_{diode}$ are captured. Note that this diode has $\pm 4°C$ inaccuracy and is assumed to be in the centre of the \ac{FPGA} \cite{Agne2013}.
+
+\subsection{Discussion on Accuracy and Calibration}
+
+The above-named approaches all fit well in the application of measuring temperatures and - if the devices are pre-calibrated - calibration of other sensors. However, each has benefits and shortcomings, which are listed in Table~\ref{tab:proconmeasurement}. The thermal diode, which is built-in in many nowadays \acp{FPGA} benefits from being easily accessible via the system monitor. Using this temperature sensor requires no additional implementation or calibration. On the other hand the specified accuracy of $\pm 4\symbol{23}^{\circ}C$ may be to much. Furthermore, this accuracy can possibly not be met in real life. As depicted in \cite{Sayed2011}, the diode has measured incorrect temperatures compared to an external thermometer. On a Xilinx Virtex-5 \ac{FPGA} the difference between both devices amounts to $20.3\symbol{23}^{\circ}C$. Until now, it has not been resolved why this differences occurs.
+Another disadvantage of using the thermal diode is that it is not clear where on the \ac{FPGA} it is placed, though it is assumed to be in the centre of the \ac{FPGA} \cite{Agne2013}. Hence the diode is not able to detect on-chip hot spots or the specific temperature of a certain instantiated circuit on the \ac{FPGA}.
+
+A much more accurate approach is the use of \ac{IR} cameras. It is able to measure the on-chip temperatures with a high resolution, i.\,e. everywhere on the \ac{FPGA}. This again leads to the possibility of detecting hot spots.
+On the other hand, \ac{IR} cameras are not only very expensive but very bulky, which hinders the in-field application. Beyond that, you need to have direct vision onto the silicon, which requires unpacking of the die.
+
+The most effective way to measure temperatures on reconfigurable devices is using \ac{RO}-based temperature sensors. It has nearly the advantages compared to \ac{IR} cameras, and is beyond that easy to implement in reconfigurable computing devices. However, these sensor network needs to be calibrated. As this work aims to reconfigurable devices, i.\,e. \acp{FPGA}, the only handy and imaginable approach is the thermal diode, which could be a disadvantage in occurrence of incorrect measurements.
+
+
+
+\begin{tabular}{|p{3.16cm}|p{3.16cm}|p{3.16cm}|}
+	\hline  \textbf{Measurement Technique} & \textbf{Pro} &  \textbf{Contra} \label{tab:proconmeasurement}\\ 
+	\hline  \textbf{Thermal diode} & Built-in and pre-calibrated & Inaccuracy and no hot spot detection \\ 
+	\hline  \textbf{\ac{IR} camera} & Very accurate, high resolution and hot spot detection & Very expensive, no usage in field, requires view on silicon and knowledge about emission values \\ 
+	\hline  \textbf{\ac{RO}-based sensor} & High resolution and hot spot detection & Calibration \\ 
+	\hline
+\end{tabular} 
+
 
 \section{Temperature Generation Methods}
 \label{sec:tempgen}
 
-As said earlier \ac{RO} temperature sensors have to be calibrated before use. For example, this can be done by 
-There are several approaches\cite{Velusamy2005, Lopez-Buedo2002, Zick2010}
+As said earlier most sensors, e.\,g. \ac{RO}-based, have to be calibrated before use. In order to do so accurately, the \ac{IC} needs to be heated up to learn about the sensor output in combination with a pre-calibrated sensor temperature output.
+But besides that, it might be interesting to heat up devices for the sake of evaluating the functionality. This may include fault tolerance like timing or soft and hard errors under occurrence of heat, especially for scientific use.
 
-Several approaches are using a temperature-controlled oven in order to heat up the chip \cite{Velusamy2005, Lopez-Buedo2002, Zick2010}. Either the sensors are calibrated by surrounding temperature or 
+Several approaches are using a temperature-controlled oven in order to heat up the chip \cite{Velusamy2005, Lopez-Buedo2002}. This way, the \ac{IC} is heated up and simultaneously the \acp{RO} are calibrated. In the first instance, these approaches use heat generation for calibration. But as a matter of principle, temperature controlled ovens can be used to heat up \acp{IC} uniformly distributed on the die.
+Practically, on the other hand, it might also be interesting to create local hot spots and generate spatial gradients on the chip in order to learn about the chip's thermal properties. Temperature controlled ovens do not support this kind of researching, not least because of the needed bulky external device.
+A much handier way to calibrate sensors might be the laser trimming \cite{Bakker1996}, which is out of place in the field of reconfigurable computing, for instance for designing on \acp{FPGA}.
 
-	VCC and temperature proportionally ! \cite{Ruthing2012}
+A better way, which also perfectly matches the advantages of reconfigurable computing is the use of dedicated heat generating circuits, specified in Verilog or \ac{VHDL}. 
+
+\cite{Sayed2011}  up to 37°C with 80\% utilization with LUT-FF-Pipeline, 
+\cite{Happe} 10.000 FF at 100 MHz --> 6.5°C spatial gradient
+\cite{Agne2013}  increase LUT OSc +81.2°C  , 10°C gradient
+
+\begin{figure}[h]
+	\includegraphics[width=\textwidth]{__pics/FFpipe.pdf}
+	\caption{\ac{FPGA}-Implementation of a 1-level \ac{RO}}
+	\label{pic:ffpipe}	
+\end{figure}
+
+\begin{figure}[h]
+	\includegraphics[width=\textwidth]{__pics/LUTFFpipe.pdf}
+	\caption{\ac{FPGA}-Implementation of a 1-level \ac{RO}}
+	\label{pic:lutffpipe}	
+\end{figure}
+
+\begin{figure}[h]
+	\includegraphics[width=0.75\textwidth]{__pics/lutoscillator.pdf}
+	\caption{\ac{FPGA}-Implementation of a 1-level \ac{RO}}
+	\label{pic:lutosc}	
+\end{figure} 
