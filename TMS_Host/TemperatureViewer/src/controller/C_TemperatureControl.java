@@ -47,18 +47,18 @@ public class C_TemperatureControl {
 		if (control.getModel().getCalibrationMode()) {
 			mCalibration.addData(pSensorData, pTempData, pVoltData - VCC);
 			
-			if (foundFirstEvenTemperatures && mDataReader.findLevelTemperatures(pTempData, 0.55f)){
-				control.stopCalibration();
-				//stopCalibration();
-				foundFirstEvenTemperatures = false;
-				System.out.println("Reached second even (low) temperatures."); //chip fully calibrated
-			}
-			
-			if (!foundFirstEvenTemperatures && mDataReader.findLevelTemperatures(pTempData, 0.05f)){
-				foundFirstEvenTemperatures = true;
-				System.out.println("Reached first even (high) temperatures."); 
-				control.getHeatControl().setAllHeaters(0);
-			}	
+//			if (foundFirstEvenTemperatures && mDataReader.findLevelTemperatures(pTempData, 0.55f)){
+//				control.stopCalibration();
+//				//stopCalibration();
+//				foundFirstEvenTemperatures = false;
+//				System.out.println("Reached second even (low) temperatures."); //chip fully calibrated
+//			}
+//			
+//			if (!foundFirstEvenTemperatures && mDataReader.findLevelTemperatures(pTempData, 0.05f)){
+//				foundFirstEvenTemperatures = true;
+//				System.out.println("Reached first even (high) temperatures."); 
+//				control.getHeatControl().setAllHeaters(0);
+//			}	
 		} else {
 			mCalibration.getTemperature(mCurrTemp, pSensorData);
 		}

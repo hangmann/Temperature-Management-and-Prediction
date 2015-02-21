@@ -23,14 +23,13 @@ public class C_HeaterControl {
 			for (int i = 0;  i < M_TemperatureMeasurementSystem.NUMBER_OF_HEATERS; i++)
 			{	
 				v_HC.setComboIndex(i, j);
-	
-			//	setHeater(i,j);
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
 			}
 		}
 	}
@@ -117,7 +116,6 @@ public class C_HeaterControl {
 	
 	public void startExperiment() {
 		sendMsg("startex");
-		c_TMS.getSerialCommunication().clearText();
 	}
 
 

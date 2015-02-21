@@ -49,7 +49,7 @@ public class M_TemperatureMeasurementSystem {
 	
 	static final public int NUMBER_OF_HEATERS = 22;
 	static final public int HEATER_MAX_ADJUSTABILITY = 32;
-	static final public int HEATER_CALIBRATION_LEVEL = 16; // higher levels might force the fpga to crash
+	static final public int HEATER_CALIBRATION_LEVEL = 16; 
 	static final public int NUMBER_OF_SENSORS = 25;
 	
 	private InputStream in_stream;

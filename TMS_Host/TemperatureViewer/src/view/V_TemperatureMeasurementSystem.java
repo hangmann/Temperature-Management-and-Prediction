@@ -7,7 +7,7 @@ import javax.swing.*;
 import model.M_TemperatureMeasurementSystem;
 import controller.C_SerialReader;
 import controller.C_TemperatureControl;
-import controller.C_TimerThread;
+import controller.C_ExperimentThread;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -43,7 +43,7 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 //	static private int min_temp = 30;
 //	static private int max_temp = 100;
 	
-	private static JButton mStartCalibration, mStopCalibration, mShowTemperatureOnChip, mToggle3d, stopHeaters, start10mex;
+	private static JButton mStartCalibration, mStopCalibration, mShowTemperatureOnChip, mToggle3d, stopHeaters, startEx;
 	private M_TemperatureMeasurementSystem m_TMS;
 	private final C_TemperatureMeasurementSystem c_TMS;
 	
@@ -72,7 +72,7 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 		mStartCalibration = new JButton("start calibration");
 		mStopCalibration = new JButton("stop calibration");
 		stopHeaters = new JButton("reset heaters");
-		start10mex = new JButton("start 10min experiment");
+		startEx = new JButton("start experiment");
 		mShowTemperatureOnChip = new JButton("Show temperature on Chip");
 		mToggle3d = new JButton("Toggle 2D/3D");
 		mStopCalibration.setEnabled(false);
@@ -99,7 +99,7 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 			}
 		});
 		
-		start10mex.addActionListener(new ActionListener() {
+		startEx.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				start10MinExperiment();
@@ -144,7 +144,7 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 		mControlFrame.add(mStartCalibration);
 		mControlFrame.add(mStopCalibration);
 		mControlFrame.add(stopHeaters);
-		mControlFrame.add(start10mex);
+		mControlFrame.add(startEx);
 		mControlFrame.add(mShowTemperatureOnChip);
 		mControlFrame.add(mToggle3d);
 		mControlFrame.pack();

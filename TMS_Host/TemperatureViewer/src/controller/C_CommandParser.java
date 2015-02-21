@@ -100,16 +100,7 @@ public class C_CommandParser {
 	}
 	
 	private void setAllheaters(int intensity) {
-		for (int i=0; i<=21; i++)
-		{
-			c_HC.setHeater(i, intensity);	
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				
-				e.printStackTrace();
-			}
-		}
+		c_HC.setAllHeaters(intensity);	
 		
 	}
 

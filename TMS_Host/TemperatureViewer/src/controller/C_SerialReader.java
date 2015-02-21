@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import model.M_TemperatureMeasurementSystem;
 
@@ -15,18 +18,22 @@ import view.V_Console;
     {
 	 	private InputStream in;
 	 	private PrintWriter out;
+	 	private PrintWriter out_calibrating;
         private C_SerialCommumication c_SR;
         private M_TemperatureMeasurementSystem m_TMS;
         private C_TemperatureMeasurementSystem c_TMS;
         private String unstoredLines;
         private int numberOfSensorValues = 0;
         private boolean firstCall = true;
+        Calendar rightNow;
         
         public C_SerialReader ( C_SerialCommumication c_SR, InputStream in, C_TemperatureMeasurementSystem c_TMS)
         {
+        	String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmm").format(Calendar.getInstance().getTime());
         	this.c_SR = c_SR;
         	try {
-				out = new PrintWriter(new BufferedWriter(new FileWriter("output", true)));
+				out = new PrintWriter(new BufferedWriter(new FileWriter("output" + timeStamp, true)));
+				out_calibrating = new PrintWriter(new BufferedWriter(new FileWriter("output" + timeStamp+"_calibrating", true)));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -116,12 +123,16 @@ import view.V_Console;
         							String partsTemp = substituteSensorValues(parts[i]);
         							m_TMS.addTempLine(partsTemp);
                                     c_SR.appendTextTemp(partsTemp + "\n");
-                                    out.print(partsTemp + "\n");
+                                    out.print(partsTemp);
+            					}else{
+                                    c_SR.appendText(parts[i] + "\n");
+                                    out_calibrating.print(parts[i]);
             					}
             					m_TMS.addUnreadLine(parts[i]);
-                                c_SR.appendText(parts[i] + "\n");
             					
-        					}
+        					} else
+                                c_SR.appendText(parts[i] + "\n");
+        						
         				}
     					
     				if (parts[parts.length - 1].split(" ")[0].substring(0, 1).equals("3")){

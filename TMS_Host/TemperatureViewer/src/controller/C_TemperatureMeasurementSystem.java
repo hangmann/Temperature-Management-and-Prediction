@@ -103,7 +103,7 @@ public class C_TemperatureMeasurementSystem {
 
 		m_TMS.setReadMode(true);
 		m_TMS.setCalibrationMode(true);
-		//getHeatControl().startCalibration();
+		getHeatControl().startExperiment();
 		mTempControl.startCalibration();
 	}
     
@@ -116,13 +116,15 @@ public class C_TemperatureMeasurementSystem {
 		//getHeatControl().stopCalibration();
 		m_TMS.setCalibrationMode(false);
 		getSerialCommunication().appendText("\n1: Stopping Calibration...\n");
+		start10MinExperiment();
+		//getSerialCommunication().clearText();
 		
 	}
 
 	public void start10MinExperiment() {
-		getHeatControl().startExperiment();
+		//getHeatControl().startExperiment();
 		//heatControl.setOutput(0);
-		Thread t = new Thread(new C_TimerThread(600000, 32, this));
+		Thread t = new Thread(new C_ExperimentThread(16, this));
 		    
 	    t.start();
 	}
