@@ -3,54 +3,43 @@
 
 #include <stdio.h>
 
-/* grid coordinates */
-struct coordinate_t
-{
-	int x;
-	int y;
-};
-
-/* network topology connector */
-struct connector
-{
-	float R; /* resistance */
-	struct coordinate_t coord;
-};
-
 /* network topology node */
-struct node_t
+struct node
 {
-	float C; /* capacity */
-	float T; /* temperature */
-	float F; /* heat flow to node */
-	struct coordinate_t coord;
-};
-
-/* layer of nodes */
-struct node_layer_t
-{
-	struct node_t * nodes;
-	
-};
-
-/* layer of nodes */
-struct connector_layer_t
-{
-	struct connector_t * connector;
-	
+	float capacity; /* capacity */
+	float temperature; /* temperature */
+	float heatflow; /* heat flow to node */
+	int coordx;
+    int coordy;
+    int layer;
+    int num_neighbors;
+    struct node * neighbors;
+    float * resistance;
 };
 
 /* thermal model */
-struct model_t
+struct rc_network
 {
 	int num_layers;  			/* number of layers */
-	struct node_layer_t * n_layers;		/* layers of nodes */
-	struct node_layer_t * sink_n_layer;	/* node layer of heat sink */
-	struct node_layer_t * source_layer;	/* node layer of heat source */
-	struct connector_layer_t * c_layers;	/* layers of connectors */
-	struct connector_layer_t sink_c_layer;	/* connector layer to heat sink */
+    int num_nodes;          /* number of nodes in models */
+    int num_nodes_per_layer;          /* number of nodes in models */
+    struct node * nodes;    /* nodes in rc network*/
+   
+    float * resistance_sink;               /* resistances between maximum layer nodes and head sink */
+	float * heatflow_source;              /* heat source temperatures */
+    
+    float temperature_sink;
+    
 	int size_x;				/* network width */
 	int size_y;				/* network height */
 };
+
+struct rc_network * create(int x, int y, int l);
+void calculate_nodes (struct rc_network * rcn);
+void free(struct rc_network * rcn);
+void init(struct rc_network * rcn);
+void simulate(struct model_t * model, float sim_time, float dt);
+//void print(struct model_t * model, FILE * fout);
+//void temperatures_print(struct model_t * model, FILE * fout, int line_length);
 
 #endif
