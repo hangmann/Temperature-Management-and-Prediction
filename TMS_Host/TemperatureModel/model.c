@@ -3,11 +3,7 @@
 
 int main (int argc, char **argv)
 {
-	int i;
-	i= 47;
-
-	printf ("i ist gleiiiich %d", i);
-
+	// TODO
 	return 0;
 }
 
