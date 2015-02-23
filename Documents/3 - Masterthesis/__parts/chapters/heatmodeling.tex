@@ -1,8 +1,50 @@
 \chapter{Heat Modeling of Integrated Devices}
 \label{ch:heatmodeling}
 \section{Heat Models using physical device models}
-\subsection{With Die Knowledge}
-\subsection{RC-\,Networks}
+\subsection{Discrete Cosine Transform Approach}
+
+\begin{center}
+\begin{figure}[h]
+\begin{center}
+	\includegraphics[width=0.8\textwidth]{__pics/regions}
+	\caption{The temperature in the field region is derived from the power in the source region cf. \cite{Sapatnekar2005}}
+	\label{pic:regions}	
+\end{center}
+\end{figure} 
+\end{center}
+
+\begin{equation}
+\label{eq:hde}
+\rho c_p \frac{\partial T(x,y,z,t)}{\partial t} =
+\nabla \cdot [k(x,y,z,T) \nabla T(x,y,z,t)] +g(x,y,z,t)
+\end{equation}
+
+\begin{center}
+	\begin{figure}[h]
+		\begin{center}
+			\includegraphics[width=0.8\textwidth]{__pics/packaging}
+			\caption{Stacked layers in a typical \ac{CBGA} package \cite{Huang2006}}
+			\label{pic:packaging}	
+		\end{center}
+	\end{figure} 
+\end{center}
+
+\subsection{HotSpot}
+\cite{Huang2006}
+
+\subsubsection{RC-\,Networks}
+
+\begin{center}
+	\begin{figure}[h]
+		\begin{center}
+			\includegraphics[width=0.7\textwidth]{__pics/rcn}
+			\caption{RC-Network with two layers \cite{Happe}}
+			\label{pic:rcn2}	
+		\end{center}
+	\end{figure} 
+\end{center}
+
+
 \section{Extension to On-Line Evolution of Heat Models}
 
 \begin{itemize}
@@ -128,7 +170,7 @@ Another way to calibrate the sensors is to make use of the built-in thermal diod
 
 \subsection{Discussion on Accuracy and Calibration}
 
-The above-named approaches all fit well in the application of measuring temperatures and - if the devices are pre-calibrated - calibration of other sensors. However, each has benefits and shortcomings, which are listed in Table~\ref{tab:proconmeasurement}. The thermal diode, which is built-in in many nowadays \acp{FPGA} benefits from being easily accessible via the system monitor. Using this temperature sensor requires no additional implementation or calibration. On the other hand the specified accuracy of $\pm 4\symbol{23}^{\circ}C$ may be to much. Furthermore, this accuracy can possibly not be met in real life. As depicted in \cite{Sayed2011}, the diode has measured incorrect temperatures compared to an external thermometer. On a Xilinx Virtex-5 \ac{FPGA} the difference between both devices amounts to $20.3\symbol{23}^{\circ}C$. Until now, it has not been resolved why this differences occurs.
+The above-named approaches all fit well in the application of measuring temperatures and - if the devices are pre-calibrated - calibration of other sensors. However, each has benefits and shortcomings, which are listed in Table~\ref{tbl:proconmeasurement}. The thermal diode, which is built-in in many nowadays \acp{FPGA} benefits from being easily accessible via the system monitor. Using this temperature sensor requires no additional implementation or calibration. On the other hand the specified accuracy of $\pm 4\symbol{23}^{\circ}C$ may be to much. Furthermore, this accuracy can possibly not be met in real life. As depicted in \cite{Sayed2011}, the diode has measured incorrect temperatures compared to an external thermometer. On a Xilinx Virtex-5 \ac{FPGA} the difference between both devices amounts to $20.3\symbol{23}^{\circ}C$. Until now, it has not been resolved why this differences occurs.
 Another disadvantage of using the thermal diode is that it is not clear where on the \ac{FPGA} it is placed, though it is assumed to be in the centre of the \ac{FPGA} \cite{Agne2013}. Hence the diode is not able to detect on-chip hot spots or the specific temperature of a certain instantiated circuit on the \ac{FPGA}.
 
 A much more accurate approach is the use of \ac{IR} cameras. It is able to measure the on-chip temperatures with a high resolution, i.\,e. everywhere on the \ac{FPGA}. This again leads to the possibility of detecting hot spots.
@@ -137,15 +179,24 @@ On the other hand, \ac{IR} cameras are not only very expensive but very bulky, w
 The most effective way to measure temperatures on reconfigurable devices is using \ac{RO}-based temperature sensors. It has nearly the advantages compared to \ac{IR} cameras, and is beyond that easy to implement in reconfigurable computing devices. However, these sensor network needs to be calibrated. As this work aims to reconfigurable devices, i.\,e. \acp{FPGA}, the only handy and imaginable approach is the thermal diode, which could be a disadvantage in occurrence of incorrect measurements.
 
 
+\begin{center}
+\begin{table}
 
+\begin{center}
 \begin{tabular}{|p{3.16cm}|p{3.16cm}|p{3.16cm}|}
+	
 	\hline  \textbf{Measurement Technique} & \textbf{Pro} &  \textbf{Contra} \label{tab:proconmeasurement}\\ 
-	\hline  \textbf{Thermal diode} & Built-in and pre-calibrated & Inaccuracy and no hot spot detection \\ 
+	\hline \hline  \textbf{Thermal diode} & Built-in and pre-calibrated & Inaccuracy and no hot spot detection \\ 
 	\hline  \textbf{\ac{IR} camera} & Very accurate, high resolution and hot spot detection & Very expensive, no usage in field, requires view on silicon and knowledge about emission values \\ 
 	\hline  \textbf{\ac{RO}-based sensor} & High resolution and hot spot detection & Calibration \\ 
 	\hline
 \end{tabular} 
-
+\caption{Advantages and Disadvantages of several temperature measurement techniques}
+\label{tbl:proconmeasurement}
+\end{center}
+\end{table}
+	
+\end{center}
 
 \section{Temperature Generation Methods}
 \label{sec:tempgen}
@@ -157,26 +208,52 @@ Several approaches are using a temperature-controlled oven in order to heat up t
 Practically, on the other hand, it might also be interesting to create local hot spots and generate spatial gradients on the chip in order to learn about the chip's thermal properties. Temperature controlled ovens do not support this kind of researching, not least because of the needed bulky external device.
 A much handier way to calibrate sensors might be the laser trimming \cite{Bakker1996}, which is out of place in the field of reconfigurable computing, for instance for designing on \acp{FPGA}.
 
-A better way, which also perfectly matches the advantages of reconfigurable computing is the use of dedicated heat generating circuits, specified in Verilog or \ac{VHDL}. 
-
-\cite{Sayed2011}  up to 37°C with 80\% utilization with LUT-FF-Pipeline, 
-\cite{Happe} 10.000 FF at 100 MHz --> 6.5°C spatial gradient
-\cite{Agne2013}  increase LUT OSc +81.2°C  , 10°C gradient
+A better way, which also perfectly matches the advantages of reconfigurable computing is the use of dedicated heat generating circuits, specified in Verilog or \ac{VHDL}, following the approach of self-heating. By instantiating the low level components of a \ac{FPGA}, several approaches achieved temperature increases and local hot spots on the die. These components are mostly placed in the \ac{FPGA}'s \ac{CLB} and comprise
 
 \begin{figure}[h]
-	\includegraphics[width=\textwidth]{__pics/FFpipe.pdf}
-	\caption{\ac{FPGA}-Implementation of a 1-level \ac{RO}}
-	\label{pic:ffpipe}	
+	\includegraphics[width=\textwidth]{__pics/v5.pdf}
+	\caption{A simplified overview of a Virtex-5 \ac{FPGA}}
+	\label{pic:v5}	
 \end{figure}
+
+\begin{itemize}
+	\item \acp{LUT}\\
+			Arranged in the \ac{CLB}'s slices. \acp{LUT} can implement any \textit{n}-input logic function. The highest amount of input signals \textit{n} is nowadays 6. Logical functions with a higher amount in input signals can be achieved by combining several \acp{LUT}
+	\item \acp{FF}\\
+			Also stored in slices next to \acp{LUT}. \acp{FF} can be initialized with a start value.
+	\item \acp{DSP}\\
+			\ac{DSP} blocks are compact and high-speed circuits and fulfil the special purpose of huge arithmetical and logical operations. Usually there is a special area between some \acp{CLB}
+	\item \acp{BRAM}\\
+	       Also arranged between several \ac{CLB}. \acp{BRAM} can for instance be used as \ac{FIFO}, single or dual port \ac{RAM}.
+\end{itemize}
+
+Figure~\ref{pic:v5} depicts the arrangement of these components on Virtex-5 \ac{FPGA}. Additionally \ac{IO} blocks, \ac{DCM} and \ac{PLL} are added.
+
+It is easy to see that the most effective way to generate temperature increases and especially local hot spots or spatial temperature gradients is to use the \acp{CLB}, i.\,e. \acp{LUT} and \acp{FF}. The designer is thereby almost not restricted to an area that can be heated. 
+As illustrated in \cite{Sayed2011} the used \ac{FPGA} increased its temperature up to 37$\symbol{23}^{\circ}C$ by utilizing $80\%$ of the \acp{CLB}. More precisely, the \acp{LUT} and \acp{FF} were arranged in a pipeline as depicted in Figure~\ref{pic:lutffpipe}, clocked at $100\,MHz$. The output of each \ac{LUT} was wired with the input of another \ac{FF}, whose output was on the contrary was wired to another \ac{LUT} and so on.
 
 \begin{figure}[h]
 	\includegraphics[width=\textwidth]{__pics/LUTFFpipe.pdf}
-	\caption{ MARK SLICE!! }
+	\caption{ Pipeline consisting of \acp{LUT} and \acp{FF}}
 	\label{pic:lutffpipe}	
 \end{figure}
 
 \begin{figure}[h]
-	\includegraphics[width=0.75\textwidth]{__pics/lutoscillator.pdf}
+	\includegraphics[width=\textwidth]{__pics/FFpipe.pdf}
+	\caption{Pipeline consisting of \acp{FF} }
+	\label{pic:ffpipe}	
+\end{figure}
+
+Local hotspots were for instance created by using a \ac{FF} pipeline as illustrated in Figure~\ref{pic:ffpipe}. As \cite{Happe} depicted, it is possible to create a spatial gradient of $6.5\symbol{23}^{\circ}C$ by utilizing 10.000 \acp{FF} on the \ac{FPGA}, which were clocked at $100\%$.
+
+As a systematic study of possible heat generating circuits yielded, there are even more temperature increases and spatial gradients possible \cite{Agne2013}. A average overall temperature rise of $81.2\symbol{23}^{\circ}C$ was achieved by implementing 1.000 single-level oscillators on the \ac{FPGA}. As Figure~\ref{pic:lutosc} depicts, this oscillators were realized with \acp{LUT}, which fed back the outputs to the input \textit{I0}. The logical function that was stored in this \ac{LUT} is a simple \ac{XOR}, which function as an inverter, when the enabling signal is activated. This slim and effective heat generating circuit also achieved a spatial temperature gradient of up to $10\symbol{23}^{\circ}C$.
+
+\begin{center}
+\begin{figure}[h]
+\begin{center}
+	\includegraphics[width=0.70\textwidth]{__pics/lutoscillator.pdf}
 	\caption{\ac{FPGA}-Implementation of a 1-level \ac{RO}}
 	\label{pic:lutosc}	
-\end{figure} 
+\end{center}
+\end{figure} 	
+\end{center}

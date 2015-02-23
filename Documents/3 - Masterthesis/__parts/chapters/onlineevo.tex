@@ -2,10 +2,16 @@
 \chapter{Online Evolution of Heat Models}
 \label{ch:onlineevo}
 
-\begin{itemize}
-\item{Methodology}
-\subitem{Definition of Heat Model}
-\subitem{Measurement modes and Accuracy}
-\item{Learning and Optimizing Algorithms}
-\subitem{Methodology of used Algorithms}
-\end{itemize}
+
+\section{Methodology}
+\subsection{Temperature Model Definition}
+
+\begin{equation}
+\label{eq:mse}
+mse(P)=\frac{1}{|N||M|} \cdot \sum_{i\in M} \sum_{j\in N} (T_s(P,t_i,j)-T_m(t_i,j))^2
+\end{equation}
+
+\subsection{Learning and Optimizing Algorithms}
+\subsubsection{Simulated Annealing}
+
+\subsubsection{Evolutionary Algorithms}
