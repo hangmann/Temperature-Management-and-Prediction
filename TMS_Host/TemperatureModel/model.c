@@ -25,28 +25,29 @@
  */
 rc_network * create(int x, int y, int l)
 {
-    rc_network * model;
-    int num_resistances;  //number of overall resistances between nodes (except sink and source)
+    rc_network * rcn;
     
-    model->num_nodes_per_layer = x * y;
-    model->num_layers = l;
-    model->num_nodes = model->num_nodes_per_layer * model->num_layers;
-    model->size_x = x;
-    model->size_y = y;
+    rcn = malloc(sizeof * rcn);
+	assert(rcn);
+	rcn->nodes = malloc(rcn->num_nodes * sizeof *rcn->nodes);
+	assert(rcn->nodes);
+
+	rcn->num_nodes_per_layer = x * y;
+	rcn->num_layers = l;
+	rcn->num_nodes = rcn->num_nodes_per_layer * rcn->num_layers;
+	rcn->size_x = x;
+	rcn->size_y = y;
+
+	rcn->inv_resistance_sink = malloc(rcn->num_nodes_per_layer * sizeof *rcn->inv_resistance_sink);
+	assert(rcn->inv_resistance_sink);
+	rcn->heatflow_source = malloc(rcn->num_nodes_per_layer * sizeof *rcn->heatflow_source );
+	assert(rcn->heatflow_source );
+
+
+
+    //num_resistances = ((x - 1) * x + y * (y - 1)) * l + rcn->num_nodes_per_layer;  // total number of connections between nodes (except sink and source)
     
-    model = malloc(sizeof * model);
-	assert(model);
-	model->nodes = malloc(model->num_nodes * sizeof *model->nodes);
-	assert(model->nodes);
-    
-    num_resistances = ((x - 1) * x + y * (y - 1)) * l + model->num_nodes_per_layer;  // total number of connections between nodes (except sink and source)
-    
-    model->resistance_sink = malloc(model->num_nodes_per_layer * sizeof *model->resistance_sink);
-	assert(model->resistance_sink);
-    model->heatflow_source = malloc(model->num_nodes_per_layer * sizeof *model->heatflow_source );
-	assert(model->heatflow_source );
-    
-    return model;
+    return rcn;
 }
 
 
@@ -109,14 +110,14 @@ void init (rc_network * rcn)
                     neighboring_nodes_raw[num_of_neighbors - 1] = rcn->nodes[node_index + 1];
                 }
                 
-          /*      rcn->nodes[node_index].neighbors = malloc(rcn->nodes[node_index].num_neighbors * sizeof *rcn->nodes[node_index].neighbors);
+                rcn->nodes[node_index].neighbors = malloc(rcn->nodes[node_index].num_neighbors * sizeof *rcn->nodes[node_index].neighbors);
                 assert(rcn->nodes[node_index].neighbors);
                 
-                rcn->nodes[node_index].resistance = malloc(rcn->nodes[node_index].num_neighbors * sizeof *rcn->nodes[node_index].resistance);
-                assert(rcn->nodes[node_index].resistance);
-            */
+                rcn->nodes[node_index].inv_resistance = malloc(rcn->nodes[node_index].num_neighbors * sizeof *rcn->nodes[node_index].inv_resistance);
+                assert(rcn->nodes[node_index].inv_resistance);
+
                 for(i = 0; i < num_of_neighbors; i++){
-                    rcn->nodes[node_index].resistance[i] = 1.0;
+                    rcn->nodes[node_index].inv_resistance[i] = 1.0;
                 }
                                 
                 node neighboring_nodes[num_of_neighbors];
@@ -144,7 +145,7 @@ void calculate_nodes (rc_network * rcn, float dt)
     int i, j, k, l;
     int layer_index;
     float heat_flow_sink[rcn->num_nodes_per_layer];
-    int num_of_neighbors;
+
     float summed_heatflow;
     
     int begin_highest_layer;
@@ -153,14 +154,14 @@ void calculate_nodes (rc_network * rcn, float dt)
     
     for(i = begin_highest_layer; i < rcn->num_nodes; i++){   // calculate I_sink for top layer
          layer_index = i - begin_highest_layer;
-         heat_flow_sink[layer_index] = (rcn->temperature_sink - rcn->nodes[i].temperature) / rcn->resistance_sink[layer_index];
+         heat_flow_sink[layer_index] = (rcn->temperature_sink - rcn->nodes[i].temperature) * rcn->inv_resistance_sink[layer_index];
     }
        
     for(j = 0; j < rcn->num_nodes; j++){  
                 
         for(k = 0; k < rcn->nodes[j].num_neighbors; k++){
         
-            rcn->nodes[j].heatflow += (rcn->nodes[j].neighbors[k].temperature - rcn->nodes[j].temperature) / rcn->nodes[j].resistance[k]; // calculate I_n
+            rcn->nodes[j].heatflow += (rcn->nodes[j].neighbors[k].temperature - rcn->nodes[j].temperature) * rcn->nodes[j].inv_capacity; // calculate I_n
         }
     }
     
@@ -178,7 +179,7 @@ void calculate_nodes (rc_network * rcn, float dt)
             summed_heatflow += *rcn->heatflow_source;    // add I_source
         }
         
-        rcn->nodes[j].temperature = summed_heatflow / rcn->nodes[j].capacity * dt;
+        rcn->nodes[j].temperature = summed_heatflow * rcn->nodes[j].inv_capacity * dt;
     }
 }
 
@@ -200,14 +201,8 @@ void rcn_free(rc_network * rcn)
     assert(rcn);
 	free(rcn->nodes);
     free(rcn->nodes);
-	free(rcn->resistance_sink);
+	free(rcn->inv_resistance_sink);
 	free(rcn->heatflow_source);
     free(rcn);
-}
-
-int main (int argc, char **argv)
-{
-	// TODO
-	return 0;
 }
 

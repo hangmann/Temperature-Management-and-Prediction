@@ -22,7 +22,7 @@ typedef struct node node;
 /* network topology node */
 struct node
 {
-	float capacity; /* capacity */
+	float inv_capacity; /* capacity */
 	float temperature; /* temperature */
 	float heatflow; /* heat flow to node */
 	int coordx;
@@ -30,7 +30,7 @@ struct node
     int layer;
     int num_neighbors;
     node * neighbors;
-    float * resistance;
+    float * inv_resistance;
 };
 
 /* thermal model */
@@ -41,7 +41,7 @@ typedef struct
     int num_nodes_per_layer;          /* number of nodes in models */
     node * nodes;    /* nodes in rc network*/
    
-    float * resistance_sink;               /* resistances between maximum layer nodes and head sink */
+    float * inv_resistance_sink;               /* resistances between maximum layer nodes and head sink */
 	float * heatflow_source;              /* heat source temperatures */
     
     float temperature_sink;
