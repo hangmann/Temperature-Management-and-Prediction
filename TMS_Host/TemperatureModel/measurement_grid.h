@@ -34,7 +34,6 @@ typedef struct
 }measurement_grid;
 
 measurement_grid layer_to_grid(rc_network * rcn, int layer);
-void init_grid(measurement_grid * grid);
 measurement_grid * create_grid(int x, int y);
 
 #endif /* MEASUREMENT_GRID_H_ */

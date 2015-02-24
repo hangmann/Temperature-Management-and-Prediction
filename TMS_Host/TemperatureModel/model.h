@@ -50,7 +50,7 @@ typedef struct
 	int size_y;				/* network height */
 } rc_network;
 
-rc_network * create(int x, int y, int l);
+rc_network * create_rcn(int x, int y, int l);
 void calculate_nodes (rc_network * rcn, float dt);
 void rcn_free(rc_network * rcn);
 void init(rc_network * rcn);

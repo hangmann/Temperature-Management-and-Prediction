@@ -23,26 +23,25 @@
  *  y = network height
  *  l = network layers
  */
-rc_network * create(int x, int y, int l)
+rc_network * create_rcn(int x, int y, int l)
 {
     rc_network * rcn;
     
     rcn = malloc(sizeof * rcn);
 	assert(rcn);
-	rcn->nodes = malloc(rcn->num_nodes * sizeof *rcn->nodes);
-	assert(rcn->nodes);
-
 	rcn->num_nodes_per_layer = x * y;
 	rcn->num_layers = l;
-	rcn->num_nodes = rcn->num_nodes_per_layer * rcn->num_layers;
 	rcn->size_x = x;
 	rcn->size_y = y;
+	rcn->num_nodes = rcn->num_nodes_per_layer * rcn->num_layers;
+
+	rcn->nodes = malloc(rcn->num_nodes * sizeof *rcn->nodes + 6 * sizeof *rcn->nodes->neighbors + 6 *sizeof *rcn->nodes->inv_resistance);
+	assert(rcn->nodes);
 
 	rcn->inv_resistance_sink = malloc(rcn->num_nodes_per_layer * sizeof *rcn->inv_resistance_sink);
 	assert(rcn->inv_resistance_sink);
 	rcn->heatflow_source = malloc(rcn->num_nodes_per_layer * sizeof *rcn->heatflow_source );
 	assert(rcn->heatflow_source );
-
 
 
     //num_resistances = ((x - 1) * x + y * (y - 1)) * l + rcn->num_nodes_per_layer;  // total number of connections between nodes (except sink and source)
@@ -67,12 +66,9 @@ void init (rc_network * rcn)
         for(j = 0; j < rcn->size_x; j++){  
             for(k = 0; k < rcn->size_y; k++){  
                 node_index = i * rcn->num_nodes_per_layer + j * rcn->size_x + k;
-                rcn->nodes[node_index].coordx = j;
-                rcn->nodes[node_index].coordy = k;
-                rcn->nodes[node_index].layer = i;
-                
+
                 num_of_neighbors = 0;
-                
+
                 if(i > 0) 
                     {
                         // there is a layer below ( i - 1 )
@@ -110,23 +106,31 @@ void init (rc_network * rcn)
                     neighboring_nodes_raw[num_of_neighbors - 1] = rcn->nodes[node_index + 1];
                 }
                 
+
+                rcn->nodes[node_index].num_neighbors = num_of_neighbors; //set number of neighbors
+
                 rcn->nodes[node_index].neighbors = malloc(rcn->nodes[node_index].num_neighbors * sizeof *rcn->nodes[node_index].neighbors);
                 assert(rcn->nodes[node_index].neighbors);
-                
+
                 rcn->nodes[node_index].inv_resistance = malloc(rcn->nodes[node_index].num_neighbors * sizeof *rcn->nodes[node_index].inv_resistance);
                 assert(rcn->nodes[node_index].inv_resistance);
+
+
+                rcn->nodes[node_index].coordx = j;
+                rcn->nodes[node_index].coordy = k;
+                rcn->nodes[node_index].layer = i;
 
                 for(i = 0; i < num_of_neighbors; i++){
                     rcn->nodes[node_index].inv_resistance[i] = 1.0;
                 }
                                 
                 node neighboring_nodes[num_of_neighbors];
+                rcn->nodes[node_index].neighbors = neighboring_nodes;    //set actual neighbors nodes
                 
                 for(l = 0; l < num_of_neighbors; l++){
                     neighboring_nodes[0] = neighboring_nodes_raw[0];
                 }
-                rcn->nodes[node_index].num_neighbors = num_of_neighbors; //set number of neighbors
-                rcn->nodes[node_index].neighbors = neighboring_nodes;    //set actual neighbors nodes
+               // printf("Node %d has %d neighbors...\n", node_index, num_of_neighbors);
                 
             }
         }
@@ -200,7 +204,6 @@ void rcn_free(rc_network * rcn)
 {
     assert(rcn);
 	free(rcn->nodes);
-    free(rcn->nodes);
 	free(rcn->inv_resistance_sink);
 	free(rcn->heatflow_source);
     free(rcn);
