@@ -21,17 +21,12 @@
 
 typedef struct
 {
-	float temperature;
-	float heatflow;
-	float heater_level;
-}grid_node;
-
-typedef struct
-{
 	int num_nodes;
 	int size_x;
 	int size_y;
-	grid_node * nodes;
+	float * temperature;
+	float * heatflow;
+	int * heater_level;
 }measurement_grid;
 
 measurement_grid layer_to_grid(rc_network * rcn, int layer);

@@ -30,8 +30,8 @@ measurement_grid layer_to_grid(rc_network * rcn, int layer)
 	for (i = 0; i < rcn->num_nodes; i++) {
 		if (rcn->nodes[i].layer == layer)
 		{
-			temp_grid.nodes[j].heatflow = rcn->nodes[i].heatflow;
-			temp_grid.nodes[j].temperature = rcn->nodes[i].temperature;
+			temp_grid.heatflow[j] = rcn->nodes[i].heatflow;
+			temp_grid.temperature[j] = rcn->nodes[i].temperature;
 			j++;
 		}
 	}
@@ -51,25 +51,30 @@ measurement_grid * create_grid(int x, int y)
 		(m_grid+var)->size_x=x;
 		(m_grid+var)->size_y=y;
 		(m_grid+var)->num_nodes = x*y;
-		(m_grid+var)->nodes = malloc(m_grid->num_nodes * sizeof (grid_node));
-		int var2;
-		for (var2 = 0; var2 < m_grid->num_nodes; var2++) {
-			(m_grid+var)->nodes[var2].heater_level=0;
-			(m_grid+var)->nodes[var2].temperature=0;
-			(m_grid+var)->nodes[var2].heatflow=0;
-		}
-		assert(m_grid->nodes);
+		(m_grid+var)->temperature	= malloc(m_grid->num_nodes		* sizeof (*(m_grid+var)->temperature ));
+		(m_grid+var)->heater_level	= malloc((m_grid->num_nodes-3)	* sizeof (*(m_grid+var)->heater_level));
+		(m_grid+var)->heatflow 		= malloc(m_grid->num_nodes		* sizeof (*(m_grid+var)->heatflow    ));
 	}
 
 	return m_grid;
+}
+
+void init_grid (measurement_grid * grid)
+{
+	int var;
+	for (var = 0; var < 10154; ++var) {
+		int var2;
+		for (var2 = 0; var2 < grid->num_nodes; var2++) {
+			grid[var].temperature[var2]		= -1;
+			grid[var].heater_level[var2]	= -1;
+			grid[var].heatflow[var2] 		= -1;
+		}
+	}
 }
 
 void mgrid_free(measurement_grid * m_grid)
 {
     assert(m_grid);
     int var;
-    for (var = 0; var < 10154; ++var) {
-		free((m_grid+var)->nodes);
-	}
     free(m_grid);
 }

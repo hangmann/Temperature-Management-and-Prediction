@@ -35,7 +35,7 @@ rc_network * create_rcn(int x, int y, int l)
 	rcn->size_y = y;
 	rcn->num_nodes = rcn->num_nodes_per_layer * rcn->num_layers;
 
-	rcn->nodes = malloc(rcn->num_nodes * sizeof *rcn->nodes + 6 * sizeof *rcn->nodes->neighbors + 6 *sizeof *rcn->nodes->inv_resistance);
+	rcn->nodes = malloc(rcn->num_nodes * sizeof *rcn->nodes + 6 * sizeof *rcn->nodes->neighbors + 6 *sizeof *rcn->nodes->inv_resistance + 6*sizeof *rcn->nodes->neighbor_type);
 	assert(rcn->nodes);
 
 	rcn->inv_resistance_sink = malloc(rcn->num_nodes_per_layer * sizeof *rcn->inv_resistance_sink);
@@ -108,6 +108,9 @@ void init (rc_network * rcn)
                 
 
                 rcn->nodes[node_index].num_neighbors = num_of_neighbors; //set number of neighbors
+
+                rcn->nodes[node_index].neighbor_type = malloc(rcn->nodes[node_index].num_neighbors * sizeof *rcn->nodes[node_index].neighbor_type);
+                assert(rcn->nodes[node_index].neighbor_type);
 
                 rcn->nodes[node_index].neighbors = malloc(rcn->nodes[node_index].num_neighbors * sizeof *rcn->nodes[node_index].neighbors);
                 assert(rcn->nodes[node_index].neighbors);

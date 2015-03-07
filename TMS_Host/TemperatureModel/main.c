@@ -87,11 +87,8 @@ void parse_measurements(FILE ** file, rc_network * rcn, measurement_grid * m_gri
 	int second;
 	linenumber=0;
 	float vcc, temperature_diode;
-	float * temperatures;
-	temperatures = malloc(rcn->num_nodes_per_layer + sizeof *temperatures);
-	int * heater_levels;
-	heater_levels = malloc(heater_size_x * heater_size_y - 3 * sizeof *heater_levels);
 	float temp;
+	int temp_heater;
 
 	/**
 	 * structure of a line:
@@ -115,66 +112,39 @@ void parse_measurements(FILE ** file, rc_network * rcn, measurement_grid * m_gri
 				second = atoi(timestep_measurement);
 			} else if ( 1 < i && i < 2 + rcn->num_nodes_per_layer) {
 				temp =atof(timestep_measurement);
-				//printf("%d/%d\t\t%f\n", linenumber, number_of_temperatures, temp);
-				m_grid[linenumber].nodes[number_of_temperatures].temperature = temp;
-				temperatures[number_of_temperatures] = temp;
+				m_grid[linenumber].temperature[number_of_temperatures] = temp;
 				number_of_temperatures++;
 			} else if (2 + rcn->num_nodes_per_layer == i) {
 				temperature_diode = atof(timestep_measurement);
 			} else if (3 + rcn->num_nodes_per_layer == i) {
 				vcc = atof(timestep_measurement);
 			} else if (3 + rcn->num_nodes_per_layer < i && i < 4 + rcn->num_nodes_per_layer + heater_size_x*heater_size_y -3 ) {
-				heater_levels[number_of_heaters] = atoi(timestep_measurement);
+				temp_heater = atoi(timestep_measurement);
+				m_grid[linenumber].heater_level[number_of_heaters] = temp_heater;
 				number_of_heaters++;
 			} else {
-				//printf("\nSomething went wrong! \t Word number %d: %d\n", i, atoi(timestep_measurement));
+				// nothing. error
 			}
-		//	for (j = 0; j < m_grid->num_nodes; j++) {
-		//		rcn->nodes[j].temperature = atof(timestep_measurement);
-		//		m_grid->nodes[j].temperature = atof(timestep_measurement);
-		//	}
 
 			timestep_measurement = strtok (NULL, " ");
 			i++;
 		}
-		/*
-		printf("\tRead %d temperatures. last one was %f...\n", number_of_temperatures, temperatures[number_of_temperatures -1]);
-		printf("\tRead %d heat codes. last one was %d...\n", number_of_heaters, heater_levels[number_of_heaters-1]);
+/*
+		printf("\tRead %d temperatures...\n", number_of_temperatures);
+		printf("\tRead %d heat codes...\n", number_of_heaters);
 		printf("\tRead vcc %f...\n", vcc);
 		printf("\tRead diode %f...\n", temperature_diode);
-		*/
+*/
 
 		m_grid[linenumber].size_x=rcn->size_x;
 		m_grid[linenumber].size_y=rcn->size_y;
 		m_grid[linenumber].num_nodes=rcn->num_nodes;
 
-		int temp_var;
-		for (temp_var = 0; temp_var < rcn->num_nodes_per_layer; temp_var++) {
-			m_grid[linenumber].nodes[temp_var].temperature = temperatures[temp_var];
-			printf("LineNumber/Node: \t%d/%d\t\tArray: %f\tGrid: %f\n", 0, temp_var, temperatures[temp_var], m_grid[linenumber].nodes[temp_var].temperature);
-			m_grid[linenumber].nodes[temp_var].heater_level = heater_levels[temp_var];
-		//	printf("%d: %d - %d\n", temp_var, m_grid[linenumber].nodes[temp_var].heater_level, heater_levels[temp_var]);
-		}
-		int temp_var2;
-		for (temp_var2 = 0; temp_var2 < number_of_heaters; temp_var2++) {
-			printf("%d: %d - %d\n", temp_var2, m_grid[linenumber].nodes[temp_var2].heater_level, heater_levels[temp_var]);
-		//	printf("%d: %p\n", temp_var2, &m_grid[linenumber].nodes[temp_var2].heater_level);
-		}
 		linenumber++;
 
 	}
-	int var;
-	int temp_var;
-	for (var = 0; var < linenumber; var++) {
-		for (temp_var = 0; temp_var < rcn->num_nodes_per_layer; temp_var++) {
-		//	printf("LineNumber/Node: \t%d/%d\t\tArray: %f\tGrid: %f\n", var, temp_var, temperatures[temp_var], m_grid[var].nodes[temp_var].temperature);
-		//	printf("%f\n", m_grid[linenumber-1].nodes[temp_var].temperature);
-		}
-	}
 
 	fclose( *file );
-	free(temperatures);
-	free(heater_levels);
 }
 
 float get_random_float(float a)
@@ -295,36 +265,34 @@ void assign_parameters(parameter_set * params, rc_network * rcn, measurement_gri
 	//printf("Temp: %f\n", m_grid[10153].nodes[0].temperature);
 	int i, j, k, l;
 	l = 0;
-	node * temp_node;
 	for (i = 0; i < rcn->num_nodes; i++) {
-		temp_node = &rcn->nodes[i];
-		rcn->nodes[i].inv_capacity = params->capacitance_per_layer[temp_node->layer];
-		for (j = 0; j < temp_node->num_neighbors; j++) {
-			if (temp_node->neighbor_type[j] == Z_UP && temp_node->layer == rcn->num_layers - 1) {
-				temp_node->inv_resistance[j] = params->resistance_sink;
+		rcn->nodes[i].inv_capacity = params->capacitance_per_layer[rcn->nodes[i].layer];
+		for (j = 0; j < rcn->nodes[i].num_neighbors; j++) {
+			if (rcn->nodes[i].neighbor_type[j] == Z_UP && rcn->nodes[i].layer == rcn->num_layers - 1) {
+				rcn->nodes[i].inv_resistance[j] = params->resistance_sink;
 			}
-			if (temp_node->neighbor_type[j] == Z_UP && temp_node->layer != rcn->num_layers - 1) {
-				temp_node->inv_resistance[j] = params->resistance_inter_layer[temp_node->layer];
+			if (rcn->nodes[i].neighbor_type[j] == Z_UP && rcn->nodes[i].layer != rcn->num_layers - 1) {
+				rcn->nodes[i].inv_resistance[j] = params->resistance_inter_layer[rcn->nodes[i].layer];
 			}
-			if (temp_node->neighbor_type[j] == Z_DOWN) {
-				temp_node->inv_resistance[j] = params->resistance_inter_layer[temp_node->layer - 1];
+			if (rcn->nodes[i].neighbor_type[j] == Z_DOWN) {
+				rcn->nodes[i].inv_resistance[j] = params->resistance_inter_layer[rcn->nodes[i].layer - 1];
 			}
-			if (temp_node->neighbor_type[j] == Y_UP || temp_node->neighbor_type[j] == Y_DOWN) {
-				temp_node->inv_resistance[j] = params->resistances_y_per_layer[temp_node->layer];
+			if (rcn->nodes[i].neighbor_type[j] == Y_UP || rcn->nodes[i].neighbor_type[j] == Y_DOWN) {
+				rcn->nodes[i].inv_resistance[j] = params->resistances_y_per_layer[rcn->nodes[i].layer];
 			}
-			if (temp_node->neighbor_type[j] == X_UP || temp_node->neighbor_type[j] == X_DOWN) {
-				temp_node->inv_resistance[j] = params->resistances_x_per_layer[temp_node->layer];
+			if (rcn->nodes[i].neighbor_type[j] == X_UP || rcn->nodes[i].neighbor_type[j] == X_DOWN) {
+				rcn->nodes[i].inv_resistance[j] = params->resistances_x_per_layer[rcn->nodes[i].layer];
 			}
 		}
-		temp_node->heatflow = params->heatflow_inactive;			// TODO Active? Inactive?
+		rcn->nodes[i].heatflow = params->heatflow_inactive;			// TODO Active? Inactive?
 		rcn->temperature_sink = params->temperature_heat_sink;
 
 		/*
 		 * Setting initial temperatures for heat source layer (= 0)
 		 */
-		if (temp_node->layer == 0)
+		if (rcn->nodes[i].layer == 0)
 		{
-			temp_node->temperature = m_grid[0].nodes[l].temperature; // m_grid[0] is first timestep of measurements
+			rcn->nodes[i].temperature = m_grid[0].temperature[l]; // m_grid[0] is first timestep of measurements
 			l++;
 		}
 	//	printf("%f\n", rcn->nodes[i].temperature);
@@ -406,7 +374,7 @@ int main (int argc, char **argv)
 		printf("Parsing Measurements... ");fflush(stdout);
 
 		m_grid = create_grid(sensor_size_x, sensor_size_y);
-
+		init_grid(m_grid);
 		parse_measurements(&file, rcn, m_grid, heater_size_x, heater_size_y);
 
 		printf("Done!\nCreating Random Parameter Set... ");fflush(stdout);
@@ -419,11 +387,15 @@ int main (int argc, char **argv)
 		//print_rcn(rcn);
 		printf("Learning Parameters... ");fflush(stdout);
 		// learn
-		printf("Done.\n");fflush(stdout);
+		printf("Needs to be implemented.\n");fflush(stdout);
 	}
 
+	printf("Freeing parameters... ");fflush(stdout);
 	params_free(params);
+	printf("Done!\nFreeing RCN...");fflush(stdout);
 	rcn_free(rcn);
+	printf("Done!\nFreeing MGRID...");fflush(stdout);
 	mgrid_free(m_grid);
+	printf("Done!\nExiting...");fflush(stdout);
     exit(EXIT_SUCCESS);
 }
