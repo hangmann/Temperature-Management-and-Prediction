@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "model.h"
+#include "measurement_grid.h"
 
 #ifndef MAIN_H_
 #define MAIN_H_
@@ -35,7 +36,7 @@ typedef struct
 }parameter_set;
 
 void open_measurements(FILE ** file, char ** path);
-void parse_measurements(FILE ** file);
+void parse_measurements(FILE ** file, rc_network * rcn, measurement_grid * m_grid, int heater_size_x, int heater_size_y);
 char * strtok(char * s, const char * toks);
 parameter_set * create_parameter_set(int x, int y, int l);
 void random_init_paramaters (parameter_set * params, int l, int nodes_per_layer);
@@ -43,5 +44,6 @@ void params_free(parameter_set * params);
 float get_random_float(float a);
 void print_parameters(parameter_set * params, int num_layers);
 int main (int argc, char **argv);
+void assign_parameters(parameter_set * params, rc_network * rcn, measurement_grid * m_grid);
 
 #endif /* MAIN_H_ */

@@ -45,7 +45,7 @@ rc_network * create_rcn(int x, int y, int l)
 
 
     //num_resistances = ((x - 1) * x + y * (y - 1)) * l + rcn->num_nodes_per_layer;  // total number of connections between nodes (except sink and source)
-    
+
     return rcn;
 }
 
@@ -208,4 +208,3 @@ void rcn_free(rc_network * rcn)
 	free(rcn->heatflow_source);
     free(rcn);
 }
-

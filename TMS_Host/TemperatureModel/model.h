@@ -16,8 +16,19 @@
 #define MODEL_H
 
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef struct node node;
+
+enum node_type
+{
+	X_UP,	// After on X
+	X_DOWN,	// Before on X
+	Y_UP,	// After on Y
+	Y_DOWN,	// Before on Y
+	Z_UP,	// above
+	Z_DOWN	// below
+};
 
 /* network topology node */
 struct node
@@ -30,6 +41,7 @@ struct node
     int layer;
     int num_neighbors;
     node * neighbors;
+    enum node_type * neighbor_type;
     float * inv_resistance;
 };
 
@@ -41,7 +53,7 @@ typedef struct
     int num_nodes_per_layer;          /* number of nodes in models */
     node * nodes;    /* nodes in rc network*/
    
-    float * inv_resistance_sink;               /* resistances between maximum layer nodes and head sink */
+    float * inv_resistance_sink;          /* resistances between maximum layer nodes and head sink */
 	float * heatflow_source;              /* heat source temperatures */
     
     float temperature_sink;
