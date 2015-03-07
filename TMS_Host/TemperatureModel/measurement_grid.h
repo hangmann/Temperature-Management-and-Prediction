@@ -24,6 +24,7 @@ typedef struct
 	int num_nodes;
 	int size_x;
 	int size_y;
+	int timestep;
 	float * temperature;
 	float * heatflow;
 	int * heater_level;

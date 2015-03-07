@@ -45,5 +45,7 @@ float get_random_float(float a);
 void print_parameters(parameter_set * params, int num_layers);
 int main (int argc, char **argv);
 void assign_parameters(parameter_set * params, rc_network * rcn, measurement_grid * m_grid);
+float simulate_model(measurement_grid * m_grid, rc_network * rcn, parameter_set * params);
+int get_neighbor_index_of(node temp_node, node_type type);
 
 #endif /* MAIN_H_ */

@@ -52,7 +52,7 @@ measurement_grid * create_grid(int x, int y)
 		(m_grid+var)->size_y=y;
 		(m_grid+var)->num_nodes = x*y;
 		(m_grid+var)->temperature	= malloc(m_grid->num_nodes		* sizeof (*(m_grid+var)->temperature ));
-		(m_grid+var)->heater_level	= malloc((m_grid->num_nodes-3)	* sizeof (*(m_grid+var)->heater_level));
+		(m_grid+var)->heater_level	= malloc(m_grid->num_nodes		* sizeof (*(m_grid+var)->heater_level));
 		(m_grid+var)->heatflow 		= malloc(m_grid->num_nodes		* sizeof (*(m_grid+var)->heatflow    ));
 	}
 
@@ -68,6 +68,7 @@ void init_grid (measurement_grid * grid)
 			grid[var].temperature[var2]		= -1;
 			grid[var].heater_level[var2]	= -1;
 			grid[var].heatflow[var2] 		= -1;
+			grid[var].timestep				= -1;
 		}
 	}
 }
