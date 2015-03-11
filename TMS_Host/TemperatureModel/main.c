@@ -112,6 +112,7 @@ void parse_measurements(FILE ** file, rc_network * rcn, measurement_grid * m_gri
 				// line info number
 			} else if (i == 1) {
 				second = atoi(timestep_measurement);
+				m_grid[linenumber].timestep = second;
 			} else if ( 1 < i && i < 2 + rcn->num_nodes_per_layer) {
 				temp =atof(timestep_measurement);
 				m_grid[linenumber].temperature[number_of_temperatures] = temp;
@@ -165,7 +166,7 @@ void random_init_paramaters (parameter_set * params, int l, int nodes_per_layer)
 {
 	int i;
 
-	float a = 100.0f;
+	float a = 10.0f;
 	srand((unsigned int)time(NULL));
 
 	for (i = 0; i < l; i++) {
@@ -177,25 +178,30 @@ void random_init_paramaters (parameter_set * params, int l, int nodes_per_layer)
 
 	params->heatflow_inactive = get_random_float(a);
 
-	a=150.0f;
+	a=10.0f;
 	for (i = 0; i < l-1; i++) {
 		params->resistance_inter_layer[i] = 1.0f/get_random_float(a);
 	}
 
-	a = 100.0f;
+	a=100.0f;
+	for (i = 0; i < l; i++) {
+		params->temperatures_per_layer[i] = get_random_float(a);
+	}
+
+	a = 10.0f;
 	params->resistance_sink=1.0f/get_random_float(a);
 
-	a = 150.0f;
+	a = 10.0f;
 	for (i = 0; i < l; i++) {
 		params->resistances_x_per_layer[i] = 1.0f/get_random_float(a);
 	}
 
-	a = 150.0f;
+	a = 10.0f;
 	for (i = 0; i < l; i++) {
 		params->resistances_y_per_layer[i] = 1.0f/get_random_float(a);
 	}
 
-	a = 100;
+	a = 50;
 	params->temperature_heat_sink=get_random_float(a);;
 
 
@@ -221,6 +227,9 @@ parameter_set * create_parameter_set(int x, int y, int l)
 
 	params->capacitance_per_layer = malloc(l * sizeof *params->capacitance_per_layer); // one capacitance per layer
 	assert(params->capacitance_per_layer);
+
+	params->temperatures_per_layer = malloc(l * sizeof *params->temperatures_per_layer); // one capacitance per layer
+	assert(params->temperatures_per_layer);
 
 	int var;
 
@@ -255,6 +264,10 @@ void print_parameters(parameter_set * params, int num_layers)
 		printf("\t\tX-Resistances on Layer %d: \t%f\n", i, params->resistances_x_per_layer[i]);
 		printf("\t\tY-Resistances on Layer %d: \t%f\n", i, params->resistances_y_per_layer[i]);
 	}
+
+	for (i = 0; i < num_layers; i++) {
+		printf("\t\tInitial temperatures on Layer %d: \t%f\n", i, params->temperatures_per_layer[i]);
+	}
 }
 
 void params_free(parameter_set * params)
@@ -263,6 +276,7 @@ void params_free(parameter_set * params)
 	free(params->resistances_y_per_layer);
 	free(params->resistances_x_per_layer);
 	free(params->capacitance_per_layer);
+	free(params->temperatures_per_layer);
 	free(params);
 }
 
@@ -275,12 +289,19 @@ void assign_parameters(parameter_set * params, rc_network * rcn, measurement_gri
 	int i, j;
 	for (i = 0; i < rcn->num_nodes; i++) {
 		rcn->nodes[i].inv_capacity = params->capacitance_per_layer[rcn->nodes[i].layer];
-		for (j = 0; j < rcn->nodes[i].num_neighbors; j++) {
-			if (rcn->nodes[i].neighbor_type[j] == Z_UP && rcn->nodes[i].layer == rcn->num_layers - 1) {
-				rcn->nodes[i].inv_resistance[j] = params->resistance_sink;
+		if(rcn->nodes[i].layer > 0)
+		{
+			rcn->nodes[i].temperature = params->temperatures_per_layer[rcn->nodes[i].layer];
+		} else
+		{
+			rcn->nodes[i].temperature = m_grid[0].temperature[i];
+		}
 
+		for (j = 0; j < rcn->nodes[i].num_neighbors; j++) {
+			if (rcn->nodes[i].neighbor_type[j] == Z_UP && rcn->nodes[i].layer == (rcn->num_layers - 1)) {
+				rcn->nodes[i].inv_resistance[j] = params->resistance_sink;
 			}
-			else if (rcn->nodes[i].neighbor_type[j] == Z_UP && rcn->nodes[i].layer != rcn->num_layers - 1) {
+			else if (rcn->nodes[i].neighbor_type[j] == Z_UP && rcn->nodes[i].layer < (rcn->num_layers - 1)) {
 				rcn->nodes[i].inv_resistance[j] = params->resistance_inter_layer[rcn->nodes[i].layer];
 			}
 			else if (rcn->nodes[i].neighbor_type[j] == Z_DOWN && rcn->nodes[i].layer == 0) {
@@ -344,11 +365,12 @@ void print_rcn(rc_network * rcn)
 			for (k = 0; k < rcn->size_y; k++) {
 	            node_index = i * rcn->num_nodes_per_layer + j * rcn->size_x + k;
 	            int x;
-	            for (x = 0; x < rcn->nodes[node_index].num_neighbors; x++) {
+	           /* for (x = 0; x < rcn->nodes[node_index].num_neighbors; x++) {
 	            	printf("Resistance on layer %d (node %d) is:\t\t%f\n", rcn->nodes[node_index].layer, node_index, rcn->nodes[node_index].inv_resistance[x]);
 				}
 
 	            printf("Capacity on layer/node %d/%d are:    \t\t%f\n", rcn->nodes[node_index].layer, node_index, rcn->nodes[node_index].inv_capacity);
+			*/
 			}
 		}
 	}
@@ -357,9 +379,9 @@ void print_rcn(rc_network * rcn)
 float simulate_model(measurement_grid * m_grid, rc_network * rcn, parameter_set * params)
 {
 	// temporary variables
-	int i,j,k,l,x;
+	int j,k,l,x;
 	int sim_time;
-	float delta = 0.02f;
+	float delta = 0.2f;
 	float mse, e; //needed for rmse calculation
 
 	for (x = 0; x < rcn->num_nodes_per_layer; x++) {
@@ -395,11 +417,12 @@ float simulate_model(measurement_grid * m_grid, rc_network * rcn, parameter_set 
 				//heaters changes or first non-initial measurement
 				if (m_grid[j].heater_level[k] > 0){
 					rcn->heatflow_source[k] = params->heatflow_active;
-					printf("->ACTIVED %d in line %d\n", k, j);
+					//printf("->ACTIVED %d in line %d\n", k, j);
 				}else{
 					rcn->heatflow_source[k] = params->heatflow_inactive;
-					printf("->DEACTIVED %d in line %d\n", k, j);
+					//printf("->DEACTIVED %d in line %d\n", k, j);
 				}
+
 			}
 		}
 
@@ -414,15 +437,144 @@ float simulate_model(measurement_grid * m_grid, rc_network * rcn, parameter_set 
 		 */
 		for (l = 0; l < rcn->num_nodes_per_layer; l++) {
 			e = rcn->nodes[l].temperature - m_grid[j].temperature[l];
-		//	printf("%f - %f = %f\n",rcn->nodes[l].temperature,m_grid[j].temperature[l],e);
 			mse += e*e;
+			//printf("%f - %f = %f\n",rcn->nodes[l].temperature,m_grid[j].temperature[l],mse);
 		}
-	}
+	//	printf("%f - %f = %f\tmse: %f\n",rcn->nodes[10].temperature,m_grid[j].temperature[10],e, mse);
 
+	}
 	mse /= (10154);
 	mse /= (rcn->num_nodes_per_layer);
-	printf("Done!\n");
 	return sqrt(mse);
+}
+
+void get_clocks(unsigned long * t_start, unsigned long * t_stop, unsigned long * t_diff, unsigned long * t_diff_msec)
+{
+	if ( t_start <= t_stop ) {
+		*t_diff_msec = ( *t_stop - *t_start ) / ( CLOCKS_PER_SEC / 1000 );
+		*t_diff = *t_stop - *t_start;
+
+	} else {
+		*t_diff_msec = ( ULONG_MAX - *t_start + *t_stop ) / ( CLOCKS_PER_SEC / 1000 );       // Milliseconds
+		*t_diff = ULONG_MAX - (*t_stop - *t_start);
+	}
+}
+
+float min(float a, float b)
+{
+	if (a>b) return b; else return a;
+}
+
+void param_annealing(measurement_grid * m_grid, rc_network * rcn, parameter_set * params, float step, float * param, float temp_start,  float temp_step, int equilibrium_reached ,float * rmse)
+{
+	float temp;
+	temp = temp_start;
+	float cost = *rmse;
+	float cost_2;
+	float delta_cost;
+	int equilibrium = equilibrium_reached;
+	float k;
+	int no_improvement;
+	float * old_param = malloc(sizeof (parameter_set));
+	parameter_set * old_params = create_parameter_set(rcn->size_x, rcn->size_y, rcn->num_layers);
+
+	k=1000.0f;
+	//printf("COST: %f\n", cost);
+	memcpy(old_param, param, sizeof (float));
+	memcpy(old_params, params, sizeof (parameter_set));
+	while(temp > 0.00001f) // while not frozen
+	{
+		no_improvement = 0;
+		while(equilibrium != 0)
+		{
+
+			equilibrium--;
+			*param = *param + (*param * ((2.0f*step)*get_random_float(1.0f) - step)/100); // random step between -5 and 5
+
+			cost_2 = simulate_model(m_grid, rcn, params);
+
+			delta_cost = cost_2 - cost;
+			//printf("old: %f\tnew:\t%f\tcost:\t%f\tcost2:\t%f\tdeltacost:\t%f\n", *old_param, *param, cost, cost_2, delta_cost);
+			float r = get_random_float(1.0f);
+			//printf("min(%f, %f) = %f == %f?\n", 1.0f, exp(- (delta_cost)/(k*temp) ), min(1, exp(- (delta_cost)/(k*temp) )), r);
+			if (min(1.0f, exp(- (delta_cost)/(k*temp) )) > r)
+			{
+				memcpy(old_param, param, sizeof (parameter_set));
+				memcpy(old_params, params, sizeof (parameter_set));
+				cost = cost_2;
+				no_improvement = 0;
+			}else
+			{	// restore old parameters
+				memcpy(param, old_param, sizeof *old_param);
+				memcpy(params, old_params, sizeof (parameter_set));
+				no_improvement++;
+				if(no_improvement > equilibrium_reached/10)
+					break;
+			}
+		}
+		temp *= temp_step;
+	}
+	*rmse = cost;
+}
+
+void annealing (measurement_grid * m_grid, rc_network * rcn, parameter_set * params, float temp_start, float temp_step, int equlibrium, float * rmse)
+{
+	int i;
+
+	for (i = 0; i < rcn->num_layers; i++) {
+		param_annealing(m_grid,rcn,params, 25.0f,&(params->capacitance_per_layer[rcn->num_layers - 1 - i]), temp_start, temp_step,equlibrium, rmse);
+	}
+
+	for (i = 0; i < rcn->num_layers - 1; i++) {
+		param_annealing(m_grid,rcn,params, 25.0f, &(params->resistance_inter_layer[rcn->num_layers - 1 - i]), temp_start, temp_step,equlibrium, rmse);
+	}
+
+	param_annealing(m_grid,rcn,params, 25.0f,&(params->heatflow_inactive), temp_start, temp_step,equlibrium, rmse);
+	param_annealing(m_grid,rcn,params, 25.0f,&(params->heatflow_active), temp_start, temp_step,equlibrium, rmse);
+
+	param_annealing(m_grid,rcn,params, 25.0f,&(params->resistance_sink), temp_start, temp_step,equlibrium, rmse);
+
+	for (i = 0; i < rcn->num_layers; i++) {
+		param_annealing(m_grid, rcn,params, 25.0f, &(params->resistances_x_per_layer[i]), temp_start, temp_step,equlibrium, rmse);
+	}
+	for (i = 0; i < rcn->num_layers; i++) {
+		param_annealing(m_grid,rcn,params, 25.0f,&(params->resistances_y_per_layer[i]), temp_start, temp_step,equlibrium,rmse);
+	}
+
+	param_annealing(m_grid,rcn,params, 25.0f,&(params->temperature_heat_sink), temp_start, temp_step,equlibrium, rmse);
+
+	/*
+	float temp;
+	temp = temp_start;
+	float cost = *rmse;
+	float cost_2;
+	float delta_cost;
+	int equilibrium = 1000;
+	float k;
+	parameter_set * new_params = create_parameter_set(rcn->size_x, rcn->size_y, rcn->num_layers);
+
+	k=1;
+	memcpy(new_params, params, sizeof (parameter_set));
+
+	while(temp > 0.00001f) // while not frozen
+	{
+		while(equilibrium != 0)
+		{
+			equilibrium--;
+			random_init_paramaters(new_params, rcn->num_layers, rcn->num_nodes_per_layer);
+			cost_2 = simulate_model(m_grid, rcn, new_params);
+			delta_cost = cost_2 - cost;
+			float r = get_random_float(1.0f);
+			if (min(1, exp(- (delta_cost)/(k*temp) )) > r)
+			{
+				cost = cost_2;
+				memcpy(params, new_params, sizeof (parameter_set));
+			}
+		}
+		temp *= 0.95f;
+	}
+	*rmse = cost;
+	*/
 }
 
 int main (int argc, char **argv)
@@ -479,17 +631,23 @@ int main (int argc, char **argv)
 
 		t_stop = clock( );
 		printf("\n\tInitial RMSE:\t%f\n", rmse);fflush(stdout);
-		if ( t_start <= t_stop ) {
-			t_diff_msec = ( t_stop - t_start ) / ( CLOCKS_PER_SEC / 1000 );
-			t_diff = t_stop - t_start;
+		get_clocks(&t_start, &t_stop, &t_diff, &t_diff_msec);
 
-		} else {
-			t_diff_msec = ( ULONG_MAX - t_start + t_stop ) / ( CLOCKS_PER_SEC / 1000 );       // Milliseconds
-			t_diff = ULONG_MAX - (t_stop - t_start);
-		}
-		//t_diff = t_stop - t_start;
 		// learn
 		printf("Done in %d msec (%d clocks).\n", (int)t_diff_msec, (int)t_diff);fflush(stdout);
+		printf("Learning Parameters... ");fflush(stdout);
+
+		float temp_start = 2.0f;
+		float temp_step = 0.85f;
+		int equlibrium = 1000;
+		t_start = clock( );
+
+		annealing(m_grid, rcn, params, temp_start, temp_step, equlibrium, &rmse);
+
+		t_stop = clock( );
+		get_clocks(&t_start, &t_stop, &t_diff, &t_diff_msec);
+		printf("\nDone in %d msec (%d clocks). New RMSE:\t%f\n", (int)t_diff_msec, (int)t_diff, rmse);fflush(stdout);
+		print_parameters(params, rcn->num_layers);
 	}
 
 	printf("Freeing parameters... ");fflush(stdout);

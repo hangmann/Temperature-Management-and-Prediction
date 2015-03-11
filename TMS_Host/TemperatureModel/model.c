@@ -127,6 +127,8 @@ void init (rc_network * rcn)
                 rcn->nodes[node_index].coordx = j;
                 rcn->nodes[node_index].coordy = k;
                 rcn->nodes[node_index].layer = i;
+                rcn->nodes[node_index].temperature = 0.0f;
+                rcn->nodes[node_index].heatflow = 0.0f;
 
         		int x;
                 for(x = 0; x < num_of_neighbors; x++){
@@ -149,44 +151,53 @@ void init (rc_network * rcn)
  */
 void calculate_nodes (rc_network * rcn, float dt)
 {
-    int i, j, k, l;
+    int j, k, l;
     int layer_index;
     float heat_flow_sink[rcn->num_nodes_per_layer];
-
     float summed_heatflow;
     
     int begin_highest_layer;
     
     begin_highest_layer = rcn->num_nodes - rcn->num_nodes_per_layer;
-    
-    for(i = begin_highest_layer; i < rcn->num_nodes; i++){   // calculate I_sink for top layer
-         layer_index = i - begin_highest_layer;
-         heat_flow_sink[layer_index] = (rcn->temperature_sink - rcn->nodes[i].temperature) * rcn->inv_resistance_sink;  //calculate I_sink
-    }
-       
-    for(j = rcn->num_nodes - 1; j >= 0; j--){
-                
-        for(k = 0; k < rcn->nodes[j].num_neighbors; k++){
-        
-            rcn->nodes[j].heatflow += (rcn->nodes[j].neighbors[k].temperature - rcn->nodes[j].temperature) * rcn->nodes[j].inv_resistance[k]; // calculate I_n
-        }
-    }
-    
+
     for(l = 0; l < rcn->num_nodes; l++){  
-        
+        //printf("Heatflow of %d: %f\n", l, rcn->nodes[l].heatflow);
+        float summed_heatflow;
         summed_heatflow = rcn->nodes[l].heatflow;	//I_n
+
+        for(k = 0; k < rcn->nodes[l].num_neighbors; k++){
+
+        	summed_heatflow += (rcn->nodes[l].neighbors[k].temperature - rcn->nodes[l].temperature) * rcn->nodes[l].inv_resistance[k]; // calculate I_n
+		}
+
+        //printf("1. Heatflow:\t%f\n", summed_heatflow);
     
         if (l >= begin_highest_layer)
         {
-            summed_heatflow += heat_flow_sink[l - begin_highest_layer];    // add I_sink (only on top layer)
+        	layer_index = l - begin_highest_layer;
+			heat_flow_sink[layer_index] = (rcn->temperature_sink - rcn->nodes[l].temperature) * rcn->inv_resistance_sink;  //calculate I_sink
+        	summed_heatflow += heat_flow_sink[l - begin_highest_layer];    // add I_sink (only on top layer)
+
+   //         printf("Because Top Layer\n");
+    //        printf("2. Heatflow:\t%f\t\t(T_sin - N(i) * R_inv = %f - %f * %f)\n", summed_heatflow, rcn->temperature_sink, rcn->nodes[l].temperature, rcn->inv_resistance_sink);
         }
         
-        if (l <= rcn->num_nodes_per_layer)
+        if (l < rcn->num_nodes_per_layer)
         {
             summed_heatflow += rcn->heatflow_source[l];    // add I_source (only on layer 0)
+   //         printf("Because Source\n");
+    //        printf("3. Heatflow:\t%f\n", summed_heatflow);
         }
         
-        rcn->nodes[j].temperature = summed_heatflow * rcn->nodes[j].inv_capacity * dt;
+        rcn->nodes[l].temperature = summed_heatflow * rcn->nodes[l].inv_capacity * dt;
+
+     //   printf("Temperature:\t%f\t\t= I * C_inv * dt = %f * %f * %f\n", rcn->nodes[l].temperature, summed_heatflow, rcn->nodes[l].inv_capacity, dt);
+       // printf("Temperature is %f\n", rcn->nodes[l].temperature);
+    /*    printf("%d: T: %f\tC:\t%f\tI:\t%f\n", l, rcn->nodes[l].temperature, rcn->nodes[l].inv_capacity, rcn->nodes[l].heatflow);
+        for(k = 0; k < rcn->nodes[l].num_neighbors; k++){
+			printf("\t%f\n", rcn->nodes[l].inv_resistance[k]);
+		}
+		*/
     }
 }
 
@@ -199,8 +210,6 @@ void simulate (rc_network * rcn, float duration, float dt)
 		calculate_nodes(rcn,dt);
 		duration -= dt;
 	}
-	
-	if(duration > 0) calculate_nodes(rcn, duration);
 }
 
 void rcn_free(rc_network * rcn)

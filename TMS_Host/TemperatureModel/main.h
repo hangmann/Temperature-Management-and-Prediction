@@ -32,6 +32,7 @@ typedef struct
 	float temperature_heat_sink;   //   temperature of heat sink
 	float heatflow_active;   // heat flows for layer 0, if heat core on tile active
 	float heatflow_inactive;  // heat flows for layer 0, if heat core on tile inactive
+	float * temperatures_per_layer;
 
 }parameter_set;
 
@@ -47,5 +48,7 @@ int main (int argc, char **argv);
 void assign_parameters(parameter_set * params, rc_network * rcn, measurement_grid * m_grid);
 float simulate_model(measurement_grid * m_grid, rc_network * rcn, parameter_set * params);
 int get_neighbor_index_of(node temp_node, node_type type);
+void annealing (measurement_grid * m_grid, rc_network * rcn, parameter_set * params, float temp_start,  float temp_step,int equlibrium,float * rmse);
+void param_annealing(measurement_grid * m_grid, rc_network * rcn, parameter_set * params, float step, float * param, float temp_start, float temp_step, int equlibrium_reached,float * rmse);
 
 #endif /* MAIN_H_ */

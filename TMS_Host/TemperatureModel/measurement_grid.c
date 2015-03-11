@@ -76,6 +76,5 @@ void init_grid (measurement_grid * grid)
 void mgrid_free(measurement_grid * m_grid)
 {
     assert(m_grid);
-    int var;
     free(m_grid);
 }
