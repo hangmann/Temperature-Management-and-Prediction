@@ -17,6 +17,15 @@ public class C_HeaterControl {
 		
 	}
 	
+	public void wait(int duration)
+	{
+		try {
+			Thread.sleep(duration);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public void startCalibration(){
 		
@@ -56,11 +65,22 @@ public class C_HeaterControl {
 	public void sendMsg(String msg, boolean n)
 	{
 		try {
-			
+
+			c_TMS.getModel().getOut_stream().flush();
+			if (n) msg = msg + "\n";
 			for (int i=0; i<msg.getBytes().length;i++)
+			{
 				c_TMS.getModel().getOut_stream().write(msg.getBytes()[i]);
-			
-			if (n) c_TMS.getModel().getOut_stream().write('\n');
+				c_TMS.getModel().getOut_stream().flush();
+			}
+			c_TMS.getModel().getOut_stream().flush();
+			wait(100);
+			for (int i=0; i<msg.getBytes().length;i++)
+			{
+				c_TMS.getModel().getOut_stream().write(msg.getBytes()[i]);
+				c_TMS.getModel().getOut_stream().flush();
+			}
+			c_TMS.getModel().getOut_stream().flush();
 		} catch (IOException e) {
 			// 
 			System.out.println(e);
@@ -70,8 +90,6 @@ public class C_HeaterControl {
 	
 	public void setAllHeaters(int j){
 
-		sendMsg("setallheaters " + j,true);
-		sendMsg("setallheaters " + j,true);
 		sendMsg("setallheaters " + j,true);
 	}
 
@@ -83,8 +101,6 @@ public class C_HeaterControl {
 	
 	public void set5Heaters(int h0, int h1, int h2, int h3, int h4, int intensity)
 	{
-		sendMsg("set5heaters " + h0 + " " +h1 + " " + h2 + " " + h3 + " " + h4 +  " " + intensity, true);
-		sendMsg("set5heaters " + h0 + " " +h1 + " " + h2 + " " + h3 + " " + h4 +  " " + intensity, true);
 		sendMsg("set5heaters " + h0 + " " +h1 + " " + h2 + " " + h3 + " " + h4 +  " " + intensity, true);
 	}
 	

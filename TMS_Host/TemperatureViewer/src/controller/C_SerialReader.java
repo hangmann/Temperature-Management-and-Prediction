@@ -56,9 +56,13 @@ import view.V_Console;
 	            {
 	                while ( ( len = this.in.read(buffer)) > -1 )
 	                {
+	                	if (run)
+	                
+	                	{
 	                //	try {
 		                    System.out.print(new String(buffer,0,len));
 		                    addOutput(new String(buffer,0,len));
+	                	}
 						//} catch (java.lang.StringIndexOutOfBoundsException e) {
 					//		System.out.println("StringIndexOutOfBoundsException: " + len);
 					//	}

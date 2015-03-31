@@ -35,7 +35,7 @@ public class C_ExperimentThread implements Runnable {
 		{
 		case sWait:
 			c_TMS.getHeatControl().setAllHeaters(0);
-			wait(1*60*1000);
+			wait(2*60*1000);
 			heatingStates = States.sAll;
 		case sAll:
 			c_TMS.getHeatControl().setAllHeaters(maxlevel);
@@ -76,7 +76,7 @@ public class C_ExperimentThread implements Runnable {
 			wait(100);
 			c_TMS.getHeatControl().setHeater(20, maxlevel);
 */
-			wait(5*60*1000);
+			wait(10*60*1000);
 			heatingStates = States.sRightFive;
 		case sRightFive:
 			c_TMS.getHeatControl().set5Heaters(20, 21, 22, 23, 24, maxlevel);
@@ -92,7 +92,7 @@ public class C_ExperimentThread implements Runnable {
 			wait(100);
 			c_TMS.getHeatControl().setHeater(24, maxlevel);
 */
-			wait(5*60*1000);
+			wait(10*60*1000);
 			heatingStates = States.sLeftFive;
 		case sLeftFive:
 			//4 9 11 16 21 
@@ -109,12 +109,12 @@ public class C_ExperimentThread implements Runnable {
 			wait(100);
 			c_TMS.getHeatControl().setHeater(4, maxlevel);
 */
-			wait(5*60*1000);
+			wait(10*60*1000);
 			heatingStates = States.sCoolDown;
 		case sCoolDown: 
 
 			c_TMS.getHeatControl().setAllHeaters(0);
-			wait(10*60*1000);
+			wait(8*60*1000);
 			heatingStates = States.sExit;
 		case sExit:
 			//reset timer, clear, new text file

@@ -23,12 +23,12 @@ typedef enum node_type node_type;
 
 enum node_type
 {
-	X_UP,	// After on X  1
-	X_DOWN,	// Before on X 2
-	Y_UP,	// After on Y  3
-	Y_DOWN,	// Before on Y 4
-	Z_UP,	// above       5
-	Z_DOWN	// below       6
+	X_UP,	// After on X  0
+	X_DOWN,	// Before on X 1
+	Y_UP,	// After on Y  2
+	Y_DOWN,	// Before on Y 3
+	Z_UP,	// above       4
+	Z_DOWN	// below       5
 };
 
 /* network topology node */
@@ -41,7 +41,7 @@ struct node
     int coordy;
     int layer;
     int num_neighbors;
-    node * neighbors;
+    node ** neighbors;
     enum node_type * neighbor_type;
     float * inv_resistance;
 };
@@ -54,7 +54,7 @@ typedef struct
     int num_nodes_per_layer;          /* number of nodes in models */
     node * nodes;    /* nodes in rc network*/
    
-    float inv_resistance_sink;          /* resistances between maximum layer nodes and head sink */
+    float * inv_resistance_sink;          /* resistances between maximum layer nodes and head sink */
 	float * heatflow_source;              /* heat source temperatures */
     
     float temperature_sink;

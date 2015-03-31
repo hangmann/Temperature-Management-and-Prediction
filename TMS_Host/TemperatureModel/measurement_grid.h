@@ -30,9 +30,9 @@ typedef struct
 	int * heater_level;
 }measurement_grid;
 
-measurement_grid layer_to_grid(rc_network * rcn, int layer);
-measurement_grid * create_grid(int x, int y);
+measurement_grid * layer_to_grid(rc_network * rcn, measurement_grid * m_grid, int num_heaters ,int layer);
+measurement_grid * create_grid(int x, int y, int num_lines);
 void mgrid_free(measurement_grid * m_grid);
-void init_grid (measurement_grid * grid);
+void init_grid (measurement_grid * grid, int num_lines);
 
 #endif /* MEASUREMENT_GRID_H_ */
