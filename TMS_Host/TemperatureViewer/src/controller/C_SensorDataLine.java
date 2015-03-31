@@ -32,6 +32,7 @@ public class C_SensorDataLine {
 		temperature=-1;
 		vcc=-1;
 		lineNumber=-1;
+		infoNumber = -1;
 	}
 	
 	public C_SensorDataLine(String line){
@@ -94,6 +95,10 @@ public class C_SensorDataLine {
 
 	public int getLineNumber() {
 		return lineNumber;
+	}
+	
+	public int getInfoNumber(){
+		return infoNumber;
 	}
 
 	public void setLineNumber(int lineNumber) {

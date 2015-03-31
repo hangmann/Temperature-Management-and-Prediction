@@ -25,7 +25,8 @@ public class C_CommandParser {
 							"history",
 							"toggleoutput",
 							"setoutput \\w+",
-							"setallheaters \\w+"};
+							"setallheaters \\w+",
+							"set5heaters \\w+ \\w+ \\w+ \\w+ \\w+ \\w+"};
 	
 	
 	public C_CommandParser(C_TemperatureMeasurementSystem c_TMS)
@@ -92,6 +93,7 @@ public class C_CommandParser {
 		case 12: toggleOutput(); break;
 		case 13: setOuput(Integer.parseInt(query[1])); break;
 		case 14: setAllheaters(Integer.parseInt(query[1]));break;
+		case 15: set5heaters(Integer.parseInt(query[1]),Integer.parseInt(query[2]),Integer.parseInt(query[3]),Integer.parseInt(query[4]),Integer.parseInt(query[5]),Integer.parseInt(query[6]));break;
 		}
 		
 		
@@ -99,6 +101,13 @@ public class C_CommandParser {
 		
 	}
 	
+	private void set5heaters(int h0, int h1, int h2,
+			int h3, int h4, int intensity) {
+
+		c_HC.set5Heaters(h0,h1,h2,h3,h4,intensity);	
+		
+	}
+
 	private void setAllheaters(int intensity) {
 		c_HC.setAllHeaters(intensity);	
 		

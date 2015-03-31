@@ -274,7 +274,7 @@ public class C_DataReader {
 		public void startReading()  {
 		//	mFileReader = new RandomAccessFile(new File(mFileName), "r");
 		//	mReading = true;
-			this.start();
+		//	this.start();
 		}
 
 		public void stopReading() {

@@ -20,8 +20,8 @@ public class C_UnreadSensorData {
 
 	public void addLine(String line)
 	{
-		if (!line.equals("") && line!=null){
-			C_SensorDataLine nextLine = new C_SensorDataLine(line);
+		if (!line.equals("") && line!=null && line.startsWith("3 ")){
+			C_SensorDataLine nextLine = new C_SensorDataLine(line);		
 			addLine(nextLine);
 
 		}
