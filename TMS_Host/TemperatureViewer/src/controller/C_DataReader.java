@@ -46,10 +46,6 @@ public class C_DataReader {
 		}
 	}
 
-	public synchronized void startReading()  {
-		mReaderThread.startReading();
-	}
-
 	public synchronized void stopReading() {
 		mReaderThread.stopReading();
 		// wait until Thread is terminated
@@ -271,11 +267,6 @@ public class C_DataReader {
 			mTempContol.updateData(mSensorData, mTempData, mVoltData);
 		}
 
-		public void startReading()  {
-		//	mFileReader = new RandomAccessFile(new File(mFileName), "r");
-		//	mReading = true;
-		//	this.start();
-		}
 
 		public void stopReading() {
 			mReading = false;

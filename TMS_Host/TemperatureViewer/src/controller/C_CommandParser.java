@@ -2,6 +2,8 @@ package controller;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import model.M_TemperatureMeasurementSystem;
+
 import view.*;
 
 public class C_CommandParser {
@@ -11,22 +13,25 @@ public class C_CommandParser {
 	private C_HeaterControl c_HC;
 	private C_TemperatureMeasurementSystem c_TMS;
 	private ArrayList<String> inputs;
-	private String commands []= {	"help", 
+	private String commands []= {	"help ", 
 							"setheater \\w+ \\w+", 
 							"getheater \\w+",
-							"gettemp",
-							"getvcc",
-							"getcounts",
-							"clear",
-							"exit|quit",
-							"showchip",
-							"start",
-							"stop",
-							"history",
-							"toggleoutput",
+							"gettemp ",
+							"getvcc ",
+							"getcounts ",
+							"reset ",
+							"exit |quit ",
+							"showchip ",
+							"start ",
+							"stop ",
+							"history ",
+							"toggleoutput ",
 							"setoutput \\w+",
 							"setallheaters \\w+",
-							"set5heaters \\w+ \\w+ \\w+ \\w+ \\w+ \\w+"};
+							"settopheaters \\w+",
+							"setbottomheaters \\w+",
+							"setleftheaters \\w+",
+							"setrightheaters \\w+"};
 	
 	
 	public C_CommandParser(C_TemperatureMeasurementSystem c_TMS)
@@ -44,12 +49,11 @@ public class C_CommandParser {
 		String cmd = "";
 		int cmdID = -1;
 		String query[] = new String[3];
-		scanner = new Scanner(str);
+		scanner = new Scanner(str.trim() + " ");
 		String arg0 = "-1";
 		String arg1 = "-1";
 		
 		inputs.add(str);
-		
 		for (int i = 0; i < commands.length; i++) {
 		    
 			cmd = scanner.findInLine(commands[i]);
@@ -84,7 +88,7 @@ public class C_CommandParser {
 		case 3: getTemp(); break;
 		case 4: getVcc(); break;
 		case 5: getCount(); break;
-		case 6: c_TMS.getSerialCommunication().clearText();; break;
+		case 6: c_TMS.getSerialCommunication().clearText(); c_TMS.getModel().clearUnreadLine(); c_TMS.getModel().setCalibrationMode(false); break;
 		case 7: System.exit(0); break;
 		case 8: displayChip();break;
 		case 9: startExperiment(); break;
@@ -93,7 +97,10 @@ public class C_CommandParser {
 		case 12: toggleOutput(); break;
 		case 13: setOuput(Integer.parseInt(query[1])); break;
 		case 14: setAllheaters(Integer.parseInt(query[1]));break;
-		case 15: set5heaters(Integer.parseInt(query[1]),Integer.parseInt(query[2]),Integer.parseInt(query[3]),Integer.parseInt(query[4]),Integer.parseInt(query[5]),Integer.parseInt(query[6]));break;
+		case 15: settopheaters(Integer.parseInt(query[1])); break;
+		case 16: setbottomheaters(Integer.parseInt(query[1])); break;
+		case 17: setleftheaters(Integer.parseInt(query[1])); break;
+		case 18: setrightheaters(Integer.parseInt(query[1])); break;
 		}
 		
 		
@@ -101,10 +108,27 @@ public class C_CommandParser {
 		
 	}
 	
-	private void set5heaters(int h0, int h1, int h2,
-			int h3, int h4, int intensity) {
+	private void settopheaters(int intensity) {
 
-		c_HC.set5Heaters(h0,h1,h2,h3,h4,intensity);	
+		c_HC.setTopHeaters(intensity);	
+		
+	}
+	
+	private void setbottomheaters(int intensity) {
+
+		c_HC.setBottomHeaters(intensity);	
+		
+	}
+	
+	private void setleftheaters(int intensity) {
+
+		c_HC.setLeftHeaters(intensity);	
+		
+	}
+	
+	private void setrightheaters(int intensity) {
+
+		c_HC.setRightHeaters(intensity);	
 		
 	}
 
@@ -153,10 +177,6 @@ public class C_CommandParser {
 		c_TMS.getSerialCommunication().appendText(chip);	
 	}
 
-	public static void main (String a[])
-	{
-		
-	}
 	
 	public void displayHelp()
 	{

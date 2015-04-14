@@ -28,6 +28,7 @@ public class C_TemperatureMeasurementSystem {
 	private C_SerialCommumication c_SCom;
 	private C_HeaterControl c_HC;
 	private C_TemperatureControl mTempControl;
+	private  SerialPort serialPort;
 	
 	/**
 	 * Constructor opens and initializes serial port 
@@ -50,7 +51,7 @@ public class C_TemperatureMeasurementSystem {
             CommPort commPort;
 			commPort = portIdentifier.open("Temperature Measurement System", 2000);
 			
-            SerialPort serialPort = (SerialPort) commPort;
+            serialPort = (SerialPort) commPort;
             serialPort.setSerialPortParams(M_TemperatureMeasurementSystem.BAUD_RATE,M_TemperatureMeasurementSystem.SP_DATABITS ,M_TemperatureMeasurementSystem.SP_STOPBITS,M_TemperatureMeasurementSystem.SP_PARITY);
             m_TMS.setIn_stream(serialPort.getInputStream());
             m_TMS.setOut_stream(serialPort.getOutputStream());
@@ -104,7 +105,6 @@ public class C_TemperatureMeasurementSystem {
 		m_TMS.setReadMode(true);
 		m_TMS.setCalibrationMode(true);
 		getHeatControl().startExperiment();
-		mTempControl.startCalibration();
 	}
     
     /**
@@ -118,6 +118,7 @@ public class C_TemperatureMeasurementSystem {
 		getSerialCommunication().appendText("\n1: Stopping Calibration...\n");
 		start10MinExperiment();
 		//getSerialCommunication().clearText();
+		mTempControl.stopCalibration();
 		
 	}
 
@@ -134,6 +135,18 @@ public class C_TemperatureMeasurementSystem {
 		return mTempControl;
 	}
 
+	public void renewOutputStream()
+	{
+		try {
 
+            m_TMS.setOut_stream(serialPort.getOutputStream());
+		
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("I/O Error.");
+			System.exit(0);
+		}
+		
+	}
 
 }

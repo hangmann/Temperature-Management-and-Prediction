@@ -34,7 +34,7 @@ public class M_TemperatureMeasurementSystem {
 	static final public int MAX_TEMP = 190;
 
 	// Serial Port parameters
-	static final public int BAUD_RATE = 19200;
+	static final public int BAUD_RATE = 115200;
 	static final public int SP_DATABITS = SerialPort.DATABITS_7;
 	static final public int SP_STOPBITS = SerialPort.STOPBITS_1;
 	static final public int SP_PARITY = SerialPort.PARITY_NONE;
@@ -123,6 +123,10 @@ public class M_TemperatureMeasurementSystem {
 
 	public void addUnreadLine(String string) {
 		 unreadSensorData.addLine(string);
+	}
+
+	public void clearUnreadLine() {
+		 unreadSensorData.clear();
 	}
 
 	public synchronized void addTempLine(String string) {

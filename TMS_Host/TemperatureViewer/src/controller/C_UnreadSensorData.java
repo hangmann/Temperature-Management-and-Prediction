@@ -16,6 +16,11 @@ public class C_UnreadSensorData {
 		return dummyLine.getNextLine().toString();
 	}
 
+	public void clear()
+	{
+		dummyLine.setNextLine(dummyLine);
+		dummyLine.setPreviousLine(dummyLine);
+	}
 
 
 	public void addLine(String line)

@@ -113,6 +113,7 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 				mStopCalibration.setEnabled(false);
 				c_TMS.stopCalibration();
 				c_TMS.getModel().setTemperatureMode(true);
+				c_TMS.getModel().setCalibrationMode(false);
 			}
 		});
 
@@ -150,13 +151,6 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 		mControlFrame.pack();
 		mControlFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mControlFrame.setVisible(true);
-	}
-	
-	public static void main(String[] args) throws Exception {	
-		File file = new File("output");
-		if(file.exists()){
-            file.delete();
-        }
 	}
 	
 	@Override

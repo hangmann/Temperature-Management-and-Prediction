@@ -165,7 +165,7 @@ import view.V_Console;
                                     out.print(partsTemp + "\n");
             					}
                 				C_SensorDataLine line = m_TMS.getNextCompleteLine();
-                				c_TMS.getTempControl().updateData(line.getSensorData(), line.getTemperature(), line.getVcc());
+            					c_TMS.getTempControl().updateData(line.getSensorData(), line.getTemperature(), line.getVcc());
                             }
         						
         				}
@@ -174,6 +174,8 @@ import view.V_Console;
     		//	} 
     			
     		}
+
+    		
 //    		else if ( && text != "" && text != null) {
 //    			C_SensorDataLine line = getNextCompleteLine();
 //    			if (line != null && line.getLineNumber() != -1){
