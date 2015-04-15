@@ -49,6 +49,7 @@ import view.V_Console;
         {
             byte[] buffer = new byte[1024];
             int len = -1;
+            
             try
             {
                 while ( ( len = this.in.read(buffer)) > -1 )
@@ -146,9 +147,13 @@ import view.V_Console;
     				}
     			} 
     			
-    			C_SensorDataLine line = m_TMS.getNextCompleteLine();
-    			if (line != null && line.getLineNumber() != -1){
-    				c_TMS.getTempControl().updateData(line.getSensorData(), line.getTemperature(), line.getVcc());
+    			if(m_TMS.getCalibrationMode())
+    			{
+        			C_SensorDataLine line = m_TMS.getNextCompleteLine();
+        			if (line != null && line.getLineNumber() != -1){
+        				c_TMS.getTempControl().updateData(line.getSensorData(), line.getTemperature(), line.getVcc());
+        			}
+        			System.out.println("Adding to calibration");
     			}
     		}
 //    		else if ( && text != "" && text != null) {

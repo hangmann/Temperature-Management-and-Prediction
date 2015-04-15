@@ -74,6 +74,15 @@ public class C_TemperatureControl {
 	public synchronized void resetCalibration() {
 		mCalibration.reset();
 	}
+	
+
+
+	public Double[][] getCalibrationParameter()
+	{
+		
+		return mCalibration.getCalibrationParameters();
+		
+	}
 
 	public synchronized void startCalibration() {
 		mIsCalibrating = true;

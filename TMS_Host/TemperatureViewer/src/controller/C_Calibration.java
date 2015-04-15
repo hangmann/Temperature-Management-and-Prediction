@@ -33,7 +33,19 @@ public class C_Calibration {
 		}
 	}
 
+	public Double[][] getCalibrationParameters()
+	{
+		Double[][] ret = new Double[mNumberOfSensors][2];
+		for (int i = 0; i < mNumberOfSensors; i++) {
+			ret[i][0] = mCalibrations[i].getA();
+			ret[i][1] = mCalibrations[i].getB();
+		}
+		return ret;
+	}
+	
 	public void calibrate() {
+
+		System.out.println("Calibrating...");
 		double c = 0;
 		
 		for (int i = 0; i < mNumberOfSensors; i++) {
@@ -55,7 +67,7 @@ public class C_Calibration {
 		}
 	}
 
-	private class SingleCalibration {
+	public class SingleCalibration {
 		private double mXSum, mYSum, mVSum;
 		private double mXYSum, mXVSum, mYVSum;
 		private double mXXSum, mYYSum, mVVSum;

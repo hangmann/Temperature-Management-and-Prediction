@@ -143,11 +143,6 @@ public class C_CommandParser {
 					  "#######################\nHXX: Heater\nSXX: System";
 		c_TMS.getSerialCommunication().appendText(chip);	
 	}
-
-	public static void main (String a[])
-	{
-		
-	}
 	
 	public void displayHelp()
 	{

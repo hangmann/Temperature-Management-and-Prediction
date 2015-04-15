@@ -69,7 +69,7 @@ public class C_TemperatureMeasurementSystem {
 		} catch (NoSuchPortException e1) {
 			e1.printStackTrace();
 			System.out.println("Error: Port does not exist.");
-			System.exit(0);
+		//	System.exit(0);
 		
 		} catch (PortInUseException e) {
 			e.printStackTrace();
@@ -116,12 +116,18 @@ public class C_TemperatureMeasurementSystem {
 		//getHeatControl().stopCalibration();
 		m_TMS.setCalibrationMode(false);
 		getSerialCommunication().appendText("\n1: Stopping Calibration...\n");
-		start10MinExperiment();
+		
+
+		Double [][] param = getTempControl().getCalibrationParameter();
+		for (int i = 0; i < m_TMS.NUMBER_OF_SENSORS; i++) {
+			System.out.println("Sensor " + i + ": A = " + param[i][0] + ", B = " + param[i][1]);
+		}
+		
 		//getSerialCommunication().clearText();
 		
 	}
 
-	public void start10MinExperiment() {
+	public void startHeatExperiment() {
 		//getHeatControl().startExperiment();
 		//heatControl.setOutput(0);
 		Thread t = new Thread(new C_ExperimentThread(16, this));
@@ -129,11 +135,17 @@ public class C_TemperatureMeasurementSystem {
 	    t.start();
 	}
 
+	public void startRandomHeaterExperiment() {
+		//getHeatControl().startExperiment();
+		//heatControl.setOutput(0);
+		Thread t = new Thread(new C_RandomExperimentThread(16, this));
+		    
+	    t.start();
+	}
 
 	public C_TemperatureControl getTempControl() {
 		return mTempControl;
 	}
-
 
 
 }

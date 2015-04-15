@@ -43,7 +43,7 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 //	static private int min_temp = 30;
 //	static private int max_temp = 100;
 	
-	private static JButton mStartCalibration, mStopCalibration, mShowTemperatureOnChip, mToggle3d, stopHeaters, startEx;
+	private static JButton mStartCalibration, mStopCalibration, mShowTemperatureOnChip, mToggle3d, stopHeaters, startEx, startRandEx;
 	private M_TemperatureMeasurementSystem m_TMS;
 	private final C_TemperatureMeasurementSystem c_TMS;
 	
@@ -73,6 +73,7 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 		mStopCalibration = new JButton("stop calibration");
 		stopHeaters = new JButton("reset heaters");
 		startEx = new JButton("start experiment");
+		startRandEx = new JButton("start random experiment");
 		mShowTemperatureOnChip = new JButton("Show temperature on Chip");
 		mToggle3d = new JButton("Toggle 2D/3D");
 		mStopCalibration.setEnabled(false);
@@ -102,7 +103,14 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 		startEx.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				start10MinExperiment();
+				startExperiment();
+			}
+		});
+		
+		startRandEx.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				startRandExperiment();
 			}
 		});
 
@@ -145,6 +153,7 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 		mControlFrame.add(mStopCalibration);
 		mControlFrame.add(stopHeaters);
 		mControlFrame.add(startEx);
+		mControlFrame.add(startRandEx);
 		mControlFrame.add(mShowTemperatureOnChip);
 		mControlFrame.add(mToggle3d);
 		mControlFrame.pack();
@@ -152,21 +161,19 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 		mControlFrame.setVisible(true);
 	}
 	
-	public static void main(String[] args) throws Exception {	
-		File file = new File("output");
-		if(file.exists()){
-            file.delete();
-        }
-	}
-	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		c_TMS.getHeatControl().setAllHeaters(i);				
 	}
 	
-	public void start10MinExperiment()
+	public void startExperiment()
 	{		
-		c_TMS.start10MinExperiment();		
+		c_TMS.startHeatExperiment();		
+	}
+	
+	public void startRandExperiment()
+	{		
+		c_TMS.startRandomHeaterExperiment();		
 	}
 	
 
