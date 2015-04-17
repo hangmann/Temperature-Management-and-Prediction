@@ -1,7 +1,18 @@
 \chapter{Heat Modeling of Integrated Devices}
 \label{ch:heatmodeling}
 \section{Heat Models using physical device models}
+
+\subsection{Finite Difference Method}
+\ac{FDM}
+\cite{Liszka1980}
+
+\subsection{Finite Element Method}
+\ac{FEM}
+
+
 \subsection{Discrete Cosine Transform Approach}
+
+\cite{Sapatnekar2005}
 
 \begin{center}
 \begin{figure}[h]
@@ -19,6 +30,12 @@
 \nabla \cdot [k(x,y,z,T) \nabla T(x,y,z,t)] +g(x,y,z,t)
 \end{equation}
 
+
+
+\subsection{HotSpot}
+\label{ch:hotspot}
+\cite{Huang2006}
+
 \begin{center}
 	\begin{figure}[h]
 		\begin{center}
@@ -29,15 +46,27 @@
 	\end{figure} 
 \end{center}
 
-\subsection{HotSpot}
-\cite{Huang2006}
-
-\subsubsection{RC-\,Networks}
 
 \cite{Skadron2003}
 
 
-\label{ch:rcn}
+resistances for horizontal thermal conductivity (= 1/thermal resistance)
+
+capacities model heating up
+
+thermal resistance between layers
+
+\begin{center}
+	\begin{figure}[h]
+		\begin{center}
+			\includegraphics[width=0.7\textwidth]{__pics/RC_layer}
+			\caption{Layer $l$ of an \ac{RC} network with four nodes, c.\,f. \cite{Skadron2003}. Each node $i$ has a (thermal) capacitance $C_i$. Different nodes are separated by (thermal) resistances $R_{l, x}$ in $X$ direction and $R_{l, y}$ in $Y$ direction.}
+			\label{pic:rcnlayer}	
+		\end{center}
+	\end{figure} 
+\end{center}
+
+
 \begin{center}
 	\begin{figure}[h]
 		\begin{center}
@@ -51,14 +80,13 @@
 
 \section{Extension to On-Line Evolution of Heat Models}
 \label{ch:ext}
-\begin{itemize}
-	\item RCN
-	\item heat up
-	\item cool down
-	\item measure temperature
-	\item learn parameters
-	\item evaluate
-\end{itemize}
+
+Because there is no knowledge of the \ac{FPGA} one has to learn the parameters on-line.
+
+Layers for accuracy (e.g. TWO layers)
+
+number of nodes/blocks for granularity.
+
 
 \section{Temperature Measurement Methods}
 
@@ -92,7 +120,7 @@ V_{ptat}(T_{abs}) = 10 \cdot \frac{kT_{abs}}{q}\cdot ln(10)
 
 Note that the emission current density ratio is here set to $p = 10$. Hence, the temperature coefficient of $V_{ptat}$ is $-2\,mV/\symbol{23}^{\circ}C$.
 
-Since the thermal diode is pre-calibrated, the temperature can be derived as depicted in Equation~\ref{eq:tempcalc}. To allow the further calculation it is mandatory to convert $V_{ptat}$, given as analog signal, into a digital number. The thermal diode on a Virtex-5 \ac{FPGA} digitizes $V_{abs}$ with the help of the built-in \ac{ADC} and produces the 10\,bit output \ac{ADC} code $V_ADC$. The resulting maximum-measurement error of this on-chip temperature sensor is specified with $\symbol{23}^{\circ}C$ \cite{Xilinx2011a}.
+Since the thermal diode is pre-calibrated, the temperature can be derived as depicted in Equation~\ref{eq:tempcalc}. To allow the further calculation it is mandatory to convert $V_{ptat}$, given as analogue signal, into a digital number. The thermal diode on a Virtex-5 \ac{FPGA} digitizes $V_{abs}$ with the help of the built-in \ac{ADC} and produces the 10\,bit output \ac{ADC} code $V_ADC$. The resulting maximum-measurement error of this on-chip temperature sensor is specified with $\pm 4\symbol{23}^{\circ}C$ \cite{Xilinx2011a}.
 
 \begin{equation}
 \label{eq:tempcalc}
@@ -248,16 +276,20 @@ As illustrated in \cite{Sayed2011} the used \ac{FPGA} increased its temperature 
 	\label{pic:ffpipe}	
 \end{figure}
 
-Local hotspots were for instance created by using a \ac{FF} pipeline as illustrated in Figure~\ref{pic:ffpipe}. As \cite{Happe} depicted, it is possible to create a spatial gradient of $6.5\symbol{23}^{\circ}C$ by utilizing 10.000 \acp{FF} on the \ac{FPGA}, which were clocked at $100\%$.
+Local hotspots were for instance created by using a \ac{FF} pipeline as illustrated in Figure~\ref{pic:ffpipe}. As \cite{Happe} depicted, it is possible to create a spatial gradient of $6.5\symbol{23}^{\circ}C$ by utilizing 10.000 \acp{FF} on the \ac{FPGA}, which were clocked at $100\,MHz$.
 
-As a systematic study of possible heat generating circuits yielded, there are even more temperature increases and spatial gradients possible \cite{Agne2013}. A average overall temperature rise of $81.2\symbol{23}^{\circ}C$ was achieved by implementing 1.000 single-level oscillators on the \ac{FPGA}. As Figure~\ref{pic:lutosc} depicts, this oscillators were realized with \acp{LUT}, which fed back the outputs to the input \textit{I0}. The logical function that was stored in this \ac{LUT} is a simple \ac{XOR}, which function as an inverter, when the enabling signal is activated. This slim and effective heat generating circuit also achieved a spatial temperature gradient of up to $10\symbol{23}^{\circ}C$.
+As a systematic study of possible heat generating circuits yielded, there are even more temperature increases and spatial gradients possible \cite{Agne2013}. An average overall temperature rise of $81.2\symbol{23}^{\circ}C$ was achieved by implementing 1.000 single-level oscillators on the \ac{FPGA}. As Figure~\ref{pic:lutosc} depicts, this oscillators were realized with \acp{LUT}, which fed back the outputs to the input \textit{I0}. The logical function that was stored in this \ac{LUT} is a simple \ac{XOR}, which function as an inverter, when the enabling signal is activated. This slim and effective heat generating circuit also achieved a spatial temperature gradient of up to $10\symbol{23}^{\circ}C$.
+Considering the overall utilization of the oscillating heat circuit, it is noticeable that most of the generated temperatures might be due to routing: 1.000 instantiated 1-level ring \ac{LUT} oscillators yield to an utilization of over 14.500 \acp{LUT} and 375 \acp{FF}.
 
 \begin{center}
-\begin{figure}[h]
-\begin{center}
-	\includegraphics[width=0.70\textwidth]{__pics/lutoscillator.pdf}
-	\caption{\ac{FPGA}-Implementation of a 1-level \ac{RO}}
-	\label{pic:lutosc}	
+	\begin{figure}[h]
+		\begin{center}
+			\includegraphics[width=0.70\textwidth]{__pics/lutoscillator.pdf}
+			\caption{\ac{FPGA}-Implementation of a 1-level \ac{RO}}
+			\label{pic:lutosc}	
+		\end{center}
+	\end{figure} 	
 \end{center}
-\end{figure} 	
-\end{center}
+
+Hence, heat generating circuits based on \acp{LUT} and \acp{FF}, composed as pipeline, might provide a more predictable temperature generation, which does not rely on different routing factors. As stated in \cite{Agne2013} the second most powerful heat generating circuit is a \ac{LUT}-\ac{FF} pipeline as depicted in Figure~\ref{pic:lutffpipe}. First of all, it most likely has a predictable temperature generation behaviour, as the utilization used for routing is negligible. That is, nearly the whole circuit utilization is used for the pipeline. 
+Furthermore, an utilization of approximately 20\% generates a temperature rise of 26.3$\symbol{23}^{\circ}$C when clocked at 400\,MHz.

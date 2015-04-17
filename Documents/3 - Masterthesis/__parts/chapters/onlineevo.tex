@@ -3,23 +3,33 @@
 \label{ch:onlineevo}
 
 
-\section{Methodology}
-\subsection{Temperature Model Definition}
+\section{Temperature Model Definition}
+
+The temperature model is basically as defined in Section~\ref{ch:hotspot} and Section~\ref{ch:ext}.
+
+\begin{itemize}
+	\item RCN
+	\item heat up
+	\item cool down
+	\item measure temperature
+	\item learn parameters
+	\item evaluate
+\end{itemize}
 
 \begin{equation}
 \label{eq:mse}
 mse(P)=\frac{1}{|N||M|} \cdot \sum_{i\in M} \sum_{j\in N} (T_s(P,t_i,j)-T_m(t_i,j))^2
 \end{equation}
 
-\subsection{Learning and Optimizing Algorithms}
-\subsubsection{Simulated Annealing}
+\section{Learning and Optimizing Algorithms}
+\subsection{Simulated Annealing}
 
-\subsubsection{Evolutionary Algorithms}
-\subsubsection{Metropolis Algorithms}
+\subsection{Evolutionary Algorithms}
+\subsection{Metropolis Algorithms}
 
-\subsubsection{Gradient Descent Algorithms}
+\subsection{Gradient Descent Algorithms}
 
-\subsubsection{Particle Swarm Optimizations}
+\subsection{Particle Swarm Optimizations}
 
-\subsubsection{Hill Climbing}
-\subsubsection{Evolutionary Algorithms}
+\subsection{Hill Climbing}
+\subsection{Evolutionary Algorithms}
