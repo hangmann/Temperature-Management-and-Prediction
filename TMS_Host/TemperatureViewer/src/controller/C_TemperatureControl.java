@@ -18,7 +18,6 @@ public class C_TemperatureControl {
 	private int mNumberOfSensors;
 	private int mSensorGridWidth, mSensorGridHeight;
 
-	private boolean mIsCalibrating;
 	private C_Calibration mCalibration;
 	private C_DataReader mDataReader;
 	private boolean foundFirstEvenTemperatures;
@@ -33,7 +32,6 @@ public class C_TemperatureControl {
 		mSensorGridWidth = pGridWidth;
 		mSensorGridHeight = pGridWidth;
 		this.control = control;
-		mIsCalibrating = false;
 		mCalibration = new C_Calibration(mNumberOfSensors);
 
 		mCurrTemp = new double[mNumberOfSensors];
@@ -84,13 +82,7 @@ public class C_TemperatureControl {
 		
 	}
 
-	public synchronized void startCalibration() {
-		mIsCalibrating = true;
-		mDataReader.startReading();
-	}
-
 	public synchronized void stopCalibration() {
-		mIsCalibrating = false;
 		mCalibration.calibrate();
 	}
 
@@ -109,5 +101,10 @@ public class C_TemperatureControl {
 	
 	public int getSensorGridHeight() {
 		return mSensorGridHeight;
+	}
+	
+	public void loadCalibration(Double [][] cal)
+	{
+		mCalibration.loadCalibration(cal);
 	}
 }

@@ -32,6 +32,14 @@ public class C_Calibration {
 			pTempData[i] = mCalibrations[i].getTemperature(pSensorData[i]);
 		}
 	}
+	
+	public void loadCalibration(Double [][] cal)
+	{
+		for (int i = 0; i < mNumberOfSensors; i++) {
+			mCalibrations[i].setA(cal[i][0]);
+			mCalibrations[i].setB(cal[i][1]);
+		}
+	}
 
 	public Double[][] getCalibrationParameters()
 	{
@@ -189,6 +197,16 @@ public class C_Calibration {
 		public double getA() {
 			calcCorrXY();
 			return mCorrXY / mXX;
+		}
+		
+		public void setA(double a)
+		{
+			this.a = a;
+		}
+		
+		public void setB(double b)
+		{
+			this.b = b;
 		}
 
 		public double getB() {

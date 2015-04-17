@@ -1,5 +1,7 @@
 package controller;
 
+import javax.sql.rowset.serial.SerialRef;
+
 import model.M_TemperatureMeasurementSystem;
 import view.V_Console;
 
@@ -22,7 +24,12 @@ public class C_SerialCommumication {
 		console.appendText(str);
 	}
 	
-	public void appendTextTemp(String str)
+	public C_SerialReader get_SR()
+	{
+		return c_SR;
+	}
+	
+	public synchronized void appendTextTemp(String str)
 	{
 		console.appendTextTemp(str);
 	}

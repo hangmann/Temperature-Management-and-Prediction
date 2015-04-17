@@ -4,11 +4,13 @@ public class C_ExperimentThread implements Runnable {
 
 	private enum States
 	{
+		sWait,
 		sAll,
 		sTopFive,
 		sBottomFive,
 		sRightFive,
 		sLeftFive,
+		sCoolDown,
 		sExit,
 	}
 	
@@ -22,7 +24,7 @@ public class C_ExperimentThread implements Runnable {
 		this.c_TMS = c_TMS;
 		this.maxlevel = maxlevel;
 		
-		heatingStates = States.sAll;
+		heatingStates = States.sWait;
 		
 	}
 	
@@ -31,23 +33,28 @@ public class C_ExperimentThread implements Runnable {
 		
 		switch(heatingStates)
 		{
+		case sWait:
+			c_TMS.getHeatControl().setAllHeaters(0);
+			wait(2*60*1000);
+			heatingStates = States.sAll;
 		case sAll:
 			c_TMS.getHeatControl().setAllHeaters(maxlevel);
 			wait(10*60*1000);
 			heatingStates = States.sTopFive;
 		case sTopFive:
 			//4 9 11 16 21 
-			c_TMS.getHeatControl().setAllHeaters(0);
+			c_TMS.getHeatControl().setTopHeaters(maxlevel);
+	/*		c_TMS.getHeatControl().setAllHeaters(0);
 			wait(100);
 			c_TMS.getHeatControl().setHeater(4, maxlevel);
 			wait(100);
 			c_TMS.getHeatControl().setHeater(9, maxlevel);
 			wait(100);
-			c_TMS.getHeatControl().setHeater(11, maxlevel);
+			c_TMS.getHeatControl().setHeater(14, maxlevel);
 			wait(100);
-			c_TMS.getHeatControl().setHeater(16, maxlevel);
+			c_TMS.getHeatControl().setHeater(19, maxlevel);
 			wait(100);
-			c_TMS.getHeatControl().setHeater(21, maxlevel);
+			c_TMS.getHeatControl().setHeater(24, maxlevel);*/
 			try {
 				Thread.sleep(5*60*1000);
 			} catch (InterruptedException e) {
@@ -56,7 +63,8 @@ public class C_ExperimentThread implements Runnable {
 			}
 			heatingStates = States.sBottomFive;
 		case sBottomFive:
-			c_TMS.getHeatControl().setAllHeaters(0);
+			c_TMS.getHeatControl().setBottomHeaters(maxlevel);
+		/*	c_TMS.getHeatControl().setAllHeaters(0);
 			wait(100);
 			c_TMS.getHeatControl().setHeater(0, maxlevel);
 			wait(100);
@@ -64,30 +72,32 @@ public class C_ExperimentThread implements Runnable {
 			wait(100);
 			c_TMS.getHeatControl().setHeater(10, maxlevel);
 			wait(100);
-			c_TMS.getHeatControl().setHeater(12, maxlevel);
+			c_TMS.getHeatControl().setHeater(15, maxlevel);
 			wait(100);
-			c_TMS.getHeatControl().setHeater(17, maxlevel);
-
-			wait(5*60*1000);
+			c_TMS.getHeatControl().setHeater(20, maxlevel);
+*/
+			wait(10*60*1000);
 			heatingStates = States.sRightFive;
 		case sRightFive:
-			c_TMS.getHeatControl().setAllHeaters(0);
-			wait(100);
-			c_TMS.getHeatControl().setHeater(17, maxlevel);
-			wait(100);
-			c_TMS.getHeatControl().setHeater(18, maxlevel);
-			wait(100);
-			c_TMS.getHeatControl().setHeater(19, maxlevel);
+			c_TMS.getHeatControl().setRightHeaters(maxlevel);
+		/*	c_TMS.getHeatControl().setAllHeaters(0);
 			wait(100);
 			c_TMS.getHeatControl().setHeater(20, maxlevel);
 			wait(100);
 			c_TMS.getHeatControl().setHeater(21, maxlevel);
-
-			wait(5*60*1000);
+			wait(100);
+			c_TMS.getHeatControl().setHeater(22, maxlevel);
+			wait(100);
+			c_TMS.getHeatControl().setHeater(23, maxlevel);
+			wait(100);
+			c_TMS.getHeatControl().setHeater(24, maxlevel);
+*/
+			wait(10*60*1000);
 			heatingStates = States.sLeftFive;
 		case sLeftFive:
 			//4 9 11 16 21 
-			c_TMS.getHeatControl().setAllHeaters(0);
+			c_TMS.getHeatControl().setLeftHeaters(maxlevel);
+		/*	c_TMS.getHeatControl().setAllHeaters(0);
 			wait(100);
 			c_TMS.getHeatControl().setHeater(0, maxlevel);
 			wait(100);
@@ -98,12 +108,18 @@ public class C_ExperimentThread implements Runnable {
 			c_TMS.getHeatControl().setHeater(3, maxlevel);
 			wait(100);
 			c_TMS.getHeatControl().setHeater(4, maxlevel);
-
-			wait(5*60*1000);
-			heatingStates = States.sExit;
-		case sExit: 
+*/
+			wait(10*60*1000);
+			heatingStates = States.sCoolDown;
+		case sCoolDown: 
 
 			c_TMS.getHeatControl().setAllHeaters(0);
+			wait(10*60*1000);
+			heatingStates = States.sExit;
+		case sExit:
+			//reset timer, clear, new text file
+			heatingStates = States.sWait;
+			c_TMS.getSerialCommunication().get_SR().restart();
 		}
 		
 	}

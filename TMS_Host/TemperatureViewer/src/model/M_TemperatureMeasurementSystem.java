@@ -22,8 +22,9 @@ import controller.C_UnreadSensorData;
  *
  */
 public class M_TemperatureMeasurementSystem {
-	
+
 	static final public String OUTPUT_FILE_PATH = new String("output");  
+	static final public String CALIBRATION_FILE_PATH = new String("calibration");  
 	
 	// refresh interval in millisecons
 	static final public int REFRESH_INTERVAL = 100;
@@ -31,7 +32,7 @@ public class M_TemperatureMeasurementSystem {
 	static final public int SUBDIVISION = 10, MAX_FPS = 20;
 	
 	static final public int MIN_TEMP = 30;
-	static final public int MAX_TEMP = 130;
+	static final public int MAX_TEMP = 190;
 
 	// Serial Port parameters
 	static final public int BAUD_RATE = 115200;
@@ -47,7 +48,7 @@ public class M_TemperatureMeasurementSystem {
 	
 	static public final String PORTNAME = L_PORTNAME;
 	
-	static final public int NUMBER_OF_HEATERS = 22;
+	static final public int NUMBER_OF_HEATERS = 25;
 	static final public int HEATER_MAX_ADJUSTABILITY = 32;
 	static final public int HEATER_CALIBRATION_LEVEL = 16; 
 	static final public int NUMBER_OF_SENSORS = 25;
@@ -76,7 +77,7 @@ public class M_TemperatureMeasurementSystem {
 		calibrationMode=bo;
 	}	
 	
-	public boolean getReadMode() {
+	public synchronized boolean getReadMode() {
 		return readMode;
 	}
 	
@@ -91,7 +92,7 @@ public class M_TemperatureMeasurementSystem {
 	public void setTemperatureMode(boolean b) {
 		tempMode=b;
 	}
-	public boolean getCalibrationMode()
+	public synchronized boolean getCalibrationMode()
 	{
 		return calibrationMode;
 	}
@@ -125,7 +126,11 @@ public class M_TemperatureMeasurementSystem {
 		 unreadSensorData.addLine(string);
 	}
 
-	public void addTempLine(String string) {
+	public void clearUnreadLine() {
+		 unreadSensorData.clear();
+	}
+
+	public synchronized void addTempLine(String string) {
 		 tempOutput += string;
 	}
 

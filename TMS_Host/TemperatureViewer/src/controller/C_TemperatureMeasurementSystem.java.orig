@@ -6,9 +6,7 @@ import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,7 +28,7 @@ public class C_TemperatureMeasurementSystem {
 	private C_SerialCommumication c_SCom;
 	private C_HeaterControl c_HC;
 	private C_TemperatureControl mTempControl;
-	SerialPort serialPort;
+	private  SerialPort serialPort;
 	
 	/**
 	 * Constructor opens and initializes serial port 
@@ -72,7 +70,7 @@ public class C_TemperatureMeasurementSystem {
 		} catch (NoSuchPortException e1) {
 			e1.printStackTrace();
 			System.out.println("Error: Port does not exist.");
-			System.exit(0);
+		//	System.exit(0);
 		
 		} catch (PortInUseException e) {
 			e.printStackTrace();
@@ -80,7 +78,7 @@ public class C_TemperatureMeasurementSystem {
 			System.exit(0);
 		}
 		
-		//loadCalibration();
+
 	}
 	
 
@@ -126,6 +124,7 @@ public class C_TemperatureMeasurementSystem {
 		}
 		
 		//getSerialCommunication().clearText();
+		mTempControl.stopCalibration();
 		
 	}
 
@@ -153,6 +152,8 @@ public class C_TemperatureMeasurementSystem {
 	{
 		try {
 
+<<<<<<< HEAD
+=======
             m_TMS.setOut_stream(serialPort.getOutputStream());
 		
 		} catch (IOException e) {
@@ -162,45 +163,6 @@ public class C_TemperatureMeasurementSystem {
 		}
 		
 	}
-	
-	public void loadCalibration()
-	{
-		Double[][] cal = new Double[m_TMS.NUMBER_OF_SENSORS][2];
-		
-		BufferedReader br = null;
-		try {
-			br = new BufferedReader(new FileReader(m_TMS.CALIBRATION_FILE_PATH));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    try {
-	        StringBuilder sb = new StringBuilder();
-	        String line = br.readLine();
-	        int i = 0;
-	        int j = 0;
-	        
-	        while (line != null) {
-	            cal[i][j] = Double.valueOf(line);
-	            j = (j==0) ? 1 : 0;
-	            line = br.readLine();
-	            if (j==0) 
-		            i++;
-	        }
-	        String everything = sb.toString();
-	    } catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			mTempControl.loadCalibration(cal);
-			m_TMS.setTemperatureMode(true);
-	        try {
-				br.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	    }
-	}
 
+>>>>>>> origin
 }

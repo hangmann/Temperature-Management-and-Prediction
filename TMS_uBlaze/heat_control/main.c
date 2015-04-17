@@ -1,4 +1,4 @@
-
+			;
 /*******************************************************************
 *
 * MAIN.C
@@ -23,13 +23,13 @@
 #include <heat_core.h>
 #include <sensor_grid.h>
 #include <limits.h>
+#include <string.h>
 
 unsigned int ** heat_cores;
 
 unsigned int temperature, vccint;
 
-
- char * strtok(char * s, const char * toks)
+char * strtok(char * s, const char * toks)
  {
 	  static char * last = 0;
 	  char * ret = 0;
@@ -76,30 +76,33 @@ unsigned int temperature, vccint;
 	  return ret;
  }
 
-unsigned int * heat_core(int i)
+unsigned int * get_heat_core_adress(int i, int * valid)
 {
-	if (i == 0) return (unsigned int *) XPAR_HEAT_CORE_0_BASEADDR;
-	if (i == 1) return (unsigned int *) XPAR_HEAT_CORE_1_BASEADDR;
-	if (i == 2) return (unsigned int *)XPAR_HEAT_CORE_2_BASEADDR;
-	if (i == 3) return (unsigned int *)XPAR_HEAT_CORE_3_BASEADDR;
-	if (i == 4) return (unsigned int *)XPAR_HEAT_CORE_4_BASEADDR;
-	if (i == 5) return (unsigned int *)XPAR_HEAT_CORE_5_BASEADDR;
-	if (i == 6) return (unsigned int *)XPAR_HEAT_CORE_6_BASEADDR;
-	if (i == 7) return (unsigned int *)XPAR_HEAT_CORE_7_BASEADDR;
-	if (i == 8) return (unsigned int *)XPAR_HEAT_CORE_8_BASEADDR;
-	if (i == 9) return (unsigned int *)XPAR_HEAT_CORE_9_BASEADDR;
-	if (i == 10) return (unsigned int *)XPAR_HEAT_CORE_10_BASEADDR;
-	if (i == 11) return (unsigned int *)XPAR_HEAT_CORE_14_BASEADDR;
-	if (i == 12) return (unsigned int *)XPAR_HEAT_CORE_15_BASEADDR;
-	if (i == 13) return (unsigned int *)XPAR_HEAT_CORE_16_BASEADDR;
-	if (i == 14) return (unsigned int *)XPAR_HEAT_CORE_17_BASEADDR;
-	if (i == 15) return (unsigned int *)XPAR_HEAT_CORE_18_BASEADDR;
-	if (i == 16) return (unsigned int *)XPAR_HEAT_CORE_19_BASEADDR;
-	if (i == 17) return (unsigned int *)XPAR_HEAT_CORE_20_BASEADDR;
-	if (i == 18) return (unsigned int *)XPAR_HEAT_CORE_21_BASEADDR;
-	if (i == 19) return (unsigned int *)XPAR_HEAT_CORE_22_BASEADDR;
-	if (i == 20) return (unsigned int *)XPAR_HEAT_CORE_23_BASEADDR;
-	if (i == 21) return (unsigned int *)XPAR_HEAT_CORE_24_BASEADDR;
+	if (i == 0) { *valid = 1;return (unsigned int *) XPAR_HEAT_CORE_0_BASEADDR;}
+	if (i == 1) { *valid = 1;return (unsigned int *) XPAR_HEAT_CORE_1_BASEADDR;}
+	if (i == 2) { *valid = 1;return (unsigned int *)XPAR_HEAT_CORE_2_BASEADDR;}
+	if (i == 3) { *valid = 1;return (unsigned int *)XPAR_HEAT_CORE_3_BASEADDR;}
+	if (i == 4) { *valid = 1;return (unsigned int *)XPAR_HEAT_CORE_4_BASEADDR;}
+	if (i == 5) { *valid = 1;return (unsigned int *)XPAR_HEAT_CORE_5_BASEADDR;}
+	if (i == 6) { *valid = 1;return (unsigned int *)XPAR_HEAT_CORE_6_BASEADDR;}
+	if (i == 7) { *valid = 1;return (unsigned int *)XPAR_HEAT_CORE_7_BASEADDR;}
+	if (i == 8) { *valid = 1;return (unsigned int *)XPAR_HEAT_CORE_8_BASEADDR;}
+	if (i == 9) { *valid = 1;return (unsigned int *)XPAR_HEAT_CORE_9_BASEADDR;}
+	if (i == 10) { *valid = 1;return (unsigned int *)XPAR_HEAT_CORE_10_BASEADDR;}
+	if (i == 11) { *valid = 0;return (unsigned int *)0;}
+	if (i == 12) { *valid = 0;return (unsigned int *)0;}
+	if (i == 13) { *valid = 0;return (unsigned int *)0;}
+	if (i == 14) { *valid = 1;return (unsigned int *)XPAR_HEAT_CORE_14_BASEADDR;}
+	if (i == 15) { *valid = 1;return (unsigned int *)XPAR_HEAT_CORE_15_BASEADDR;}
+	if (i == 16) { *valid = 1;return (unsigned int *)XPAR_HEAT_CORE_16_BASEADDR;}
+	if (i == 17) { *valid = 1;return (unsigned int *)XPAR_HEAT_CORE_17_BASEADDR;}
+	if (i == 18) { *valid = 1;return (unsigned int *)XPAR_HEAT_CORE_18_BASEADDR;}
+	if (i == 19) { *valid = 1;return (unsigned int *)XPAR_HEAT_CORE_19_BASEADDR;}
+	if (i == 20) { *valid = 1;return (unsigned int *)XPAR_HEAT_CORE_20_BASEADDR;}
+	if (i == 21) { *valid = 1;return (unsigned int *)XPAR_HEAT_CORE_21_BASEADDR;}
+	if (i == 22) { *valid = 1;return (unsigned int *)XPAR_HEAT_CORE_22_BASEADDR;}
+	if (i == 23) { *valid = 1;return (unsigned int *)XPAR_HEAT_CORE_23_BASEADDR;}
+	if (i == 24) { *valid = 1;return (unsigned int *)XPAR_HEAT_CORE_24_BASEADDR;}
 }
 
 void init_heat_cores()
@@ -128,8 +131,11 @@ void init_heat_cores()
 //	heat_cores[21] = (unsigned int *) (XPAR_HEAT_CORE_24_BASEADDR);
 //	
 	int i;
-	for (i = 0; i<22;i++){
-		disable(heat_core(i));
+	for (i = 0; i<24;i++){
+		int valid = 0;
+		unsigned int* heat_core = get_heat_core_adress(j, &valid);
+		if (valid == 1)
+			disable(heat_core);
 	}
 }
 
@@ -149,10 +155,10 @@ void clear_array(char* c, int length)
 
 	int msec;
 	int i;
-	int inp;
+	char inp;
 
-	char input [15] = "";
-
+	char input [35] = "";
+	
 enum States {waitForNext=0, startMeasure, inMeasure, endMeasure, pauseAveraging, printData, end};
 	
 	unsigned int averagingCount;
@@ -250,58 +256,173 @@ void printCounts()
 
 int interpret_command(char* str)
 {
-	char * command;
-	char * param;
-	char * inp;
-	int params[2];
+	int j;
+	char * command = malloc(15 * sizeof (char));
+	char * inp_temp = malloc(15 * sizeof (char));
+	int params[6];
 	int heater;
 	int intensity;
 	int count = 0;
 	
-	//xil_printf("Input uB: %s\n",str);
+	xil_printf("1 Input uB: %s\n",str);
 	
-	inp = strtok (str," ");
+	int temp;
+	for (temp = 0; temp < 6; temp++)
+		params[temp] = 0;
+	clear_array(inp_temp,15);
 	
-	while (inp != NULL)
+	inp_temp = strtok (str," ");
+	while (inp_temp != NULL)
 	{
-		if (count == 0) command = inp;
-		else params[count-1] = atoi(inp);
+		if (count == 0) strncpy(command, inp_temp, 15);
+		else params[count-1] = atoi(inp_temp);
 		count++;
-		inp = strtok (NULL, " ");
+		
+		inp_temp = strtok (NULL, " ");
 	}
-	count = 0;
-	clear_array(inp,15);
+	clear_array(inp_temp,15);
+	
+	xil_printf("1 Received Command: %s with %d parameters: ", command, count - 1);
+	int t;
+	for (t = 0; t < count - 1; t++)
+	{
+		xil_printf(" %d,",params[t]);
+	}
+	xil_printf("\n");
+	
 
 	if (strcmp(command, "setheater") == 0) 
 	{
 		if (response == incoming)
 		{
-			xil_printf("Setting Heater %d (at 0x%x) intensity to %d\n", params[0],
-			heat_core(params[0]), params[1]); 
+			int valid = 0;
+			unsigned int* heat_core = get_heat_core_adress(params[0], &valid);
+			if (valid == 1)				
+				xil_printf("1 Setting Heater %d (at 0x%x) intensity to %d\n", params[0], heat_core, params[1]); 
+			
 		}
 		int ret;
 		if (params[1] >= 1){
-			enable(heat_core(params[0]));
-			set_active_heater(heat_core(params[0]), params[1]);
-			ret = 1;
+			int valid = 0;
+			unsigned int* heat_core = get_heat_core_adress(params[0], &valid);
+			if (valid == 1)
+			{
+				enable(heat_core);
+				set_active_heater(heat_core, params[1]);
+				ret = 1;
+			}
 		} else {
-			disable(heat_core(params[0]));
-			set_active_heater(heat_core(params[0]), 0);
-			ret = 0;
+			int valid = 0;
+			unsigned int* heat_core = get_heat_core_adress(params[0], &valid);
+			if (valid == 1)
+			{
+				disable(heat_core);
+				set_active_heater(heat_core, 0);
+				ret = 0;
+			}
 		}
 		if (params[1] > 32) {
-			enable(heat_core(params[0]));
-			set_active_heater(heat_core(params[0]), 32);
+			int valid = 0;
+			unsigned int* heat_core = get_heat_core_adress(params[0], &valid);
+			if (valid == 1)
+			{
+				enable(heat_core);
+				set_active_heater(heat_core, 32);
+				ret = 1;
+			}
+		}
+		return ret;
+	}
+	if (strcmp(command, "setallheaters") == 0) 
+	{
+		unsigned int* heat_core;
+		int valid = 0;
+		int ret;
+		if (response == incoming)
+		{
+		}
+			xil_printf("1 Setting all Heater's intensity to %d\n", params[0]); 
+		if (params[0] >= 1){
+			for (j = 0; j <=24; j++)
+			{
+				heat_core = get_heat_core_adress(j, &valid);
+				if (valid == 1)
+				{
+					enable(heat_core);
+					set_active_heater(heat_core, params[0]);
+				}
+			}
+			ret = 1;
+		} else {
+			for (j = 0; j <=24; j++)
+			{
+				heat_core = get_heat_core_adress(j, &valid);
+				if (valid == 1)
+				{
+					disable(heat_core);
+					set_active_heater(heat_core, 0);
+				}
+			}
+			ret = 0;
+		}
+		if (params[0] > 32) {
+			for (j = 0; j <=24; j++)
+			{
+				unsigned int* heat_core = get_heat_core_adress(j, &valid);
+				if (valid == 1)
+				{
+					enable(heat_core);
+					set_active_heater(heat_core, 32);
+				}
+			}
 			ret = 1;
 		}
 		return ret;
 	}
+	if (strcmp(command, "set5heaters") == 0) 
+	{
+		unsigned int* heat_core;
+		int valid = 0;
+		int ret;
+				
+		for (j = 0; j <=24; j++)
+		{
+			heat_core = get_heat_core_adress(j, &valid);
+			if (valid == 1)
+			{
+				if (j == params[0] || j == params[1] || j == params[2] || j == params[3] || j == params[4])
+				{
+					int value = 0;
+					if (params[5] < 0)
+						value = 0;
+					else if (params[5] > 32)
+						value = 32;
+					else
+						value = params[5];
+						
+					if (response == incoming)
+						xil_printf("1 Setting Heater %d (at 0x%x) intensity to %d\n", j, heat_core, value);
+					set_active_heater(heat_core, value);
+				}
+				else
+				{
+					disable(heat_core);
+					set_active_heater(heat_core, 0);
+				}
+			}
+		}		
+				
+			ret = 1;
+		return ret;
+	}
 	else if (strcmp(command, "getheater") == 0)
 	{
+		int valid = 0;
 		if (response == incoming)
 		{
-			xil_printf("Intensity of Heater %d (at 0x%x) is %d\n", params[0], 
-			heat_core(params[0]), get_active_heater(heat_core(params[0])));
+				unsigned int* heat_core = get_heat_core_adress(params[0], &valid);
+				if (valid == 1)
+					xil_printf("1 Intensity of Heater %d (at 0x%x) is %d\n", params[0], heat_core, get_active_heater(heat_core));
 		}
 		return 0;
 	}
@@ -310,7 +431,7 @@ int interpret_command(char* str)
 		if (response == incoming)
 		{
 			int temp = sysmon_get_mcelsius();
-			xil_printf(" %03d.%03d\n", temp / 1000, temp % 1000);
+			xil_printf("1 Temperature is %03d.%03d\n", temp / 1000, temp % 1000);
 		}
 		return 0; //GET TEMPERATURE
 	}
@@ -319,7 +440,7 @@ int interpret_command(char* str)
 		if (response == incoming)
 		{
 			int temp = sysmon_get_vcc();
-			xil_printf(" %03d.%03d\n", temp / 1000, temp % 1000);
+			xil_printf("1 VCC is %03d.%03d\n", temp / 1000, temp % 1000);
 		}
 		return 0;
 	}
@@ -327,6 +448,7 @@ int interpret_command(char* str)
 	{
 		if (response == incoming)
 		{
+			xil_printf("1 ");
 			printCounts();
 			xil_printf("\n");
 		}
@@ -351,7 +473,7 @@ int interpret_command(char* str)
 		else
 		{
 			response = incoming;
-			xil_printf("Outputs enabled\n");
+			xil_printf("1 Outputs enabled\n");
 		}
 		return 0;
 	}
@@ -364,17 +486,43 @@ int interpret_command(char* str)
 		else
 		{
 			response = incoming;
-			xil_printf("Outputs enabled\n");
+			xil_printf("1 Outputs enabled\n");
 		}
 		return 0;
 	}
 	
 	params[0]=0;
 	params[1]=0;
+	params[2]=0;
+	params[3]=0;
+	params[4]=0;
+	params[5]=0;
+	free(inp);
+	clear_array(command,15);
+	free(command);
 }
 
+int i_p = 0;
+char input[35];
+char temp_input[35];
 	
-
+void get_commands()
+{
+	if (!XUartLite_IsReceiveEmpty(XPAR_UARTLITE_1_BASEADDR)) {
+			inp=XUartLite_RecvByte (XPAR_UARTLITE_1_BASEADDR);
+			
+			if (inp != '\n' && inp != '\r'){
+				temp_input[i_p] = inp;
+				i_p++;
+			} else {
+				strncpy(input, temp_input, i_p);
+				interpret_command(input);
+				i_p=0;
+				clear_array(input, 35);
+				clear_array(temp_input, 35);
+			}
+		}
+}
 
 
 // busy waiting for 'duration' milliseconds
@@ -389,19 +537,7 @@ void wait_for_ms(int duration)
 		print("");
 		t_stop = *timebase;
 		time_in_ms = (calc_timediff(t_start, t_stop) / 100000);
-		if (!XUartLite_IsReceiveEmpty(XPAR_UARTLITE_1_BASEADDR)) {
-			inp=XUartLite_RecvByte (XPAR_UARTLITE_1_BASEADDR);
-			
-			if (inp != '\n'){
-				input[i] = inp;
-				inp = 0;
-				i++;
-			} else {
-				i=0;
-				interpret_command(input);
-				clear_array(input, 15);
-			}
-		}
+		get_commands();
 	}
 }
 
@@ -422,25 +558,27 @@ int main (void)
 		
 		if (response == continuous)
 		{
-			if (first==1){
-				xil_printf("##################47_24_latch#################\r\n");	
-				first = 0;
-			}
-			xil_printf("%05d", msec);
+			xil_printf("3 %05d", msec);
 			printCounts();
 			xil_printf(" %03d.%03d", temperature / 1000, temperature % 1000);
 			xil_printf(" %01d.%03d", vccint / 1000, vccint % 1000);
 			
 			int heater;
-			for (heater = 0; heater < 22; heater ++)
+			for (heater = 0; heater < 25; heater ++)
 			{
-				xil_printf(" %d", get_active_heater(heat_core(heater)));
+				int valid = 0;
+				unsigned int* heat_core = get_heat_core_adress(heater, &valid);
+				if (valid == 1)
+					xil_printf(" %d", get_active_heater(heat_core));
+				else
+					xil_printf(" 0");
 			}
 			
-			xil_printf("\r\n");
+			xil_printf(" \r\n");
 			msec++;
 		}
 
+		get_commands();
 		wait_for_ms(100);
 	}
 

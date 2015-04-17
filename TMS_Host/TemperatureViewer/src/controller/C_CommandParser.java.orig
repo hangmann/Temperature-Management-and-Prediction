@@ -54,7 +54,6 @@ public class C_CommandParser {
 		String arg1 = "-1";
 		
 		inputs.add(str);
-		
 		for (int i = 0; i < commands.length; i++) {
 		    
 			cmd = scanner.findInLine(commands[i]);
@@ -89,7 +88,7 @@ public class C_CommandParser {
 		case 3: getTemp(); break;
 		case 4: getVcc(); break;
 		case 5: getCount(); break;
-		case 6: c_TMS.getSerialCommunication().clearText();; break;
+		case 6: c_TMS.getSerialCommunication().clearText(); c_TMS.getModel().clearUnreadLine(); c_TMS.getModel().setCalibrationMode(false); break;
 		case 7: System.exit(0); break;
 		case 8: displayChip();break;
 		case 9: startExperiment(); break;
@@ -177,7 +176,10 @@ public class C_CommandParser {
 					  "#######################\nHXX: Heater\nSXX: System";
 		c_TMS.getSerialCommunication().appendText(chip);	
 	}
+<<<<<<< HEAD
+=======
 
+>>>>>>> origin
 	
 	public void displayHelp()
 	{

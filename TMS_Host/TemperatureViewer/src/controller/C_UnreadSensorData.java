@@ -16,12 +16,17 @@ public class C_UnreadSensorData {
 		return dummyLine.getNextLine().toString();
 	}
 
+	public void clear()
+	{
+		dummyLine.setNextLine(dummyLine);
+		dummyLine.setPreviousLine(dummyLine);
+	}
 
 
 	public void addLine(String line)
 	{
-		if (!line.equals("") && line!=null){
-			C_SensorDataLine nextLine = new C_SensorDataLine(line);
+		if (!line.equals("") && line!=null && line.startsWith("3 ")){
+			C_SensorDataLine nextLine = new C_SensorDataLine(line);		
 			addLine(nextLine);
 
 		}

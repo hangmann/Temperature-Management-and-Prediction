@@ -104,6 +104,7 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				startExperiment();
+				startEx.setEnabled(false);
 			}
 		});
 		
@@ -121,6 +122,7 @@ public class V_TemperatureMeasurementSystem implements ActionListener {
 				mStopCalibration.setEnabled(false);
 				c_TMS.stopCalibration();
 				c_TMS.getModel().setTemperatureMode(true);
+				c_TMS.getModel().setCalibrationMode(false);
 			}
 		});
 

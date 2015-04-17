@@ -18,7 +18,6 @@ import view.V_Console;
     {
 	 	private InputStream in;
 	 	private PrintWriter out;
-	 	private PrintWriter out_samples;
 	 	private PrintWriter out_calibrating;
         private C_SerialCommumication c_SR;
         private M_TemperatureMeasurementSystem m_TMS;
@@ -35,7 +34,6 @@ import view.V_Console;
         	this.c_SR = c_SR;
         	try {
 				out = new PrintWriter(new BufferedWriter(new FileWriter("output" + timeStamp, true)));
-				out_samples = new PrintWriter(new BufferedWriter(new FileWriter("output" + timeStamp+"_samples", true)));
 				out_calibrating = new PrintWriter(new BufferedWriter(new FileWriter("output" + timeStamp+"_calibrating", true)));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -50,13 +48,15 @@ import view.V_Console;
         
         public synchronized void run ()
         {
+<<<<<<< HEAD
             byte[] buffer = new byte[1024];
             int len = -1;
+            
             try
             {
                 while ( ( len = this.in.read(buffer)) > -1 )
                 {
-                   // System.out.print(new String(buffer,0,len));
+                    System.out.print(new String(buffer,0,len));
                     addOutput(new String(buffer,0,len));
                 }
             }
@@ -64,6 +64,33 @@ import view.V_Console;
             {
                 e.printStackTrace();
             }
+=======
+        	if (run)
+        	{
+	            byte[] buffer = new byte[1024];
+	            int len = -1;
+	            try
+	            {
+	                while ( ( len = this.in.read(buffer)) > -1 )
+	                {
+	                	if (run)
+	                
+	                	{
+	                //	try {
+		                    System.out.print(new String(buffer,0,len));
+		                    addOutput(new String(buffer,0,len));
+	                	}
+						//} catch (java.lang.StringIndexOutOfBoundsException e) {
+					//		System.out.println("StringIndexOutOfBoundsException: " + len);
+					//	}
+	                }
+	            }
+	            catch ( IOException e )
+	            {
+	                e.printStackTrace();
+	            }
+        	}
+>>>>>>> origin
         }
         
         public static double round(double value, int places) {
@@ -116,13 +143,11 @@ import view.V_Console;
     		run = false;
     		firstCall = true;
     		c_SR.clearText();
-    		out_samples.close();
     		out.close();
     		out_calibrating.close();
     		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmm").format(Calendar.getInstance().getTime());
         	try {
 				out = new PrintWriter(new BufferedWriter(new FileWriter("output" + timeStamp, true)));
-				out_samples = new PrintWriter(new BufferedWriter(new FileWriter("output" + timeStamp + "_sampoles", true)));
 				out_calibrating = new PrintWriter(new BufferedWriter(new FileWriter("output" + timeStamp+"_calibrating", true)));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -156,16 +181,9 @@ import view.V_Console;
         							//m_TMS.addTempLine(partsTemp);
                                     c_SR.appendTextTemp(partsTemp + "\n");
                                     out.print(partsTemp + "\n");
-                                    
-                                    if (leveled_temperatures())
-                                    	out_samples.print(partsTemp + "\n");
             					}
-            					C_SensorDataLine line = m_TMS.getNextCompleteLine();
-        						c_TMS.getTempControl().updateData(line.getSensorData(), line.getTemperature(), line.getVcc());
-								if(m_TMS.getCalibrationMode())
-								{
-				        			System.out.println("Adding to calibration");
-								}
+                				C_SensorDataLine line = m_TMS.getNextCompleteLine();
+            					c_TMS.getTempControl().updateData(line.getSensorData(), line.getTemperature(), line.getVcc());
                             }
         						
         				}
@@ -173,6 +191,17 @@ import view.V_Console;
     				}
     		//	} 
     			
+<<<<<<< HEAD
+    			if(m_TMS.getCalibrationMode())
+    			{
+        			C_SensorDataLine line = m_TMS.getNextCompleteLine();
+        			if (line != null && line.getLineNumber() != -1){
+        				c_TMS.getTempControl().updateData(line.getSensorData(), line.getTemperature(), line.getVcc());
+        			}
+        			System.out.println("Adding to calibration");
+    			}
+=======
+>>>>>>> origin
     		}
 
     		
@@ -185,11 +214,6 @@ import view.V_Console;
     		
     		
     	}
-
-		private boolean leveled_temperatures() {
-			
-			return false;
-		}
 
     }
 

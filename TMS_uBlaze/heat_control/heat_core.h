@@ -12,6 +12,7 @@
 
 #include <math.h> 
 #include <stdio.h> 
+#include <limits.h>
 
 #define B(x) ( \
   (x[0] == '1') << 31 | \
@@ -87,7 +88,7 @@ int resolve_heater_lvl (int reg_value)
 {
 	if (reg_value == 0)
 		return 0;
-	if (reg_value == -2147483648)
+	if (reg_value == INT_MIN)//-2147483648LL)
 		return 1;
 	if (reg_value == -1073741824)
 		return 2;
@@ -127,7 +128,7 @@ int resolve_heater_lvl (int reg_value)
 		return 19;
 	if (reg_value == -4096)
 		return 20;
-	if (reg_value ==  -2048 )
+	if (reg_value == -2048 )
 		return 21;
 	if (reg_value == -1024)
 		return 22;
@@ -187,7 +188,9 @@ void set_active_heater( unsigned int* heat_core, int active )
 	{ 	
 		if (i < temp)
 		{ bin[i] = '1';
-		} else {break;}
+		} else 
+		 bin[i] = '0';
+		
 	}
 	int decimal = B(bin);
 	heat_core[1] = decimal;
